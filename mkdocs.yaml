@@ -6,7 +6,6 @@ theme:
     - navigation.instant
     - navigation.tracking
     - navigation.sections
-    - navigation.expand
     - content.code.copy
 
 plugins:
