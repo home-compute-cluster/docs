@@ -1,0 +1,2376 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../../CICD/cicd-offtheshelf-software/">
+      
+      
+        <link rel="next" href="../../containerization/dockerfile-guide/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>K3s - Home Compute Cluster Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#k3s-kubernetes-working-reference" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Home Compute Cluster Documentation" class="md-header__button md-logo" aria-label="Home Compute Cluster Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Home Compute Cluster Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              K3s
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Home Compute Cluster Documentation" class="md-nav__button md-logo" aria-label="Home Compute Cluster Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Home Compute Cluster Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Motivation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Motivation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../motivation/01-motivation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Why
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../motivation/02-planning-tradeoffs-choices/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trade-offs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../motivation/03-cost-value-singapore/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost vs Value
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system-architecture/home-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CI/CD
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CI/CD
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CICD/cicd-pipeline-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pipeline Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CICD/cicd-offtheshelf-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Off-the-shelf Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    K3s
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    K3s
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#0-k3s-vs-kubernetes-settle-it-first" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        0. K3s vs Kubernetes — settle it first
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-the-mental-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. The mental model
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-the-object-hierarchy-what-actually-runs-your-stuff" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. The object hierarchy (what actually runs your stuff)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-kubectl-the-commands-youll-actually-run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. kubectl — the commands you'll actually run
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. kubectl — the commands you&#39;ll actually run">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inspection-90-of-daily-use" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inspection (90% of daily use)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interacting-with-running-pods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interacting with running Pods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#port-forwarding-a-common-gotcha" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Port-forwarding (a common gotcha)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#applying-deleting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Applying &amp; deleting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rollouts-deployments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rollouts (Deployments)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scaling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scaling
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quality-of-life" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quality-of-life
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-anatomy-of-a-manifest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Anatomy of a manifest
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-scheduling-placement-in-a-heterogeneous-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Scheduling — placement in a heterogeneous cluster
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Scheduling — placement in a heterogeneous cluster">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nodeselector-simplest-exact-match" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        nodeSelector — simplest, exact-match
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#node-labels-your-own-taxonomy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Node labels — your own taxonomy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#affinity-anti-affinity-expressive-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Affinity / anti-affinity — expressive rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taints-tolerations-the-node-says-no-by-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Taints &amp; tolerations — the node says NO by default
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resource-requests-limits-feed-the-scheduler-real-numbers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resource requests &amp; limits — feed the scheduler real numbers
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-networking-how-traffic-actually-flows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Networking — how traffic actually flows
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-storage-pvcs-storageclasses-and-node-locality" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Storage — PVCs, StorageClasses, and node-locality
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-configuration-secrets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Configuration &amp; secrets
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-health-self-healing-the-probes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Health &amp; self-healing — the probes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-helm-kustomize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Helm &amp; Kustomize
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-k3s-specific-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. K3s-specific operations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-a-debugging-playbook-the-80-of-incidents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. A debugging playbook (the 80% of incidents)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-common-workload-shapes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13. Common workload shapes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14-minimal-end-to-end-example-to-internalize-the-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14. Minimal end-to-end example to internalize the model
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-reference-card" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick reference card
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Containerization
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Containerization
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../containerization/dockerfile-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dockerfile Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../containerization/dynamic-dev-container-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dev Container Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Weekly Logs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Weekly Logs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-05-10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 01
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-05-14/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 02
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-07/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 03
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-08/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 04
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 05
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-21/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 06
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-26/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 07
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-07-01/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 08
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-07-08/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 09
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-07-15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 10
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#0-k3s-vs-kubernetes-settle-it-first" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        0. K3s vs Kubernetes — settle it first
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-the-mental-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. The mental model
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-the-object-hierarchy-what-actually-runs-your-stuff" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. The object hierarchy (what actually runs your stuff)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-kubectl-the-commands-youll-actually-run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. kubectl — the commands you'll actually run
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. kubectl — the commands you&#39;ll actually run">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inspection-90-of-daily-use" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inspection (90% of daily use)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interacting-with-running-pods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interacting with running Pods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#port-forwarding-a-common-gotcha" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Port-forwarding (a common gotcha)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#applying-deleting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Applying &amp; deleting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rollouts-deployments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rollouts (Deployments)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scaling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scaling
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quality-of-life" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quality-of-life
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-anatomy-of-a-manifest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Anatomy of a manifest
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-scheduling-placement-in-a-heterogeneous-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Scheduling — placement in a heterogeneous cluster
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Scheduling — placement in a heterogeneous cluster">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nodeselector-simplest-exact-match" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        nodeSelector — simplest, exact-match
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#node-labels-your-own-taxonomy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Node labels — your own taxonomy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#affinity-anti-affinity-expressive-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Affinity / anti-affinity — expressive rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taints-tolerations-the-node-says-no-by-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Taints &amp; tolerations — the node says NO by default
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resource-requests-limits-feed-the-scheduler-real-numbers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resource requests &amp; limits — feed the scheduler real numbers
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-networking-how-traffic-actually-flows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Networking — how traffic actually flows
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-storage-pvcs-storageclasses-and-node-locality" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Storage — PVCs, StorageClasses, and node-locality
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-configuration-secrets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Configuration &amp; secrets
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-health-self-healing-the-probes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Health &amp; self-healing — the probes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-helm-kustomize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Helm &amp; Kustomize
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-k3s-specific-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. K3s-specific operations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-a-debugging-playbook-the-80-of-incidents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. A debugging playbook (the 80% of incidents)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-common-workload-shapes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13. Common workload shapes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14-minimal-end-to-end-example-to-internalize-the-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14. Minimal end-to-end example to internalize the model
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-reference-card" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick reference card
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="k3s-kubernetes-working-reference">K3s / Kubernetes — Working Reference</h1>
+<p>A practical guide to Kubernetes, oriented around K3s. It's written from the seat
+of someone running a small heterogeneous cluster — one always-on control-plane
+node plus a couple of workers of differing capability — so where a real cluster
+made a concept concrete, I've kept that context in. Everything here is standard
+Kubernetes unless a section is explicitly flagged K3s-specific.</p>
+<p>Throughout, I refer to my own three nodes by name where it helps:
+- <strong>the control-plane node</strong> — a small always-on mini PC; runs the K3s server
+  and anything stateful-ish that must never move.
+- <strong>a GPU worker</strong> — a laptop-class node with a discrete GPU; transient, so I
+  taint it.
+- <strong>a storage worker</strong> — a desktop with the disks; where storage-bound work
+  lands.</p>
+<p>Substitute your own node names freely.</p>
+<hr />
+<h2 id="0-k3s-vs-kubernetes-settle-it-first">0. K3s vs Kubernetes — settle it first</h2>
+<p>K3s <strong>is</strong> Kubernetes. It's a CNCF-certified conformant distribution, so every
+API object, every <code>kubectl</code> verb, every manifest you write works identically on
+upstream Kubernetes, EKS, GKE, or a 500-node cluster. What K3s changes is
+<em>packaging and operations</em>, not the API:</p>
+<table>
+<thead>
+<tr>
+<th>Concern</th>
+<th>Upstream k8s</th>
+<th>K3s</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Install</td>
+<td>kubeadm + many components</td>
+<td>one <code>curl \| sh</code> binary</td>
+</tr>
+<tr>
+<td>Datastore</td>
+<td>external etcd cluster</td>
+<td>SQLite (single server) or embedded etcd (HA)</td>
+</tr>
+<tr>
+<td>CNI (networking)</td>
+<td>you pick &amp; install</td>
+<td>Flannel, bundled</td>
+</tr>
+<tr>
+<td>Ingress controller</td>
+<td>you install</td>
+<td>Traefik, bundled</td>
+</tr>
+<tr>
+<td>Storage class</td>
+<td>you install</td>
+<td><code>local-path</code>, bundled (default)</td>
+</tr>
+<tr>
+<td>Service LB</td>
+<td>cloud provider</td>
+<td>Klipper / ServiceLB, bundled</td>
+</tr>
+<tr>
+<td>Binary footprint</td>
+<td>large</td>
+<td>~70MB, runs on a Pi</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Takeaway:</strong> describe it as "K3s, a conformant Kubernetes distribution" — it
+signals you understand the distinction. The skills transfer directly; there's no
+"just homelab" asterisk on them.</p>
+<hr />
+<h2 id="1-the-mental-model">1. The mental model</h2>
+<p>Kubernetes is a <strong>reconciliation engine</strong>. You declare desired state (YAML
+manifests); controllers continuously work to make actual state match. You almost
+never tell it to <em>do</em> a thing — you tell it what should <em>be true</em>, and it figures
+out the actions. If you run GitOps on top (e.g. ArgoCD's <code>selfHeal</code>), that's the
+same principle one layer up: the GitOps controller reconciles Git → cluster,
+while the Kubernetes control plane reconciles manifests → running containers.</p>
+<p>The flow when you <code>kubectl apply</code> a Deployment:</p>
+<pre><code>You ──apply──▶ API server ──writes──▶ datastore (SQLite/etcd on the control-plane node)
+                    │
+                    ▼ (controllers watch the datastore)
+        Deployment controller: &quot;I need 1 ReplicaSet&quot;
+        ReplicaSet controller: &quot;I need 1 Pod&quot;
+        Scheduler:             &quot;that Pod goes on... a worker&quot;
+                    │
+                    ▼
+        kubelet on that worker: &quot;pulling image, starting container&quot;
+</code></pre>
+<p>Nothing pushes to nodes. Every node's <strong>kubelet</strong> <em>pulls</em> its assigned work from
+the API server. It's a pull model end to end.</p>
+<hr />
+<h2 id="2-the-object-hierarchy-what-actually-runs-your-stuff">2. The object hierarchy (what actually runs your stuff)</h2>
+<p>From smallest to largest, the chain that turns a container image into a running
+thing:</p>
+<ul>
+<li><strong>Container</strong> — your image (<code>registry/app:tag</code>), running.</li>
+<li><strong>Pod</strong> — one or more containers sharing a network namespace + storage. The
+  <em>smallest schedulable unit</em>. Pods are cattle: disposable, replaceable, get a
+  new IP every time. You rarely create these directly.</li>
+<li><strong>ReplicaSet</strong> — keeps N identical Pods alive. You rarely touch these directly.</li>
+<li><strong>Deployment</strong> — manages ReplicaSets to give you rolling updates and rollbacks.
+  <strong>This is what you write</strong> for stateless services (web servers, APIs, proxies).</li>
+<li><strong>StatefulSet</strong> — like a Deployment but Pods get stable identities and stable
+  storage (<code>pod-0</code>, <code>pod-1</code>). For databases and anything where identity matters.</li>
+<li><strong>DaemonSet</strong> — one Pod on <em>every</em> node (or every matching node). Used for
+  node-level agents: Prometheus <code>node-exporter</code>, log collectors, CNI, device
+  plugins.</li>
+<li><strong>Job / CronJob</strong> — run-to-completion and scheduled tasks. Backups, batch,
+  migrations.</li>
+</ul>
+<p>Supporting objects:</p>
+<ul>
+<li><strong>Service</strong> — a stable virtual IP + DNS name fronting a set of Pods (Pods die;
+  the Service endpoint doesn't). Three flavors in §6.</li>
+<li><strong>Namespace</strong> — a logical partition (<code>argocd</code>, <code>monitoring</code>, <code>kube-system</code>,
+  one per app). Scopes names and lets you apply quotas/policies per tenant.</li>
+<li><strong>ConfigMap / Secret</strong> — config and credentials injected into Pods as env vars
+  or mounted files. Secrets are base64, <em>not</em> encrypted at rest by default.</li>
+<li><strong>PersistentVolume (PV) / PersistentVolumeClaim (PVC)</strong> — storage abstraction.
+  A Pod asks for storage via a PVC; a StorageClass provisions a PV to satisfy it.</li>
+<li><strong>Ingress / IngressRoute</strong> — HTTP routing from outside into Services. With
+  Traefik you get its <code>IngressRoute</code> CRD, a richer Traefik-specific version of
+  the standard <code>Ingress</code> object.</li>
+</ul>
+<hr />
+<h2 id="3-kubectl-the-commands-youll-actually-run">3. kubectl — the commands you'll actually run</h2>
+<p><code>kubectl</code> is your single interface. The pattern is almost always
+<code>kubectl &lt;verb&gt; &lt;resource&gt; [name] [flags]</code>.</p>
+<h3 id="inspection-90-of-daily-use">Inspection (90% of daily use)</h3>
+<pre><code class="language-bash">kubectl get nodes -o wide              # all nodes, IPs, k3s version, OS
+kubectl get pods -A                    # -A = all namespaces (kube-system too)
+kubectl get pods -n &lt;ns&gt; -o wide       # which node each pod landed on
+kubectl get all -n &lt;ns&gt;                # pods, services, deployments, etc. in one ns
+kubectl get deployment,svc,pvc -n &lt;ns&gt;
+
+kubectl describe pod &lt;pod&gt; -n &lt;ns&gt;     # events, why it won't schedule, image pull errs
+kubectl describe node &lt;node&gt;           # capacity, taints, what's scheduled there
+
+kubectl logs &lt;pod&gt; -n &lt;ns&gt;             # stdout/stderr
+kubectl logs &lt;pod&gt; -n &lt;ns&gt; -f          # follow (tail -f)
+kubectl logs &lt;pod&gt; -n &lt;ns&gt; --previous  # logs from the crashed prior container
+</code></pre>
+<h3 id="interacting-with-running-pods">Interacting with running Pods</h3>
+<pre><code class="language-bash">kubectl exec -it &lt;pod&gt; -n &lt;ns&gt; -- sh   # shell inside a container
+kubectl exec &lt;pod&gt; -n &lt;ns&gt; -- nginx -t          # one-off command
+kubectl cp &lt;pod&gt;:/etc/nginx/nginx.conf ./out.conf -n &lt;ns&gt;
+</code></pre>
+<h3 id="port-forwarding-a-common-gotcha">Port-forwarding (a common gotcha)</h3>
+<pre><code class="language-bash">kubectl port-forward -n &lt;ns&gt; svc/&lt;svc&gt; 8888:80
+</code></pre>
+<p>If you run this <strong>inside an SSH session</strong> to a node, <code>localhost:8888</code> binds to
+<em>that node's</em> loopback, not your laptop. Two fixes:</p>
+<pre><code class="language-bash">ssh -L 8888:localhost:8888 &lt;node&gt;      # tunnel the port back to your laptop, OR
+kubectl port-forward --address 0.0.0.0 -n &lt;ns&gt; svc/&lt;svc&gt; 8888:80  # then hit the node's LAN IP
+</code></pre>
+<p>The clean long-term fix: copy the kubeconfig (<code>/etc/rancher/k3s/k3s.yaml</code> on a
+K3s server) to your workstation, rewrite the <code>server:</code> field to the control-plane
+node's IP (<code>https://&lt;control-plane-ip&gt;:6443</code>), and run <code>kubectl</code> locally. Then
+<code>localhost</code> means your laptop and forwards Just Work.</p>
+<h3 id="applying-deleting">Applying &amp; deleting</h3>
+<pre><code class="language-bash">kubectl apply -f deployment.yaml       # declarative — create or update to match file
+kubectl apply -k apps/&lt;svc&gt;/           # apply a Kustomize directory
+kubectl delete -f deployment.yaml
+kubectl delete pod &lt;pod&gt; -n &lt;ns&gt;       # pod gets recreated by its ReplicaSet — a quick restart
+</code></pre>
+<p><strong>Prefer <code>apply</code> (declarative) over <code>create</code>/<code>edit</code> (imperative).</strong> Everything in
+the cluster should be reproducible from source. The imperative commands are for
+debugging and learning, not for the running state — and if you run GitOps, a
+<code>selfHeal</code> controller will literally undo any imperative change you make to a
+managed resource, by design.</p>
+<h3 id="rollouts-deployments">Rollouts (Deployments)</h3>
+<pre><code class="language-bash">kubectl rollout status deployment/&lt;svc&gt; -n &lt;ns&gt;
+kubectl rollout history deployment/&lt;svc&gt; -n &lt;ns&gt;
+kubectl rollout undo deployment/&lt;svc&gt; -n &lt;ns&gt;          # roll back one version
+kubectl rollout restart deployment/&lt;svc&gt; -n &lt;ns&gt;       # restart all pods (re-pull, re-read config)
+</code></pre>
+<h3 id="scaling">Scaling</h3>
+<pre><code class="language-bash">kubectl scale deployment/&lt;svc&gt; -n &lt;ns&gt; --replicas=3
+# (a GitOps controller reverts this if the app is git-managed — the self-heal proof)
+</code></pre>
+<h3 id="quality-of-life">Quality-of-life</h3>
+<pre><code class="language-bash">kubectl get pods -A -w                 # -w = watch, live updates
+kubectl get events -n &lt;ns&gt; --sort-by=.lastTimestamp   # what just happened &amp; why
+kubectl api-resources                  # every object type + its short name &amp; API group
+kubectl explain deployment.spec.template.spec.containers  # inline schema docs
+alias k=kubectl                        # everyone does this
+</code></pre>
+<hr />
+<h2 id="4-anatomy-of-a-manifest">4. Anatomy of a manifest</h2>
+<p>Every object shares the same four top-level keys:</p>
+<pre><code class="language-yaml">apiVersion: apps/v1     # which API group+version owns this kind
+kind: Deployment        # the object type
+metadata:
+  name: web             # unique within namespace+kind
+  namespace: web
+spec:                   # DESIRED STATE — the only part you really design
+  replicas: 1
+  selector:             # how this Deployment finds &quot;its&quot; pods (must match template labels)
+    matchLabels: { app: web }
+  template:             # the Pod blueprint stamped out N times
+    metadata:
+      labels: { app: web }   # ← selector matches THIS
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: &lt;control-plane-node&gt;   # placement constraint (see §5)
+      containers:
+        - name: web
+          image: registry/web-app:latest
+          ports:
+            - containerPort: 80
+# status:               # ACTUAL STATE — k8s writes this, you never do
+</code></pre>
+<p>The <strong>labels/selector</strong> coupling trips everyone up early: a Service finds Pods by
+label selector, a Deployment manages Pods by label selector. If labels and
+selectors don't match, you get a Service with no endpoints or a Deployment that
+manages nothing. They're the glue.</p>
+<hr />
+<h2 id="5-scheduling-placement-in-a-heterogeneous-cluster">5. Scheduling — placement in a heterogeneous cluster</h2>
+<p>This matters most when your nodes are <em>not</em> interchangeable — different CPUs,
+some with a GPU, some always-on and some transient. The scheduler decides
+placement <strong>once, at creation time</strong>, based on <code>resources.requests</code> (declared,
+not actual usage) — there's no automatic rebalancing afterward. You steer it with
+four tools.</p>
+<h3 id="nodeselector-simplest-exact-match">nodeSelector — simplest, exact-match</h3>
+<pre><code class="language-yaml">spec:
+  nodeSelector:
+    kubernetes.io/hostname: &lt;control-plane-node&gt;    # &quot;only here&quot;
+</code></pre>
+<p>Good for "this must run on the always-on node" — I pin the GitOps controller and
+any always-up service this way.</p>
+<h3 id="node-labels-your-own-taxonomy">Node labels — your own taxonomy</h3>
+<pre><code class="language-bash">kubectl label node &lt;storage-node&gt; role=storage
+kubectl label node &lt;gpu-node&gt; gpu=true
+kubectl get nodes --show-labels
+</code></pre>
+<p>Then <code>nodeSelector: { role: storage }</code> is more meaningful than a hostname and
+survives a hardware swap.</p>
+<h3 id="affinity-anti-affinity-expressive-rules">Affinity / anti-affinity — expressive rules</h3>
+<p><code>nodeSelector</code> is hard AND-only. Affinity adds OR, preferences (soft), and
+pod-relative rules:</p>
+<pre><code class="language-yaml">spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:   # hard requirement
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: gpu
+                operator: In
+                values: [&quot;true&quot;]
+    podAntiAffinity:                                     # spread replicas across nodes
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            labelSelector:
+              matchLabels: { app: web }
+            topologyKey: kubernetes.io/hostname
+</code></pre>
+<h3 id="taints-tolerations-the-node-says-no-by-default">Taints &amp; tolerations — the node says NO by default</h3>
+<p>A <strong>taint</strong> repels Pods <em>unless</em> they explicitly <strong>tolerate</strong> it. This is exactly
+the pattern for a transient node: taint it so stateful/general workloads stay
+off, and only the workloads that opt in land there.</p>
+<pre><code class="language-bash"># on a transient node:
+kubectl taint node &lt;gpu-node&gt; transient=true:NoSchedule
+</code></pre>
+<pre><code class="language-yaml"># only a pod with this toleration can be placed there:
+spec:
+  tolerations:
+    - key: transient
+      operator: Equal
+      value: &quot;true&quot;
+      effect: NoSchedule
+</code></pre>
+<p>Effects: <code>NoSchedule</code> (won't place new), <code>PreferNoSchedule</code> (soft), <code>NoExecute</code>
+(also <em>evicts</em> running pods that don't tolerate — this is what drains a node).</p>
+<p><strong>The combined pattern for GPU routing:</strong> label the GPU node <code>gpu=true</code>, and
+taint it <code>transient=true:NoSchedule</code>. A GPU workload then needs <em>both</em> a
+<code>nodeSelector</code>/affinity for <code>gpu=true</code> (to be attracted) <em>and</em> a toleration for
+<code>transient</code> (to be permitted). Attraction + permission — you need both, and
+that's the bit people forget.</p>
+<h3 id="resource-requests-limits-feed-the-scheduler-real-numbers">Resource requests &amp; limits — feed the scheduler real numbers</h3>
+<pre><code class="language-yaml">containers:
+  - name: web
+    resources:
+      requests:           # scheduler reserves this; used for placement math
+        cpu: 100m         # 100 millicores = 0.1 core
+        memory: 128Mi
+      limits:             # hard ceiling; CPU throttled, memory OOM-killed if exceeded
+        cpu: 500m
+        memory: 256Mi
+</code></pre>
+<p>Without requests, the scheduler assumes ~0 and can overpack a node. On modest
+nodes (say 16GB) this bites fast — set requests so placement reflects reality.</p>
+<hr />
+<h2 id="6-networking-how-traffic-actually-flows">6. Networking — how traffic actually flows</h2>
+<p>Three Service types, each a different exposure level:</p>
+<ul>
+<li><strong>ClusterIP</strong> (default) — internal-only virtual IP. Reachable as
+  <code>&lt;svc&gt;.&lt;ns&gt;.svc.cluster.local</code> from any pod. Most services should be ClusterIP
+  and get exposed via Ingress.</li>
+<li><strong>NodePort</strong> — opens a high port (30000–32767) on <em>every</em> node's IP. Crude;
+  mostly a debugging/legacy step. Usually skipped.</li>
+<li><strong>LoadBalancer</strong> — asks for an external IP. In cloud, provisions a cloud LB; in
+  K3s, the bundled ServiceLB (Klipper) fakes it using node IPs. MetalLB is the
+  common bare-metal alternative — but if you front the cluster with a tunnel
+  (below), you may not need LoadBalancer Services or MetalLB at all.</li>
+</ul>
+<p><strong>A tunnel-based ingress path</strong> (the one I run) avoids opening any router ports:</p>
+<pre><code>Internet ─▶ Cloudflare edge (TLS) ─▶ cloudflared tunnel ─▶ Traefik :80
+            ─▶ IngressRoute (Host match) ─▶ ClusterIP Service ─▶ Pod
+</code></pre>
+<p>No router ports opened, no MetalLB, no LoadBalancer Services. <code>cloudflared</code> is a
+dumb pipe; Traefik is the routing brain. Every new external service = one DNS
+record + one IngressRoute. It's one of several valid patterns — a LoadBalancer +
+MetalLB + real Ingress is equally legitimate; the tunnel just trades a dependency
+on Cloudflare for not touching the router.</p>
+<p><strong>DNS inside the cluster:</strong> CoreDNS (in <code>kube-system</code>) gives every Service a name.
+Pattern: <code>&lt;service&gt;.&lt;namespace&gt;.svc.cluster.local</code>. From a pod in the same
+namespace, just <code>&lt;service&gt;</code> works. This is how one service finds another
+(e.g. a reverse proxy finding its upstreams).</p>
+<p><strong>The CNI (Flannel in K3s):</strong> gives every Pod a routable IP on an overlay network
+so any pod can reach any pod across nodes without NAT. You rarely touch it; just
+know the pod network (<code>10.42.0.0/16</code> by default in K3s) is separate from your LAN
+(e.g. <code>192.168.1.0/24</code>).</p>
+<hr />
+<h2 id="7-storage-pvcs-storageclasses-and-node-locality">7. Storage — PVCs, StorageClasses, and node-locality</h2>
+<p>The PVC/PV/StorageClass dance:</p>
+<ul>
+<li>A <strong>StorageClass</strong> is a <em>provisioner</em> — a recipe for making volumes on demand.</li>
+<li>A Pod declares a <strong>PVC</strong> ("I want 10Gi, ReadWriteOnce").</li>
+<li>The StorageClass dynamically creates a <strong>PV</strong> to satisfy it; the PVC binds.</li>
+</ul>
+<pre><code class="language-yaml">apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: data
+  namespace: web
+spec:
+  accessModes: [&quot;ReadWriteOnce&quot;]
+  storageClassName: local-path        # K3s default, lives on the node's disk
+  resources:
+    requests:
+      storage: 5Gi
+</code></pre>
+<pre><code class="language-yaml"># in the pod spec:
+    volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: data
+    containers:
+      - name: app
+        volumeMounts:
+          - { name: data, mountPath: /var/lib/app }
+</code></pre>
+<p><strong>Access modes matter for a multi-node cluster:</strong>
+- <code>ReadWriteOnce</code> (RWO) — one <em>node</em> at a time. Fine for single-replica apps.
+- <code>ReadWriteMany</code> (RWX) — many nodes simultaneously. Needs a networked backend
+  (NFS, or Longhorn with RWX). Required for anything that must be writable from
+  pods on different nodes at once.</p>
+<p>Two common classes:
+- <strong><code>local-path</code></strong> (bundled, default): writes to a directory on whatever node the
+  pod lands on. Fast, zero-config, but the data is <em>pinned to that node</em> — if the
+  pod reschedules elsewhere, the data doesn't follow. Fine for state that lives
+  on an always-on node. <strong>Not</strong> fine for anything that might move.
+- <strong>Longhorn</strong> (or similar distributed block storage): replicated across nodes,
+  survives node loss, supports RWX, gives you snapshots. The "real" answer for
+  stateful workloads — at the cost of needing dedicated disks and some operational
+  care.</p>
+<p>This is the crux of a <strong>"durable data lives outside the disposable layer"</strong>
+discipline: K3s-native <code>local-path</code> is convenient but node-fragile, so
+irreplaceable data belongs on a proper storage tier (a NAS/ZFS box over the
+network, or replicated Longhorn) rather than on whatever node a pod happened to
+land on. It's often reasonable to keep a database <em>outside</em> the cluster entirely
+until you have real replicated storage in place.</p>
+<hr />
+<h2 id="8-configuration-secrets">8. Configuration &amp; secrets</h2>
+<pre><code class="language-yaml">apiVersion: v1
+kind: ConfigMap
+metadata: { name: app-config, namespace: web }
+data:
+  UPSTREAM_HOST: &quot;backend.web.svc.cluster.local&quot;
+  log_level: &quot;info&quot;
+---
+apiVersion: v1
+kind: Secret
+metadata: { name: app-secret, namespace: web }
+type: Opaque
+stringData:                 # stringData = plaintext in, base64 stored
+  api_token: &quot;s3cr3t&quot;
+</code></pre>
+<p>Inject into a pod:</p>
+<pre><code class="language-yaml">    containers:
+      - name: app
+        envFrom:
+          - configMapRef: { name: app-config }
+        env:
+          - name: API_TOKEN
+            valueFrom:
+              secretKeyRef: { name: app-secret, key: api_token }
+</code></pre>
+<p><strong>Secrets are base64, not encrypted.</strong> Anyone with <code>kubectl get secret -o yaml</code>
+can decode them. That may be acceptable behind a private network, but the "real"
+answer — Sealed Secrets, SOPS, or external-secrets — lets you commit <em>encrypted</em>
+secrets to a config repo, which plain Secrets can't safely do. If you're doing
+GitOps, this is the piece that makes secrets fit the model instead of being a
+manual out-of-band step.</p>
+<hr />
+<h2 id="9-health-self-healing-the-probes">9. Health &amp; self-healing — the probes</h2>
+<p>Kubernetes restarts and reroutes based on three probes you define per container:</p>
+<pre><code class="language-yaml">    containers:
+      - name: app
+        livenessProbe:        # &quot;is it alive?&quot; fail ⇒ kill &amp; restart the container
+          httpGet: { path: /healthz, port: 80 }
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        readinessProbe:       # &quot;ready for traffic?&quot; fail ⇒ pull from Service endpoints
+          httpGet: { path: /ready, port: 80 }
+          periodSeconds: 5
+        startupProbe:         # &quot;still booting?&quot; protects slow-starters from liveness
+          httpGet: { path: /healthz, port: 80 }
+          failureThreshold: 30
+          periodSeconds: 2
+</code></pre>
+<p>The distinction matters: a <strong>liveness</strong> failure restarts the pod; a <strong>readiness</strong>
+failure just stops sending it traffic (no restart). Misusing liveness for a
+slow-but-healthy app causes restart loops. Any service you write yourself should
+expose a <code>/healthz</code> (and ideally a separate <code>/ready</code>) so Kubernetes can manage it
+properly.</p>
+<hr />
+<h2 id="10-helm-kustomize">10. Helm &amp; Kustomize</h2>
+<ul>
+<li><strong>Kustomize:</strong> patches/overlays plain YAML, no templating language. An
+  <code>images:</code> block in a <code>kustomization.yaml</code> rewriting an image tag in place is
+  pure Kustomize. Built into <code>kubectl</code> (<code>kubectl apply -k</code>). Good for "same
+  manifests, small per-environment differences."</li>
+<li><strong>Helm:</strong> a package manager. A "chart" is a templated, parameterized bundle;
+  you install it with <code>--set</code> overrides or a <code>values.yaml</code>. Good for consuming
+  complex off-the-shelf software (e.g. <code>kube-prometheus-stack</code>).</li>
+</ul>
+<p>Rule of thumb: <strong>Helm to install other people's complex software, Kustomize to
+manage your own manifests.</strong> A GitOps controller like ArgoCD natively understands
+both, so either can sit behind the loop.</p>
+<pre><code class="language-bash">helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+helm install kube-prom prometheus-community/kube-prometheus-stack \
+  -n monitoring --create-namespace
+helm list -A                    # what's installed
+helm get values kube-prom -n monitoring   # what settings are active
+helm upgrade kube-prom prometheus-community/kube-prometheus-stack -n monitoring -f values.yaml
+</code></pre>
+<hr />
+<h2 id="11-k3s-specific-operations">11. K3s-specific operations</h2>
+<p>Things that are K3s-particular rather than generic Kubernetes:</p>
+<pre><code class="language-bash"># the kubeconfig (copy this to your laptop, rewrite the server: field)
+sudo cat /etc/rancher/k3s/k3s.yaml
+
+# server (control plane) service
+sudo systemctl status k3s
+sudo journalctl -u k3s -f                 # control-plane logs
+
+# agent service — on a worker
+sudo systemctl status k3s-agent
+sudo journalctl -u k3s-agent -f
+
+# the join token (to add a node)
+sudo cat /var/lib/rancher/k3s/server/node-token
+
+# add an agent (run on the new node)
+curl -sfL https://get.k3s.io | K3S_URL=https://&lt;control-plane-ip&gt;:6443 \
+  K3S_TOKEN=&lt;token&gt; sh -
+
+# K3s bundles its own containerd + crictl for low-level container debugging
+sudo k3s crictl ps                        # running containers at the runtime level
+sudo k3s crictl images
+
+# clean uninstall (K3s ships the script)
+/usr/local/bin/k3s-uninstall.sh           # on a server
+/usr/local/bin/k3s-agent-uninstall.sh     # on an agent
+</code></pre>
+<p><strong>Node lifecycle</strong> (the graceful way to power a node down):</p>
+<pre><code class="language-bash">kubectl cordon &lt;node&gt;        # mark unschedulable — no NEW pods, existing stay
+kubectl drain &lt;node&gt; --ignore-daemonsets --delete-emptydir-data  # evict pods, prep for shutdown
+kubectl uncordon &lt;node&gt;      # back into rotation
+</code></pre>
+<p><code>drain</code> before powering a node down reschedules evictable pods elsewhere first —
+the right move for any node you shut down regularly (a transient laptop worker, a
+node you patch and reboot). DaemonSets are excluded because they're node-bound by
+definition; hence <code>--ignore-daemonsets</code>.</p>
+<p><strong>Bundled-component note:</strong> because Traefik, ServiceLB, and local-path ship
+<em>inside</em> K3s, they're managed by manifests in
+<code>/var/lib/rancher/k3s/server/manifests/</code>. K3s re-applies these on restart. To
+disable a bundled component (e.g. swap Traefik for something else), start k3s with
+<code>--disable=traefik</code> rather than deleting the manifest, which would just get
+recreated.</p>
+<hr />
+<h2 id="12-a-debugging-playbook-the-80-of-incidents">12. A debugging playbook (the 80% of incidents)</h2>
+<pre><code class="language-bash"># Pod won't start — read the events FIRST, they almost always say why
+kubectl describe pod &lt;pod&gt; -n &lt;ns&gt;      # look at the Events: section at the bottom
+kubectl get events -n &lt;ns&gt; --sort-by=.lastTimestamp
+</code></pre>
+<p>Common states and what they mean:</p>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>Meaning</th>
+<th>First move</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Pending</code></td>
+<td>scheduler can't place it</td>
+<td><code>describe pod</code> → no node matches selector/taint, or insufficient resources</td>
+</tr>
+<tr>
+<td><code>ImagePullBackOff</code></td>
+<td>can't pull the image</td>
+<td>private registry needs a pull secret, or wrong image name/case</td>
+</tr>
+<tr>
+<td><code>CrashLoopBackOff</code></td>
+<td>container starts then dies repeatedly</td>
+<td><code>kubectl logs &lt;pod&gt; --previous</code> to see the death</td>
+</tr>
+<tr>
+<td><code>ContainerCreating</code> (stuck)</td>
+<td>volume won't mount / image still pulling</td>
+<td><code>describe pod</code> for the mount or pull error</td>
+</tr>
+<tr>
+<td><code>Running</code> but no traffic</td>
+<td>readiness probe failing or label/selector mismatch</td>
+<td>check <code>kubectl get endpoints &lt;svc&gt;</code> — empty means selector miss</td>
+</tr>
+<tr>
+<td><code>Terminating</code> (stuck)</td>
+<td>finalizers or a wedged node</td>
+<td><code>describe</code>, check node health</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-bash"># Service has no endpoints? The classic label/selector bug:
+kubectl get endpoints &lt;svc&gt; -n &lt;ns&gt;     # empty = Service selector doesn't match any Pod labels
+kubectl get pods -n &lt;ns&gt; --show-labels  # compare to the Service's selector
+
+# Is the whole control plane healthy?
+kubectl get pods -n kube-system         # CoreDNS, Traefik, metrics-server all Running?
+
+# What's eating resources? (needs metrics-server, bundled in K3s)
+kubectl top nodes
+kubectl top pods -A
+</code></pre>
+<hr />
+<h2 id="13-common-workload-shapes">13. Common workload shapes</h2>
+<p>A few recurring patterns, in increasing order of scheduling complexity:</p>
+<ul>
+<li><strong>Stateless service:</strong> Deployment + ClusterIP Service + IngressRoute, pinned to
+  a specific node if it must be always-on. The template for everything stateless
+  — web servers, APIs, reverse proxies.</li>
+<li><strong>GPU workload:</strong> Deployment with <code>nodeSelector</code>/affinity for a <code>gpu=true</code>
+  label + a toleration for whatever taint guards that node + a GPU resource
+  request (<code>nvidia.com/gpu: 1</code>, once the NVIDIA device plugin DaemonSet is
+  installed). The device plugin is the missing link that exposes the GPU to the
+  scheduler — without it, <code>nvidia.com/gpu</code> requests never satisfy.</li>
+<li><strong>Stateful service (database, etc.):</strong> StatefulSet + a PVC on replicated
+  storage (Longhorn/NFS), <em>not</em> <code>local-path</code>, so the data survives a
+  reschedule. If you don't yet have replicated storage, it's often cleaner to run
+  the database outside the cluster than to pin it fragilely to one node.</li>
+<li><strong>Node-level agent:</strong> DaemonSet — exporters, log shippers, device plugins.</li>
+</ul>
+<hr />
+<h2 id="14-minimal-end-to-end-example-to-internalize-the-model">14. Minimal end-to-end example to internalize the model</h2>
+<p>Deploy something from scratch, by hand, once — then never again (because you'll
+move to declarative manifests / GitOps). It cements what the automation is doing
+for you:</p>
+<pre><code class="language-bash">kubectl create namespace demo
+
+kubectl create deployment hello --image=nginx:alpine -n demo
+kubectl expose deployment hello --port=80 -n demo          # makes a ClusterIP Service
+kubectl get pods,svc -n demo -o wide                       # see where it landed
+kubectl scale deployment/hello -n demo --replicas=3        # watch 3 pods appear
+kubectl get pods -n demo -o wide -w                        # spread across nodes?
+
+kubectl port-forward -n demo svc/hello 8080:80             # (mind the SSH-localhost gotcha, §3)
+# curl localhost:8080 → nginx welcome page
+
+kubectl delete namespace demo                              # tears down everything in it
+</code></pre>
+<p>Then realize a GitOps loop does all of this from a <code>git push</code> — declaratively,
+self-healing, with the image pinned to an exact build. Being able to do it by
+hand <em>and</em> having built the automation that makes doing it by hand unnecessary is
+the whole competency.</p>
+<hr />
+<h2 id="quick-reference-card">Quick reference card</h2>
+<pre><code class="language-bash"># context &amp; cluster
+kubectl get nodes -o wide
+kubectl cluster-info
+kubectl config current-context
+
+# the daily four
+kubectl get pods -A
+kubectl describe pod &lt;pod&gt; -n &lt;ns&gt;
+kubectl logs &lt;pod&gt; -n &lt;ns&gt; -f
+kubectl exec -it &lt;pod&gt; -n &lt;ns&gt; -- sh
+
+# apply / rollout
+kubectl apply -k apps/&lt;svc&gt;/
+kubectl rollout status deployment/&lt;svc&gt; -n &lt;ns&gt;
+kubectl rollout undo deployment/&lt;svc&gt; -n &lt;ns&gt;
+
+# scheduling
+kubectl label node &lt;node&gt; &lt;key&gt;=&lt;val&gt;
+kubectl taint node &lt;node&gt; &lt;key&gt;=&lt;val&gt;:NoSchedule
+kubectl cordon/drain/uncordon &lt;node&gt;
+
+# debug
+kubectl get events -n &lt;ns&gt; --sort-by=.lastTimestamp
+kubectl get endpoints &lt;svc&gt; -n &lt;ns&gt;
+kubectl top nodes ; kubectl top pods -A
+
+# k3s host-level (on the node)
+sudo journalctl -u k3s -f               # server (control plane)
+sudo journalctl -u k3s-agent -f         # agent (worker)
+sudo k3s crictl ps
+</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

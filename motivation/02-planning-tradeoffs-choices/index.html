@@ -1,0 +1,1677 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../01-motivation/">
+      
+      
+        <link rel="next" href="../03-cost-value-singapore/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Trade-offs - Home Compute Cluster Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#the-initial-planning-tradeoffs-and-the-choices-i-made" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Home Compute Cluster Documentation" class="md-header__button md-logo" aria-label="Home Compute Cluster Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Home Compute Cluster Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Trade-offs
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Home Compute Cluster Documentation" class="md-nav__button md-logo" aria-label="Home Compute Cluster Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Home Compute Cluster Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Motivation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Motivation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-motivation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Why
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trade-offs
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trade-offs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-the-hardware-plan-and-how-it-evolved" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. The hardware plan and how it evolved
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. The hardware plan and how it evolved">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-original-sketch-vs-what-i-built" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The original sketch vs. what I built
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-tradeoffs-in-that-shift" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The tradeoffs in that shift
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-the-software-stack-what-i-chose-and-what-i-passed-on" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. The software stack — what I chose and what I passed on
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. The software stack — what I chose and what I passed on">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#two-stack-tradeoffs-worth-expanding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Two stack tradeoffs worth expanding
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-the-architectural-rules-i-locked-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. The architectural rules I locked in
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. The architectural rules I locked in">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nas-owns-data-k3s-owns-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "NAS owns data, K3s owns services"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cloudflare-tunnel-dumb-pipe-traefik-routing-brain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "Cloudflare Tunnel = dumb pipe, Traefik = routing brain"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#longhorn-cannot-use-zfs-we-should-perhaps-help-with-this-implmentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Longhorn cannot use ZFS (We should perhaps help with this implmentation)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-replicas-meaningful-redundancy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "2 replicas = meaningful redundancy"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-gitops-repo-conventions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The GitOps repo conventions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-iac-layering-boundary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The IaC layering boundary
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-sequencing-the-deliberate-order-of-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Sequencing: the deliberate order of operations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-what-i-consciously-left-open" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. What I consciously left open
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-cost-value-singapore/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost vs Value
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system-architecture/home-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CI/CD
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CI/CD
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CICD/cicd-pipeline-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pipeline Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CICD/cicd-offtheshelf-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Off-the-shelf Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../kubernetes-guides/k3s-kubernetes-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    K3s
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Containerization
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Containerization
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../containerization/dockerfile-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dockerfile Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../containerization/dynamic-dev-container-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dev Container Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Weekly Logs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Weekly Logs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-05-10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 01
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-05-14/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 02
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-07/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 03
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-08/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 04
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 05
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-21/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 06
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-26/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 07
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-07-01/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 08
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-07-08/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 09
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-07-15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 10
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-the-hardware-plan-and-how-it-evolved" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. The hardware plan and how it evolved
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. The hardware plan and how it evolved">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-original-sketch-vs-what-i-built" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The original sketch vs. what I built
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-tradeoffs-in-that-shift" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The tradeoffs in that shift
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-the-software-stack-what-i-chose-and-what-i-passed-on" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. The software stack — what I chose and what I passed on
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. The software stack — what I chose and what I passed on">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#two-stack-tradeoffs-worth-expanding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Two stack tradeoffs worth expanding
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-the-architectural-rules-i-locked-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. The architectural rules I locked in
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. The architectural rules I locked in">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nas-owns-data-k3s-owns-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "NAS owns data, K3s owns services"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cloudflare-tunnel-dumb-pipe-traefik-routing-brain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "Cloudflare Tunnel = dumb pipe, Traefik = routing brain"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#longhorn-cannot-use-zfs-we-should-perhaps-help-with-this-implmentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Longhorn cannot use ZFS (We should perhaps help with this implmentation)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-replicas-meaningful-redundancy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "2 replicas = meaningful redundancy"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-gitops-repo-conventions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The GitOps repo conventions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-iac-layering-boundary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The IaC layering boundary
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-sequencing-the-deliberate-order-of-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Sequencing: the deliberate order of operations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-what-i-consciously-left-open" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. What I consciously left open
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="the-initial-planning-tradeoffs-and-the-choices-i-made">The Initial Planning: Tradeoffs and the Choices I Made</h1>
+<p><em>Foundational document. Covers the decisions baked in at the planning stage,
+before and during the early build, and the reasoning for each.</em></p>
+<p>The first document covered <em>why</em> a homelab and not the cloud. This one covers the
+decisions <em>inside</em> that choice: the hardware, the software stack, the
+architectural rules, and the sequencing. Almost every one of these was a
+tradeoff, and the tradeoff is the interesting part.</p>
+<h2 id="1-the-hardware-plan-and-how-it-evolved">1. The hardware plan and how it evolved</h2>
+<h3 id="the-original-sketch-vs-what-i-built">The original sketch vs. what I built</h3>
+<p>The initial concept, captured in the original spec, was a fairly textbook
+homelab: one Lenovo Legion laptop as control plane + worker, plus <strong>three budget
+N100 mini-PCs</strong> as worker agents, on a S$1,000 budget over 3–6 months. Clean,
+symmetric, easy to reason about.</p>
+<p>What I actually converged on is messier and better: <strong>three heterogeneous
+always-on nodes</strong> using hardware I largely already had or could get cheaply.</p>
+<ul>
+<li><strong>deus</strong>: Lenovo M910q (i7-6700T class, ~16GB). Always-on control plane. Small,
+  low-power, quiet — ideal for the one node that must never go down.</li>
+<li><strong>nebula</strong>: i7-6700K desktop, 24GB, GTX 1080. Doubles as the ZFS NAS and the
+  Docker Compose host (This thing only cost me S$270 and 6 hours of cleaning and
+  troubleshooting). </li>
+<li><strong>legion</strong>: a laptop with a GTX 1060, battery removed so it runs 24/7 as a
+  worker.</li>
+</ul>
+<p>Why these names for the machine? Well no real reason, I just find the latin names
+more interesting and easier to remember.</p>
+<h3 id="the-tradeoffs-in-that-shift">The tradeoffs in that shift</h3>
+<ul>
+<li><strong>Symmetric N100 fleet vs. heterogeneous existing hardware.</strong> Symmetric nodes
+  are easier to reason about and cheaper to buy new. But heterogeneous hardware I
+  already owned was <em>free</em>, more powerful, and serves as a better learning experience.
+  Real clusters are heterogeneous; learning to place a GPU workload on the one
+  node that has a GPU, or to keep replicas off the node that overheats, is a
+  <em>feature</em> of an uneven cluster. I traded tidiness for realism and zero marginal
+  cost.</li>
+<li><strong>The Singapore pricing reality.</strong> My early assumption that N100 mini-PCs were
+  sub-S\$200 didn't survive contact with Singapore retail, where new 16GB/512GB units
+  land closer to <strong>S$400</strong>, and the genuinely cheap path is refurbished enterprise 
+  USFF boxes (HP EliteDesk, Lenovo ThinkCentre) off Carousell. This is part of why 
+  leaning on hardware I already had won: the "cheap mini-PC fleet" wasn't as cheap 
+  as the spec implied.</li>
+<li><strong>N100 mini-PCs stayed on the table</strong> as <em>additive</em> nodes if a discount ever put
+  them under ~S$200, specifically because they're <code>linux/amd64</code> and wouldn't break
+  my single-arch image pipeline (unlike ARM Pis). Compatibility drove that
+  constraint.</li>
+</ul>
+<h2 id="2-the-software-stack-what-i-chose-and-what-i-passed-on">2. The software stack — what I chose and what I passed on</h2>
+<p>The stack was chosen to mirror what these tools look like in a real platform team,
+while staying light enough to run on modest hardware.</p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Choice</th>
+<th>The main alternative I passed on, and why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Orchestration</td>
+<td><strong>K3s</strong></td>
+<td>Full kubeadm Kubernetes. Too heavy for this hardware, and K3s is real Kubernetes (same API) with the operational fat trimmed. Single binary, bundled Flannel/Traefik.</td>
+</tr>
+<tr>
+<td>GitOps</td>
+<td><strong>ArgoCD</strong></td>
+<td>Flux. both are fine; ArgoCD's UI makes the reconciliation loop <em>visible</em>, which matters when the goal is learning.</td>
+</tr>
+<tr>
+<td>Ingress</td>
+<td><strong>Traefik</strong></td>
+<td>nginx-ingress. Traefik ships with K3s and became my single routing brain. NGINX will be used as web servers instead</td>
+</tr>
+<tr>
+<td>Load balancer</td>
+<td><strong>MetalLB</strong></td>
+<td>Cloud LB. Doesn't exist on bare metal; MetalLB is <em>the</em> answer for LoadBalancer VIPs on a home cluster.</td>
+</tr>
+<tr>
+<td>Public access</td>
+<td><strong>Cloudflare Tunnel</strong></td>
+<td>Port-forwarding. My ISP router was locked at planning time; the tunnel dials <em>outbound</em>, sidestepping inbound ports entirely.</td>
+</tr>
+<tr>
+<td>Private/bulk access</td>
+<td><strong>WireGuard + Tailscale</strong></td>
+<td>Cloudflare Tunnel for <em>everything</em>. the tunnel hairpins through an edge PoP and is slow for bulk transfer.</td>
+</tr>
+<tr>
+<td>Storage (block)</td>
+<td><strong>Longhorn</strong></td>
+<td>Rook/Ceph. Far heavier operationally; Longhorn is right-sized for three nodes.</td>
+</tr>
+<tr>
+<td>Storage (bulk/NAS)</td>
+<td><strong>ZFS</strong></td>
+<td>Plain ext4/mdadm. ZFS gives snapshots, checksums, and mirror integrity the NAS role needs.</td>
+</tr>
+<tr>
+<td>Secrets</td>
+<td><strong>Sealed Secrets</strong></td>
+<td>Vault / External Secrets Operator, overkill until I need dynamic secrets, rotation, or audit logging.</td>
+</tr>
+<tr>
+<td>Observability</td>
+<td><strong>kube-prometheus-stack</strong></td>
+<td>Rolling my own Prometheus/Grafana. the Helm stack is the industry-standard bundle, they work together and I might as well just use as it is.</td>
+</tr>
+<tr>
+<td>Database</td>
+<td><strong>CloudNativePG</strong></td>
+<td>Bare Postgres in a Deployment, or Compose Postgres. CNPG gives an operator that owns failover, backups, and WAL archiving.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="two-stack-tradeoffs-worth-expanding">Two stack tradeoffs worth expanding</h3>
+<ul>
+<li>
+<p><strong>Sealed Secrets over Vault.</strong> Vault is what "real" shops use, so there was a
+  pull toward it for the portfolio optics. But it's a heavyweight stateful service
+  to run and back up, and I don't need dynamic secrets or rotation yet. Sealed
+  Secrets fits GitOps natively, encrypted secrets committed straight to Git, only
+  the in-cluster controller can decrypt. The tradeoff I accepted: I <em>must</em> back up
+  the controller's private key outside the cluster and outside Git, because losing
+  it makes every sealed secret unrecoverable. That single backup is the load-
+  bearing discipline of the whole choice. I will definitely switch over to Vault
+  once a significant number of services warrant its use</p>
+</li>
+<li>
+<p><strong>CNPG over a shared Postgres.</strong> I decided on <strong>one CNPG <code>Cluster</code> per
+  application</strong> rather than a single shared instance. Shared is cheaper on
+  resources; per-app is cleaner blast-radius isolation and matches how you'd
+  actually run databases in production. For a learning cluster, the isolation and
+  the realism won over the resource saving.</p>
+</li>
+</ul>
+<h2 id="3-the-architectural-rules-i-locked-in">3. The architectural rules I locked in</h2>
+<p>These are the principles that recur through every weekly log. They're the actual
+value of the planning, the rules that made later decisions fast.</p>
+<h3 id="nas-owns-data-k3s-owns-services">"NAS owns data, K3s owns services"</h3>
+<p>The cleanest line I drew due to the nature of a heterogenous cluster. Durable bulk 
+data lives on nebula's ZFS pool; services live in K3s. This is <em>why</em> Seafile runs 
+on Docker Compose on nebula and not in the cluster, it's a deliberate, data-safety 
+exception, kept out of K3s so it doesn't depend on cluster health. The tradeoff: a 
+little inconsistency (not everything isin K3s) bought a lot of data safety and a 
+clear mental model.</p>
+<h3 id="cloudflare-tunnel-dumb-pipe-traefik-routing-brain">"Cloudflare Tunnel = dumb pipe, Traefik = routing brain"</h3>
+<p>All routing logic lives in Traefik IngressRoutes. Cloudflare and Tailscale are
+<em>ingress pipes</em> that feed Traefik; they carry no routing intelligence. This is
+what lets me have multiple ingress paths (public tunnel, private tailnet) without
+fragmenting routing across them. The corollary rule: <strong>a single routing brain</strong>
+per-app proxies (like nginx fronting an out-of-cluster stack) are allowed <em>only</em>
+if scoped to that stack, never promoted to a second general-purpose ingress.</p>
+<h3 id="longhorn-cannot-use-zfs-we-should-perhaps-help-with-this-implmentation">Longhorn cannot use ZFS (We should perhaps help with this implmentation)</h3>
+<p>A hard technical constraint I learned the hard way: Longhorn needs a <strong>dedicated
+disk formatted ext4/XFS at a stable mount path</strong> with <code>multipathd</code> blacklisted. It
+cannot sit on a ZFS dataset. This shaped the whole storage-hardware plan, I
+couldn't just carve Longhorn space out of nebula's ZFS mirror (and ZFS can't
+shrink a vdev in place anyway, so clawing space back would mean breaking
+redundancy or a full backup-destroy-restore). The clean answer was <strong>buy/acquire
+dedicated disks</strong>, which is what I did.</p>
+<h3 id="2-replicas-meaningful-redundancy">"2 replicas = meaningful redundancy"</h3>
+<p>Longhorn below 2 replicas gives no node-independent redundancy. So the target is
+2, and since deus overheats (no replicas there), the replica pair is nebula +
+legion. The tradeoff accepted: with exactly two targets I have <strong>zero placement
+slack</strong>, but two honest replicas beats three where one node is thermally
+compromised.</p>
+<h3 id="the-gitops-repo-conventions">The GitOps repo conventions</h3>
+<ul>
+<li><strong>Two repos, always</strong>. App source (+ CI) separate from config manifests.
+  Single-repo would create an infinite loop, because CI writes the new image tag
+  <em>back</em> to the config repo, which would re-trigger CI. Splitting them breaks the
+  loop. This isn't a style preference; it's structural.</li>
+<li><strong>Pattern B</strong> (upstream Helm charts): just an <code>argocd/&lt;svc&gt;.yaml</code> Application,
+  no <code>apps/&lt;svc&gt;/</code> folder.</li>
+<li><strong><code>apps/&lt;svc&gt;/</code> only when I author manifests myself</strong>; multi-source Applications
+  when a chart needs my own values + custom manifests.</li>
+</ul>
+<h3 id="the-iac-layering-boundary">The IaC layering boundary</h3>
+<p><strong>Ansible owns below-K3s node state; ArgoCD owns in-cluster workloads; the two
+must not overlap.</strong> I chose Ansible over Terraform because my manual work is
+machine <em>configuration</em> (k3s install flags, systemd units, ZFS, sudoers, WoL), not
+API-driven <em>provisioning</em>, which is Terraform's job and which I mostly don't
+have. And I chose to write playbooks <strong>retroactively</strong> (the next time I rebuild a
+node) rather than stopping a working build to Ansible-ify it. Bandwidth was the
+tradeoff: perfect reproducibility now vs. forward progress now, and progress won.</p>
+<h2 id="4-sequencing-the-deliberate-order-of-operations">4. Sequencing: the deliberate order of operations</h2>
+<p>Planning wasn't just <em>what</em> to build but <em>when</em>, and the ordering was a series of
+explicit tradeoffs about managing simultaneous novelty.</p>
+<ul>
+<li><strong>CI/CD before everything else.</strong> A working deploy loop is the foundation every
+  later service rides on, so it came first, even before the storage that some
+  services needed.</li>
+<li><strong>Longhorn deferred until dedicated disks existed.</strong> Rather than fake it on
+  <code>local-path</code> (which pins pods to nodes) or bodge it onto ZFS (impossible), I
+  pinned the few stateful workloads to nodes and waited until I had real disks.
+  The tradeoff: temporary node-pinning ugliness vs. doing storage correctly once.</li>
+<li><strong>Portfolio site before obsync.</strong> Both need Go. But obsync <em>also</em> needs Postgres
+  <em>and</em> a hand-written sync protocol, three new hard things at once. The portfolio 
+  site is Go + a few JSON endpoints: one new hard thing. Doing the simpler one first 
+  means I learn the deployment shape and the language with low stakes before layering 
+  on distributed-systems correctness. This is the clearest example of my core sequencing 
+  rule: <strong>don't stack multiple new problems in one step.</strong></li>
+<li><strong>Guides written alongside the build</strong>, not after. Turning each hard-won setup
+  into a reusable guide (CI/CD, Docker, K3s, observability) meant the <em>next</em>
+  service was a checklist, not a re-derivation.</li>
+</ul>
+<h2 id="5-what-i-consciously-left-open">5. What I consciously left open</h2>
+<p>Good planning also means naming what you <em>don't</em> decide. Carried forward
+deliberately:</p>
+<ul>
+<li><strong>Control-plane HA</strong>: deus is a known single point of failure. I decided <em>not</em>
+  to chase HA prematurely: two etcd servers is worse than one (no quorum), real HA
+  needs three, so a future mini-PC becomes a <em>worker</em> to shrink blast radius first.</li>
+<li><strong>KEDA / autoscaling</strong>: gated behind Traefik metrics existing first.</li>
+<li><strong>Renovate</strong>: planned for dependency PRs, not yet stood up.</li>
+</ul>
+<p>Leaving these explicitly open, with the reasoning attached, is itself a planning
+choice. It keeps the scope honest and stops me from forcing premature answers to
+questions the cluster isn't ready to settle.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

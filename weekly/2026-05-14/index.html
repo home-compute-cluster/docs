@@ -1,0 +1,1435 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../2026-05-10/">
+      
+      
+        <link rel="next" href="../2026-06-07/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Week 02 - Home Compute Cluster Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#week-2-os-static-ips-and-bringing-the-cluster-to-life" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Home Compute Cluster Documentation" class="md-header__button md-logo" aria-label="Home Compute Cluster Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Home Compute Cluster Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Week 02
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Home Compute Cluster Documentation" class="md-nav__button md-logo" aria-label="Home Compute Cluster Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Home Compute Cluster Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Motivation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Motivation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../motivation/01-motivation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Why
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../motivation/02-planning-tradeoffs-choices/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trade-offs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../motivation/03-cost-value-singapore/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost vs Value
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system-architecture/home-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CI/CD
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CI/CD
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CICD/cicd-pipeline-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pipeline Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CICD/cicd-offtheshelf-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Off-the-shelf Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../kubernetes-guides/k3s-kubernetes-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    K3s
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Containerization
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Containerization
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../containerization/dockerfile-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dockerfile Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../containerization/dynamic-dev-container-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dev Container Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Weekly Logs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Weekly Logs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-05-10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 01
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 02
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 02
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-the-os-choice-ubuntu-server-2404-lts-on-everything" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. The OS choice: Ubuntu Server 24.04 LTS on everything
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-the-install-pattern-repeated-per-node" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. The install pattern (repeated per node)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-the-laptops-extra-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. The laptop's extra steps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-bringing-up-k3s" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Bringing up K3s
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-first-node-labels-and-a-test-workload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. First node labels and a test workload
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-node-identities-the-names-that-stick" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Node identities (the names that stick)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#state-at-the-end-of-this-stretch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State at the end of this stretch
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#open-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Open / next
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-06-07/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 03
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-06-08/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 04
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-06-15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 05
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-06-21/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 06
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-06-26/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 07
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-07-01/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 08
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-07-08/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 09
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-07-15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 10
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-the-os-choice-ubuntu-server-2404-lts-on-everything" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. The OS choice: Ubuntu Server 24.04 LTS on everything
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-the-install-pattern-repeated-per-node" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. The install pattern (repeated per node)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-the-laptops-extra-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. The laptop's extra steps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-bringing-up-k3s" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Bringing up K3s
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-first-node-labels-and-a-test-workload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. First node labels and a test workload
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-node-identities-the-names-that-stick" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Node identities (the names that stick)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#state-at-the-end-of-this-stretch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State at the end of this stretch
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#open-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Open / next
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="week-2-os-static-ips-and-bringing-the-cluster-to-life">Week 2: OS, Static IPs, and Bringing the Cluster to Life</h1>
+<p><em>Covers roughly 10–14 May 2026. The physical network is done; now the nodes get an
+OS and K3s.</em></p>
+<p>With the MoCA LAN solid, this stretch was about turning bare machines into a
+working K3s cluster: identical OS on every node, static IPs so nothing drifts, the
+K3s server/agent join, and the first node labels. By the end I had a real
+two-node cluster serving a test workload.</p>
+<h2 id="1-the-os-choice-ubuntu-server-2404-lts-on-everything">1. The OS choice: Ubuntu Server 24.04 LTS on everything</h2>
+<p>I standardized on <strong>Ubuntu Server 24.04 LTS</strong>, headless, SSH-only, on every node.
+The laptop had actually come to me running <strong>Fedora</strong> (it was ex-Red Hat
+hardware), and I deliberately wiped it to match. The reasoning is worth keeping,
+because "just use what's already on it" was tempting:</p>
+<p><strong>Homogeneity is worth more than convenience.</strong> When every node runs the same OS,
+every troubleshooting session, kernel tweak, and package install is identical
+across the cluster. Most K3s guides, Helm charts, and Stack Overflow answers
+assume Ubuntu/Debian. Fedora would have meant <code>dnf</code> vs <code>apt</code>, <code>firewalld</code> vs
+<code>ufw</code>, and <strong>SELinux enabled by default</strong>, which actively interferes with K3s
+networking if you don't configure it. One OS, one mental model. I traded a little
+setup effort for never having to think "wait, which node is this?" again.</p>
+<p>Also settled here (before installing anything): <strong>K3s over MicroK8s.</strong> K3s is a
+single static binary from Rancher/SUSE: it strips cloud-provider cruft, uses
+SQLite by default (or embedded etcd for HA), bundles Flannel (CNI) and Traefik
+(ingress), and has a dead-simple one-curl server/agent join model. It's real
+conformant Kubernetes with the operational fat trimmed, exactly right for modest
+hardware.</p>
+<h2 id="2-the-install-pattern-repeated-per-node">2. The install pattern (repeated per node)</h2>
+<p>For each machine, the same sequence:</p>
+<ol>
+<li><strong>BIOS first.</strong> Boot order to prioritize the OS SSD; <strong>enable AC power
+   recovery / auto-power-on</strong> (so a node restarts itself after a power blip);
+   disable sleep/hibernate where the option exists.</li>
+<li>A specific BIOS-menu gotcha I hit: the boot menu showed two SSDs, the USB
+     installer, and an <strong>"EFI PXE Network"</strong> entry. Correct order: USB first (just
+     to run the installer), then the OS SSD, then the other SSD, then <strong>PXE last</strong>;
+     PXE is network-boot, unneeded, and only adds a boot delay if it's higher.</li>
+<li>In the installer's storage menu: the OS goes on the SSD (the install target
+     under "used devices"); the secondary HDD sits in "available devices"
+     untouched; partition and mount it later. Don't configure it during install.</li>
+<li><strong>Ubuntu Server install</strong>, headless, no desktop. <strong>Critical screen: enable
+   "Install OpenSSH server"</strong>, that's the remote access the whole headless model
+   depends on. Import GitHub SSH keys here if available. Skip all the featured
+   server snaps (K3s comes later, by hand).</li>
+<li><strong>Static IP via netplan.</strong> DHCP is fine for the first boot, but the nodes need
+   stable addresses so the K3s join target never drifts. Find the interface with
+   <code>ip a</code> / <code>ip link</code> (likely <code>eno1</code> or <code>enp0s31f6</code> on this hardware), then edit
+   <code>/etc/netplan/…yaml</code>:</li>
+</ol>
+<p><code>yaml
+   network:
+     version: 2
+     ethernets:
+       eno1:                 # replace with the actual interface name
+         dhcp4: no
+         addresses:
+           - 192.168.1.x/24  # a static IP outside the router's DHCP range
+         routes:
+           - to: default
+             via: 192.168.1.1
+         nameservers:
+           addresses: [1.1.1.1, 8.8.8.8]</code></p>
+<p><code>sudo netplan apply</code>, verify with <code>ip a</code>, confirm internet with <code>ping 1.1.1.1</code>.
+4. <strong>SSH in from my daily driver</strong>, then unplug monitor and keyboard; the node is
+   now headless and remote-managed.
+5. <strong>Housekeeping:</strong> <code>sudo apt update &amp;&amp; sudo apt upgrade -y</code>, and
+   <code>sudo timedatectl set-timezone Asia/Singapore</code>.</p>
+<h2 id="3-the-laptops-extra-steps">3. The laptop's extra steps</h2>
+<p>The laptop (soon <em>legion</em>) needed handling the others didn't, because at this
+stage it was still meant to be a come-and-go burst node:</p>
+<ul>
+<li><strong>Disable lid-close suspend</strong>: otherwise closing the lid kills the node. In
+  <code>/etc/systemd/logind.conf</code>:
+  <code>HandleLidSwitch=ignore
+  HandleLidSwitchExternalPower=ignore
+  HandleLidSwitchDocked=ignore</code>
+  then <code>sudo systemctl restart systemd-logind</code>.</li>
+<li><strong>Disable the discrete GTX 1060.</strong> It just burns 5–20W idle if I'm not using it
+  for GPU work. Either blacklist the modules (<code>nouveau</code>/<code>nvidia</code> in
+  <code>/etc/modprobe.d/</code>, then <code>update-initramfs -u</code>), or (the cleaner route I took)
+  <strong><code>envycontrol -s integrated</code></strong>. Reversible later when I actually want NVENC for
+  Jellyfin.</li>
+<li><strong>On the battery question:</strong> at this point I decided <em>not</em> to remove it. The
+  Legion's battery is internal (non-trivial to pull), modern charge controllers
+  handle being plugged in fine, and the battery is a graceful-shutdown buffer
+  against power flicker. (I reversed this much later, pulling it to make legion
+  truly always-on, but at genesis, leave-it-in was the call.)</li>
+</ul>
+<h2 id="4-bringing-up-k3s">4. Bringing up K3s</h2>
+<p>The join model is as simple as advertised.</p>
+<p><strong>Server (on the M910q / deus):</strong></p>
+<pre><code class="language-bash">curl -sfL https://get.k3s.io | sh -
+</code></pre>
+<p>This installs K3s with the control plane <em>and</em> worker enabled by default (no
+<code>--disable-agent</code>), which is what I want since deus is a permanent worker too. Then:</p>
+<pre><code class="language-bash">sudo kubectl get nodes                              # deus, Ready
+sudo cat /var/lib/rancher/k3s/server/node-token     # grab the join token
+</code></pre>
+<p><strong>Agent (on the laptop / legion):</strong></p>
+<pre><code class="language-bash">curl -sfL https://get.k3s.io | K3S_URL=https://&lt;deus-ip&gt;:6443 K3S_TOKEN=&lt;token&gt; sh -
+</code></pre>
+<p>Verify from deus: <code>kubectl get nodes</code> shows both nodes <code>Ready</code>. Two-node cluster
+alive.</p>
+<h2 id="5-first-node-labels-and-a-test-workload">5. First node labels and a test workload</h2>
+<p>Immediately after the join, I labelled the nodes so scheduling intent was baked in
+from the start rather than bolted on later:</p>
+<pre><code class="language-bash">kubectl label node &lt;deus&gt;   node-type=always-on
+kubectl label node &lt;legion&gt; node-type=on-demand
+kubectl label node &lt;legion&gt; workload-type=stateless-only   # no stateful pods here
+</code></pre>
+<p>The <code>stateless-only</code> intent on legion follows directly from the "laptop comes and
+goes" assumption: no Longhorn replicas, no stateful workloads on a node that
+might leave. (The plan also anticipated laptop taints,
+<code>node-role=on-demand:NoSchedule</code> with tolerations only on burst workloads, using
+<em>soft</em> <code>preferredDuringScheduling</code> affinity for most workloads so the cluster stays
+flexible if a node drops.)</p>
+<p>Then a throwaway test to confirm health:</p>
+<pre><code class="language-bash">kubectl create deployment test-nginx --image=nginx --replicas=2
+kubectl expose deployment test-nginx --port=80 --type=NodePort
+kubectl get pods -o wide     # one pod per node
+</code></pre>
+<p>Hitting the NodePort from another LAN device served the nginx welcome page →
+cluster genuinely works end to end.</p>
+<h2 id="6-node-identities-the-names-that-stick">6. Node identities (the names that stick)</h2>
+<p>The naming convention that runs through everything from here:</p>
+<ul>
+<li><strong>deus</strong>: M910q, control plane, <code>192.168.1.250</code>.</li>
+<li><strong>legion</strong>: the laptop worker, <code>192.168.1.249</code>.</li>
+<li><strong>nebula</strong>: the desktop/NAS node, <code>192.168.1.248</code> (acquired around now; brought
+  fully online shortly after, see Week 0B).</li>
+</ul>
+<p>Static IPs live in the <code>192.168.1.248–250</code> range (a small reserved block at the
+top of the subnet), well clear of the router's DHCP pool.</p>
+<h2 id="state-at-the-end-of-this-stretch">State at the end of this stretch</h2>
+<ul>
+<li>Ubuntu Server 24.04 on every node, homogeneous.</li>
+<li>Static IPs via netplan; headless SSH management.</li>
+<li>K3s server on deus, legion joined as agent; two nodes <code>Ready</code>.</li>
+<li>First labels applied; test nginx workload served over NodePort.</li>
+<li>Node names and IP scheme fixed: deus/.250, legion/.249, nebula/.248.</li>
+</ul>
+<h2 id="open-next">Open / next</h2>
+<ul>
+<li>Bring nebula fully online as the NAS node (ZFS pool, then Seafile).</li>
+<li>Phase 2 orientation: Cloudflare Tunnel + domain, then storage, then Jellyfin.</li>
+<li>Monitoring stack (kube-prometheus-stack), MetalLB.</li>
+<li>Cluster shutdown/power-up automation for the transient nodes.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

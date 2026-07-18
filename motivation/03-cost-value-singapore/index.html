@@ -1,0 +1,1842 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../02-planning-tradeoffs-choices/">
+      
+      
+        <link rel="next" href="../../system-architecture/home-cluster/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Cost vs Value - Home Compute Cluster Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#cost-value-and-the-reality-of-compute-in-singapore" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Home Compute Cluster Documentation" class="md-header__button md-logo" aria-label="Home Compute Cluster Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Home Compute Cluster Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Cost vs Value
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Home Compute Cluster Documentation" class="md-nav__button md-logo" aria-label="Home Compute Cluster Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Home Compute Cluster Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Motivation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Motivation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-motivation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Why
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-planning-tradeoffs-choices/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trade-offs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost vs Value
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost vs Value
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-capital-cost-what-it-cost-to-build" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Capital cost: what it cost to build
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Capital cost: what it cost to build">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-i-actually-spent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What I actually spent
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-it-would-cost-to-build-fresh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What it would cost to build fresh
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-running-cost-electricity-is-the-only-recurring-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Running cost: electricity is the only recurring line
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Running cost: electricity is the only recurring line">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-tariff-dated-re-check-quarterly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The tariff (dated, re-check quarterly)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-draw" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The draw
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-monthly-bill" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The monthly bill
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-one-lever" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The one lever
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-value-what-the-cluster-is-worth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Value: what the cluster is worth
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Value: what the cluster is worth">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-cloud-equivalent-bill" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The cloud-equivalent bill
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-comparison-that-matters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The comparison that matters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#but-value-isnt-only-the-dollar-delta" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        But value isn't only the dollar delta
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-the-reality-of-compute-in-singapore-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. The reality of compute in Singapore, 2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. The reality of compute in Singapore, 2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#electricity-is-the-structural-constraint-on-any-local-compute" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Electricity is the structural constraint on any local compute
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-cloud-is-dominant-here-and-the-pricing-reflects-premium-demand" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The cloud is dominant here, and the pricing reflects premium demand
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-buy-vs-rent-line-when-local-hardware-wins" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The buy-vs-rent line: when local hardware wins
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#my-cluster-as-a-micro-version-of-that-same-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        My cluster as a micro-version of that same logic
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-the-bottom-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. The bottom line
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system-architecture/home-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CI/CD
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CI/CD
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CICD/cicd-pipeline-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pipeline Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CICD/cicd-offtheshelf-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Off-the-shelf Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../kubernetes-guides/k3s-kubernetes-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    K3s
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Containerization
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Containerization
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../containerization/dockerfile-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dockerfile Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../containerization/dynamic-dev-container-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dev Container Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Weekly Logs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Weekly Logs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-05-10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 01
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-05-14/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 02
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-07/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 03
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-08/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 04
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 05
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-21/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 06
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-26/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 07
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-07-01/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 08
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-07-08/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 09
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-07-15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 10
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-capital-cost-what-it-cost-to-build" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Capital cost: what it cost to build
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Capital cost: what it cost to build">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-i-actually-spent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What I actually spent
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-it-would-cost-to-build-fresh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What it would cost to build fresh
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-running-cost-electricity-is-the-only-recurring-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Running cost: electricity is the only recurring line
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Running cost: electricity is the only recurring line">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-tariff-dated-re-check-quarterly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The tariff (dated, re-check quarterly)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-draw" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The draw
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-monthly-bill" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The monthly bill
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-one-lever" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The one lever
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-value-what-the-cluster-is-worth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Value: what the cluster is worth
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Value: what the cluster is worth">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-cloud-equivalent-bill" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The cloud-equivalent bill
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-comparison-that-matters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The comparison that matters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#but-value-isnt-only-the-dollar-delta" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        But value isn't only the dollar delta
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-the-reality-of-compute-in-singapore-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. The reality of compute in Singapore, 2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. The reality of compute in Singapore, 2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#electricity-is-the-structural-constraint-on-any-local-compute" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Electricity is the structural constraint on any local compute
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-cloud-is-dominant-here-and-the-pricing-reflects-premium-demand" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The cloud is dominant here, and the pricing reflects premium demand
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-buy-vs-rent-line-when-local-hardware-wins" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The buy-vs-rent line: when local hardware wins
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#my-cluster-as-a-micro-version-of-that-same-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        My cluster as a micro-version of that same logic
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-the-bottom-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. The bottom line
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="cost-value-and-the-reality-of-compute-in-singapore">Cost, Value, and the Reality of Compute in Singapore</h1>
+<p><em>Foundational document. The money argument, what the cluster cost to build, what
+it costs to run, what it's worth, and how that sits against the actual state of
+compute in Singapore in 2026.</em></p>
+<p>All figures are current as of <strong>July 2026</strong> and, where they change quarterly (the
+electricity tariff especially), I've dated them so a future reader knows to
+re-check.</p>
+<h2 id="1-capital-cost-what-it-cost-to-build">1. Capital cost: what it cost to build</h2>
+<p>The defining feature of my build is that most of the hardware I already owned or
+acquired cheaply, so my <em>marginal</em> capital outlay was low. But to make the value
+argument honest, it's worth pricing what this cluster would cost someone building
+it from scratch in Singapore today.</p>
+<h3 id="what-i-actually-spent">What I actually spent</h3>
+<p>I wouldn't say this is a cheap project to make. But honestly, I believe this is one
+of the cheaper hobbies that you can have, and you at least end up with actualy tangible
+compute power.</p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Notes</th>
+<th>Approx. cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>deus M910q Lenovo Thinkcentre Mini-PC</td>
+<td>Bought online, i7-6700T + 16GB Ram</td>
+<td>$280</td>
+</tr>
+<tr>
+<td>nebula Used custom gaming pc</td>
+<td>Bought from a seller in Carousell, came with i7-6700K, 24GB Ram and a GTX 1080</td>
+<td>$270</td>
+</tr>
+<tr>
+<td>legion Lenovo Legion gaming laptop</td>
+<td>Used to belong to Red Hat, sold off for free in their company marketplace</td>
+<td>$0</td>
+</tr>
+<tr>
+<td>Longhorn NVMe drives (×3, 256GB)</td>
+<td><strong>Free</strong> used, from company IT (pretty good quality)</td>
+<td>S$0</td>
+</tr>
+<tr>
+<td>legion's WD Red SA500 500GB SATA</td>
+<td>NAS-rated, for the Longhorn partition</td>
+<td>~S$103</td>
+</tr>
+<tr>
+<td>ZFS NAS drives (nebula)</td>
+<td>2× ~3.6TB in a mirror</td>
+<td>$400</td>
+</tr>
+<tr>
+<td>Networking (switch, cables, MoCA)</td>
+<td>Omada switch, Cat6, MoCA over coax</td>
+<td>~S200</td>
+</tr>
+<tr>
+<td>Misc (thermal pads, USB sticks, etc.)</td>
+<td></td>
+<td>~S$30</td>
+</tr>
+</tbody>
+</table>
+<p>The total cost is about <strong>S\$1283</strong>, not too bad at this day and age with ballooning 
+memory and storage prices, and the single most important storage component 
+(the Longhorn drives) was free.</p>
+<h3 id="what-it-would-cost-to-build-fresh">What it would cost to build fresh</h3>
+<p>If someone replicated this from nothing, at Singapore retail (July 2026):</p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Qty</th>
+<th>Unit (S$)</th>
+<th>Subtotal (S$)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>N100 mini-PC (16GB / 500GB, new)</td>
+<td>3</td>
+<td>~400</td>
+<td>1200</td>
+</tr>
+<tr>
+<td>— <em>or</em> refurb USFF (EliteDesk / ThinkCentre, Carousell)</td>
+<td>3</td>
+<td>~300</td>
+<td>900</td>
+</tr>
+<tr>
+<td>Managed switch (TP-Link SG108E class)</td>
+<td>1</td>
+<td>~40</td>
+<td>40</td>
+</tr>
+<tr>
+<td>NAS-rated SSD / drives for storage</td>
+<td>—</td>
+<td>—</td>
+<td>~600</td>
+</tr>
+<tr>
+<td>Cables, USB sticks, surge strip, misc</td>
+<td>—</td>
+<td>—</td>
+<td>~80</td>
+</tr>
+<tr>
+<td><strong>Total (new mini-PCs)</strong></td>
+<td></td>
+<td></td>
+<td><strong>~S$1920</strong></td>
+</tr>
+<tr>
+<td><strong>Total (refurb path)</strong></td>
+<td></td>
+<td></td>
+<td><strong>~S$1620</strong></td>
+</tr>
+</tbody>
+</table>
+<p>So a from-scratch equivalent lands right around the original <strong>S$1,000 budget</strong>
+under it on the refurb path. That's the capital number to hold in your head:
+<strong>a complete, capable multi-node K3s platform for roughly one thousand Singapore
+dollars, once.</strong> </p>
+<h2 id="2-running-cost-electricity-is-the-only-recurring-line">2. Running cost: electricity is the only recurring line</h2>
+<p>Once built, the cluster's only ongoing cost is power. And Singapore's electricity
+price matters a lot here, because it's currently at a <strong>record high.</strong></p>
+<h3 id="the-tariff-dated-re-check-quarterly">The tariff (dated, re-check quarterly)</h3>
+<p>For <strong>1 July – 30 September 2026</strong>, SP Group's regulated household tariff is
+<strong>31.91 cents/kWh before GST, or 34.78 cents/kWh with 9% GST</strong> — the highest in
+Singapore's history, up 17% from the previous quarter, driven by higher natural
+gas costs. It's reviewed every quarter, and EMA has flagged Q4 could ease <em>or</em>
+rise further depending on global fuel prices. For this analysis I use the all-in
+<strong>S$0.348/kWh.</strong></p>
+<h3 id="the-draw">The draw</h3>
+<p>The recurring cost is the <strong>always-on</strong> draw. All three nodes now run 24/7:</p>
+<ul>
+<li><strong>deus</strong> (M910q): idles low, ~15W.</li>
+<li><strong>nebula</strong> (i7-6700K + GTX 1080): the heavy one; higher idle ~50W, more under load.</li>
+<li><strong>legion</strong> (laptop, battery removed): modest, ~16W.</li>
+</ul>
+<p>Realistic always-on total: <strong>~80W idle, ~130W with moderate workload.</strong>
+Do note that the high idle is due to overhead power consumption. The overhead is due to
+motherboard and other components (GPU is your worst nightware here), not the CPU 
+(especially the case with nebula, with only 5W CPU idle).</p>
+<h3 id="the-monthly-bill">The monthly bill</h3>
+<ul>
+<li><strong>At idle (~80W):</strong> 80W × 24h × 30d = 57.6 kWh → <strong>~S$20/month</strong></li>
+<li><strong>With moderate load (~130W):</strong> ~94 kWh → <strong>~S$33/month</strong></li>
+</ul>
+<p>So realistically <strong>S$25–33/month</strong>, call it <strong>~S$300–400/year.</strong> deus alone is
+almost free (~S$4/month); nebula with the 1080 is the main contributor.</p>
+<h3 id="the-one-lever">The one lever</h3>
+<p>The GPU-heavy draw on nebula is the part of the bill that moves. When the GPUs
+aren't working, that wattage is waste. Historically I had <code>cluster-shutdown.sh</code> /
+<code>cluster-powerup.sh</code> + WoL to spin heavy nodes down, though now that legion and
+nebula are deliberately always-on for storage-replica and NAS reasons, I've traded
+some of that saving for availability. That's a conscious tradeoff: a few dollars a
+month for a cluster that's actually up when I want to build on it.</p>
+<h2 id="3-value-what-the-cluster-is-worth">3. Value: what the cluster is worth</h2>
+<p>Here's where the numbers become lopsided in the cluster's favour.</p>
+<h3 id="the-cloud-equivalent-bill">The cloud-equivalent bill</h3>
+<p>Mapping my nodes to the nearest AWS instances (a GPU-worker-heavy cluster like
+mine maps to <code>g4dn.xlarge</code>-class GPU instances plus a <code>t3.xlarge</code>-class control
+node, with EBS gp3 for storage):</p>
+<ul>
+<li>On-demand, this lands around <strong>US\$970/month ≈ US$11,600/year.</strong></li>
+<li>On 1-year reserved pricing it drops to roughly <strong>US$7,000/year.</strong></li>
+<li>And that's <em>before</em> the Singapore-region premium: <code>ap-southeast-1</code> runs
+  meaningfully higher than the <code>us-east-1</code> reference (a <code>g4dn.xlarge</code> is ~US$0.526/hr
+  in us-east-1; Singapore is higher still), so the real local figure is worse, not
+  better.</li>
+</ul>
+<h3 id="the-comparison-that-matters">The comparison that matters</h3>
+<ul>
+<li><strong>Capital:</strong> my whole build (or a ~S$1,000 from-scratch equivalent) costs <strong>less
+  than a single month</strong> of the AWS-equivalent on-demand bill.</li>
+<li><strong>Running:</strong> ~S\$20–33/month of electricity vs. ~US$970/month of cloud compute.
+  The homelab's <em>entire annual running cost</em> is roughly what the cloud equivalent
+  bills in <strong>a week and a half.</strong></li>
+<li><strong>Over a year:</strong> owned hardware total (build + power) sits around <strong>S\$1,300–1,400
+  all-in</strong>; the cloud equivalent is <strong>US$7,000–11,600+.</strong> Roughly an
+  <strong>order of magnitude</strong> difference.</li>
+</ul>
+<h3 id="but-value-isnt-only-the-dollar-delta">But value isn't only the dollar delta</h3>
+<p>The cloud bill buys things my cluster doesn't have, genuine redundancy, 25Gbit
+networking, managed durability, and no 3am debugging of a flapping MoCA link. I'm
+not paying that premium because, for a <em>learning cluster</em>, I don't need any of it.
+So the real value has two parts:</p>
+<ol>
+<li><strong>The compute-per-dollar</strong>, which is overwhelmingly in the homelab's favour for
+   a steady always-on workload.</li>
+<li><strong>The learning and portfolio value</strong>, which is the actual point. The cluster is
+   a standing, defensible demonstration of platform engineering — every
+   post-mortem, every open item, every "here's <em>why</em> this CRD sync failed and how
+   I fixed it" is evidence I can operate and reason about infrastructure. That's
+   worth more to my career goal than the dollar saving, and it's something no
+   amount of cloud credit would have produced, because the cloud hides the exact
+   layers I needed to learn.</li>
+</ol>
+<p>Put bluntly: I spent ~S\$1,200 once plus pocket change monthly to build something
+that would cost ~US$11k/year to rent <em>and</em> that teaches me the thing I'm actually
+trying to learn. The economics are firmly on the side of building.</p>
+<p>Another thing that I must preface is that building the cluster my way would have
+you touching the hardware and configuring very fragile components such as the BIOS
+and manually tuning the custom setup. If you're rather new to PC hardware, it is 
+perhaps not very ideal to buy random custom PCs online.</p>
+<h2 id="4-the-reality-of-compute-in-singapore-2026">4. The reality of compute in Singapore, 2026</h2>
+<p>Zooming out from my cluster to the environment it sits in, a few things are true
+about acquiring compute in Singapore right now.</p>
+<h3 id="electricity-is-the-structural-constraint-on-any-local-compute">Electricity is the structural constraint on any local compute</h3>
+<p>Singapore generates ~95% of its electricity from imported natural gas, so the
+tariff tracks global gas prices with a ~one-quarter lag. In 2026 that's meant a
+climb to a <strong>record 34.78 cents/kWh (with GST) for Q3</strong> — a 17% single-quarter
+jump. For a hobbyist homelab this is a rounding error (S$25–33/month). But it's
+the reason Singapore is an <em>expensive place to run always-on compute at scale</em>,
+and it's a real input into why large-scale compute here leans toward efficiency
+and toward the cloud's shared-infrastructure model. Land and power are both scarce
+and priced accordingly. The lesson scales inversely: <strong>small always-on rigs are
+cheap to run; large ones are penalised by exactly the same tariff.</strong></p>
+<p>Fun fact: Despite being an island with no natural resources, the electricity prices
+here are still cheaper than the UK or Australia.</p>
+<h3 id="the-cloud-is-dominant-here-and-the-pricing-reflects-premium-demand">The cloud is dominant here, and the pricing reflects premium demand</h3>
+<p>Singapore is a major cloud hub — AWS (<code>ap-southeast-1</code>), GCP, and Azure all have
+strong regional presence, and <code>ap-southeast-1</code> offers 800+ EC2 instance types. But
+regional pricing runs <em>above</em> the US reference regions. For businesses with spiky
+or unpredictable load, or that need managed durability and compliance, the cloud
+is the default and a sensible one. The Singapore premium is the price of low
+latency to a dense Southeast Asian market.</p>
+<h3 id="the-buy-vs-rent-line-when-local-hardware-wins">The buy-vs-rent line: when local hardware wins</h3>
+<p>The principle that governs the whole comparison: <strong>cloud wins for spiky or
+unpredictable load; owned hardware wins for steady, high, predictable
+utilisation</strong>, because the cloud's core value is elasticity, and if you never
+scale to zero you're paying an elasticity premium for nothing. The signals that
+tip an organisation toward owning or colocating hardware:</p>
+<ul>
+<li><strong>Flat, high baseline utilisation</strong> (nodes pinned at 60–80% around the clock) —
+  the classic "we're paying a 3–5× markup on compute we could own" realisation.</li>
+<li><strong>Sustained spend into the seven-figures-a-year range</strong>, where it earns a
+  dedicated finance/infra analysis.</li>
+<li><strong>GPU-heavy workloads</strong>, where rental premiums accelerate the breakeven.</li>
+<li><strong>Heavy data egress</strong>, where cloud pricing punishes moving data out.</li>
+<li><strong>Regulatory or latency requirements</strong> that favour owned/colocated kit.</li>
+</ul>
+<p>Real companies have made exactly this move at scale, Dropbox and 37signals/
+Basecamp are the well-known cloud-repatriation cases. The honest counterweight is
+that owning hardware demands headcount and operational burden that erodes the
+savings, which is why the common landing spot is <strong>hybrid</strong>: own the steady
+baseline, burst into cloud for peaks.</p>
+<h3 id="my-cluster-as-a-micro-version-of-that-same-logic">My cluster as a micro-version of that same logic</h3>
+<p>My design <em>is</em> the hybrid principle in miniature. <code>deus</code> is the always-on baseline
+(cheap to keep up); heavy GPU draw is spun up only when needed; Cloudflare Tunnel
+(essentially free public ingress) handles the low-bandwidth public surface while
+owned WireGuard handles bulk transfer. I'm making the same steady-baseline-vs-
+elastic-burst tradeoffs a real infra team makes, just at a scale where the whole
+year's power bill is less than a fortnight of the cloud-equivalent invoice.</p>
+<h2 id="5-the-bottom-line">5. The bottom line</h2>
+<ul>
+<li><strong>Capital:</strong> ~S$1,200 once, more with further upgrades or additional nodes.</li>
+<li><strong>Running:</strong> ~S$25–33/month of electricity at the current record-high tariff
+  the only recurring cost, and a small one.</li>
+<li><strong>Cloud-equivalent:</strong> ~US$7,000–11,600+/year, higher still at Singapore-region
+  pricing.</li>
+<li><strong>Value:</strong> an order-of-magnitude compute-per-dollar advantage for this
+  always-on workload, <em>plus</em> the learning and portfolio value that was the actual
+  goal — which the cloud would have hidden rather than taught.</li>
+</ul>
+<p>Money well spent. The hardware is already amortised many times over against the
+cloud line item, the electricity is the rounding error, and the thing I walk away
+with, the ability to operate and reason about a real platform, is exactly what
+I set out to buy.</p>
+<p>You would perhaps argue the true resource being spent here is <strong>time</strong>. <em>That is correct</em>.
+But it is still time well spent learning the infrastructure in a practical manner,
+as well as a hobby worth exploring.</p>
+<hr />
+<p><em>Tariff figure: SP Group regulated tariff, Q3 2026 (1 Jul–30 Sep), 34.78 ¢/kWh
+incl. GST — re-check quarterly. Cloud figures: AWS on-demand, us-east-1 reference
+with note that ap-southeast-1 runs higher; re-verify at aws.amazon.com/ec2/pricing
+before quoting.</em></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

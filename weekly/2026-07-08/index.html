@@ -1,0 +1,1554 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../2026-07-01/">
+      
+      
+        <link rel="next" href="../2026-07-15/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Week 09 - Home Compute Cluster Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#week-9-first-real-app-wireguard-direct-storage-hardware-and-the-observability-grind" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Home Compute Cluster Documentation" class="md-header__button md-logo" aria-label="Home Compute Cluster Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Home Compute Cluster Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Week 09
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Home Compute Cluster Documentation" class="md-nav__button md-logo" aria-label="Home Compute Cluster Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Home Compute Cluster Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Motivation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Motivation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../motivation/01-motivation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Why
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../motivation/02-planning-tradeoffs-choices/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trade-offs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../motivation/03-cost-value-singapore/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost vs Value
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system-architecture/home-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CI/CD
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CI/CD
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CICD/cicd-pipeline-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pipeline Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CICD/cicd-offtheshelf-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Off-the-shelf Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../kubernetes-guides/k3s-kubernetes-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    K3s
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Containerization
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Containerization
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../containerization/dockerfile-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dockerfile Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../containerization/dynamic-dev-container-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dev Container Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Weekly Logs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Weekly Logs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-05-10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 01
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-05-14/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 02
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-06-07/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 03
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-06-08/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 04
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-06-15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 05
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-06-21/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 06
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-06-26/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 07
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-07-01/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 08
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 09
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 09
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-is-the-cluster-ready-for-real-apps-mostly-yes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Is the cluster ready for real apps? (Mostly yes)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-the-portfolio-site-planning-my-first-real-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. The portfolio site: planning my first real application
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-wireguard-finally-root-access-on-the-onr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. WireGuard: finally, root access on the ONR
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-storage-hardware-sourcing-longhorn-disks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Storage hardware: sourcing Longhorn disks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-the-observability-grind" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. The observability grind
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. The observability grind">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#getting-metrics-flowing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Getting metrics flowing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gpu-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GPU metrics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-argocd-crd-mess-still-not-fully-resolved" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The ArgoCD CRD mess (still not fully resolved)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-reclaiming-under-provisioned-disk-space" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Reclaiming under-provisioned disk space
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-i-locked-in-this-week" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What I locked in this week
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#still-open" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Still open
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-07-15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 10
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-is-the-cluster-ready-for-real-apps-mostly-yes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Is the cluster ready for real apps? (Mostly yes)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-the-portfolio-site-planning-my-first-real-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. The portfolio site: planning my first real application
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-wireguard-finally-root-access-on-the-onr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. WireGuard: finally, root access on the ONR
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-storage-hardware-sourcing-longhorn-disks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Storage hardware: sourcing Longhorn disks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-the-observability-grind" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. The observability grind
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. The observability grind">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#getting-metrics-flowing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Getting metrics flowing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gpu-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GPU metrics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-argocd-crd-mess-still-not-fully-resolved" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The ArgoCD CRD mess (still not fully resolved)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-reclaiming-under-provisioned-disk-space" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Reclaiming under-provisioned disk space
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-i-locked-in-this-week" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What I locked in this week
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#still-open" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Still open
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="week-9-first-real-app-wireguard-direct-storage-hardware-and-the-observability-grind">Week 9: First Real App, WireGuard Direct, Storage Hardware, and the Observability Grind</h1>
+<p><em>Covers roughly 2 – 8 July 2026.</em></p>
+<p>This week had two threads running in parallel: getting the cluster genuinely
+<em>ready</em> for real applications (planning the portfolio site, sorting Longhorn
+hardware, root-access WireGuard), and a long, grinding observability buildout that
+surfaced a family of ArgoCD/CRD problems I'm still untangling.</p>
+<h2 id="1-is-the-cluster-ready-for-real-apps-mostly-yes">1. Is the cluster ready for real apps? (Mostly yes)</h2>
+<p>I did a status check on the foundations. The verdict:</p>
+<ul>
+<li><strong>Ingress/TLS</strong> (Traefik + Cloudflare + cert-manager): <strong>done.</strong></li>
+<li><strong>GitOps deploy pipeline</strong> (proven with nginx): <strong>done.</strong></li>
+<li><strong>Sealed Secrets</strong>: <strong>done.</strong></li>
+<li><strong>Longhorn</strong> (node-independent storage): <strong>still in progress</strong>, and it's the
+  key blocker for stateful workloads.</li>
+</ul>
+<p>Two things flagged as must-do-before-real-data: configure the <strong>Longhorn backup
+target</strong> (NFS on <code>tank</code>) before any database holds anything meaningful, and
+actually <strong>verify node-independent placement</strong> works before assuming a database
+can float across nodes.</p>
+<h2 id="2-the-portfolio-site-planning-my-first-real-application">2. The portfolio site: planning my first real application</h2>
+<p>I proposed a portfolio site (frontend + Go backend + database) as the first
+real app. This got endorsed as a strong first project: it does double duty as a
+deployment exercise <em>and</em> a Go learning vehicle, and the backend complexity is
+intentionally low (a few JSON endpoints) so I can focus on Go the language rather
+than distributed-systems correctness.</p>
+<p>The deliberate sequencing decision: <strong>portfolio site before obsync.</strong> obsync
+layers Go + Postgres + a hand-written sync protocol all at once, too many new
+problems simultaneously. The portfolio site lets me learn the deployment shape
+with low stakes first.</p>
+<p>How the pieces map to my patterns:</p>
+<ul>
+<li><strong>Frontend</strong> → built-from-source (Hugo/Astro noted earlier), its own repo + CI.</li>
+<li><strong>Go backend</strong> → built-from-source, its own repo + CI.</li>
+<li><strong>Postgres</strong> → off-the-shelf <strong>Pattern B</strong> (manifest + ArgoCD Application, no
+  CI).</li>
+</ul>
+<p>Left open at the time: the rendering approach: static frontend + separate Go
+JSON API, vs server-side rendering in Go (templ/html-template), vs an SPA calling
+a Go JSON API. (This gets picked up when I actually deploy Postgres in Week 7.)</p>
+<h2 id="3-wireguard-finally-root-access-on-the-onr">3. WireGuard: finally, root access on the ONR</h2>
+<p>The big networking unblock. I found a <strong>root-level admin account on the Singtel
+ONR</strong> that exposes DHCP, static IP reservation, and port forwarding, the exact
+controls I'd been locked out of.</p>
+<p>I sorted out a conceptual confusion first: <strong>IP routing (static routes between
+subnets) is not the same as port forwarding/NAT (exposing an internal host to the
+internet).</strong> I'd been conflating them. What I needed was port forwarding.</p>
+<p>The exact rule: <strong>UDP, port 51820</strong> external and internal, targeting <strong>deus</strong>
+(selectable directly from the ONR's client dropdown now that static reservations
+are done), on the correct WAN interface (<code>1_TR069_INTERNET_R_VID_10</code>). The
+prerequisite is verifying that interface carries the real public IP, not a
+carrier-NAT address. Definitive test: <code>sudo wg show</code> on deus from a device off the
+LAN (phone on mobile data) showing a completed handshake.</p>
+<p>I paused to think about the <strong>security</strong> of opening a port, and came away
+reassured: forwarding a single UDP port to WireGuard is about the lowest-risk
+exposure there is. WireGuard is <strong>cryptographically silent to unauthenticated
+packets</strong>: indistinguishable from a closed port to a scanner, no banner, no
+fingerprint, minimal audited codebase. The residual risks are (1) key management
+on client devices (a phone with a WireGuard config is effectively a LAN key), and
+(2) not forwarding <em>additional</em> ports beyond the single WireGuard entry. Also
+worth confirming the ONR's stateful firewall stays active and the forward is an
+<em>exception</em> to it, not a symptom of a broader bypass.</p>
+<p>End state of the network stack: <strong>Cloudflare Tunnel for public services
+(outbound-only), WireGuard on UDP 51820 for private high-throughput admin
+access.</strong> Both feeding Traefik.</p>
+<h2 id="4-storage-hardware-sourcing-longhorn-disks">4. Storage hardware: sourcing Longhorn disks</h2>
+<p>Longhorn can't use ZFS (established in Week 4), so I needed dedicated disks. I
+worked through three options for getting them:</p>
+<ol>
+<li><strong>Claw back space from nebula's ZFS mirror</strong>: rejected. <strong>ZFS doesn't support
+   in-place vdev shrinking</strong>, so this means either breaking the mirror (killing
+   redundancy) or a full backup-destroy-restore with ongoing IOPS contention.
+   Neither fits an architecture whose whole point is data safety.</li>
+<li><strong>Buy new drives</strong>: the sensible default.</li>
+<li><strong>Used drives</strong>: where I actually landed.</li>
+</ol>
+<p>A couple of corrections I picked up while drive-shopping:</p>
+<ul>
+<li>The <strong>WD Red SA500</strong> is <em>not</em> DRAM-less (I'd initially thought so and corrected
+  it); it uses a Marvell controller with TLC NAND and does have DRAM. It's a
+  NAS-rated drive built for 24/7, which is a genuinely better replica posture than
+  a consumer SSD.</li>
+<li><strong>NVMe M.2 drives use PCIe lanes, not SATA ports</strong>, so adding NVMe doesn't cost
+  me a SATA port. NVMe is a real option, not a compromise.</li>
+<li>The meaningful drive filter isn't "has DRAM" alone; it's <strong>"DRAM or HMB + TLC
+  NAND."</strong> QLC is more harmful than DRAM-absence for sustained Longhorn
+  replication writes.</li>
+</ul>
+<p>Then the plan changed for the better: <strong>I got three used 256GB M.2 NVMe SSDs
+(Intel + WD, both with DRAM) for free from my company's IT department.</strong> 256GB is
+plenty per node since bulk data lives on ZFS. Plan: two drives across <strong>deus and
+nebula</strong> for replica count 2 (the redundancy floor), third as a cold spare.</p>
+<p><em>(Note: this "deus + nebula" replica plan shifts again in Week 7; deus ends up
+with no replicas due to its overheating, so the targets become nebula + legion.)</em></p>
+<p>I also worked out the <strong>used-drive validation workflow</strong> for the free SSDs:
+<code>smartctl -a</code> (watch Percentage Used, Available Spare, Media/Data Integrity
+Errors, Critical Warning) → non-destructive <code>badblocks -sv</code> → destructive
+<code>badblocks -wsv</code> to exercise every cell → re-read SMART to confirm no
+degradation. And verify which M.2 slots are actually free first: <strong>deus has only
+one M.2 slot</strong> and it may already hold the OS drive.</p>
+<h2 id="5-the-observability-grind">5. The observability grind</h2>
+<p>The longest, most frustrating thread of the week. I was building a proper
+"Homelab: Node Overview" Grafana dashboard on kube-prometheus-stack (chart
+v85.0.2, release <code>kube-prom</code>, values in <code>apps/monitoring/values-monitoring.yaml</code>,
+managed as a multi-source ArgoCD Application).</p>
+<h3 id="getting-metrics-flowing">Getting metrics flowing</h3>
+<ul>
+<li>Dashboard 237 was empty because of <strong>stale metric names</strong>: the imported
+  dashboard referenced old names.</li>
+<li>Enabled <strong>hardware temperature monitoring</strong> via the <code>hwmon</code> collector +
+  <code>coretemp</code> kernel module.</li>
+<li>Hit a <strong>many-to-one join error</strong> on <code>node_hwmon_temp_celsius</code>: the fix was
+  joining <code>on(chip, instance)</code>, not just <code>on(chip)</code>. And I had to filter
+  <code>chip_name="coretemp"</code> because <code>max(node_hwmon_temp_celsius)</code> was otherwise
+  grabbing the hottest sensor of <em>any</em> hardware, not the CPU cores.</li>
+<li>Confirmed chip names per node: all three have <code>coretemp</code> for CPU; nebula also
+  has <code>asus</code> (eeepc_wmi) and <code>nvme</code>; deus has <code>acpitz</code> and <code>nvme</code>; legion has
+  <code>pch_cannonlake</code>, <code>iwlwifi_1</code>, <code>adp0</code>.</li>
+</ul>
+<h3 id="gpu-metrics">GPU metrics</h3>
+<p>Set up <strong>nvidia_gpu_exporter</strong> (utkuozdemir, v1.2.1) as a <strong>Compose service on
+nebula</strong> (since the GTX 1080 lives on nebula, the Compose host). Metrics come out
+under the <code>nvidia_smi_*</code> prefix. Confirmed names:
+<code>nvidia_smi_utilization_gpu_ratio</code> (a <strong>ratio</strong>, needs <code>* 100</code>),
+<code>nvidia_smi_temperature_gpu</code>, <code>nvidia_smi_power_draw_watts</code>,
+<code>nvidia_smi_memory_used_bytes</code> / <code>_total_bytes</code>. To scrape a Compose service from
+in-cluster Prometheus, I made a <strong><code>ScrapeConfig</code> CRD</strong> in a separate
+<strong><code>monitoring-extras</code></strong> ArgoCD Application, with a static <code>instance="nebula"</code>
+label that landed correctly on the GPU metrics. Built the unified dashboard with a
+<code>$node</code> template variable (CPU, RAM, temp, disk, network) plus a GPU row scoped to
+nebula.</p>
+<h3 id="the-argocd-crd-mess-still-not-fully-resolved">The ArgoCD CRD mess (still not fully resolved)</h3>
+<p>This is the ugly part, and it's a family of related problems:</p>
+<ul>
+<li>I'm on <strong>ArgoCD v3.4.3, which has a known h2c port-forward bug</strong> making the CLI
+  unreliable, which made everything else harder to debug.</li>
+<li>A persistent <strong><code>ComparisonError</code></strong> on the kube-prom Application because
+  <code>readOnlyRootFilesystem</code> wasn't in ArgoCD's client-side structured-merge diff
+  schema.</li>
+<li><strong>App-level <code>ServerSideApply=true</code> collides with ArgoCD's controller-injected
+  <code>syncStrategy.apply.force</code></strong>: they're mutually exclusive at the apply level. A
+  patch I tried that included <code>syncStrategy.apply.force</code> got stuck in the
+  automated retry loop and had to be cleared by disabling automation, removing the
+  <code>/operation</code> field, and re-syncing.</li>
+<li>The session ended mid-resolution with the CRDs (thanosrulers, alertmanagers,
+  prometheusagents, scrapeconfigs, alertmanagerconfigs, prometheuses) failing on
+  <strong><code>metadata.annotations: Too long: may not be more than 262144 bytes</code></strong>, the
+  canonical kube-prometheus-stack + ArgoCD problem, caused by <strong>client-side apply
+  storing last-applied-configuration in an annotation</strong> that blows past the 262KB
+  ceiling.</li>
+</ul>
+<p>The end-state I identified (but hadn't fully committed): <strong>resource-level</strong>
+<code>argocd.argoproj.io/sync-options: ServerSideApply=true</code> annotations on the CRDs
+(via <code>crds.annotations</code>) and the node-exporter DaemonSet (via
+<code>daemonsetAnnotations</code>), <strong>no app-level SSA</strong>, plus <code>ignoreDifferences</code> on the
+relevant fields. (This gets refined further in Week 7 when I discover the chart
+version doesn't even <em>have</em> a <code>crds.annotations</code> injection point.)</p>
+<h2 id="6-reclaiming-under-provisioned-disk-space">6. Reclaiming under-provisioned disk space</h2>
+<p>A quick, useful find: every node only had ~100GB allocated to the OS despite
+larger disks. Classic Ubuntu Server LVM under-provisioning: the installer makes a
+volume group from the whole disk but only allocates part of it to the root LV.
+Fix: <code>lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv</code> then <code>resize2fs</code> (ext4) or
+<code>xfs_growfs</code> (XFS), both online-safe, no reboot. Since all three nodes share the
+install config, this is a prime candidate for a retroactive Ansible playbook.</p>
+<h2 id="what-i-locked-in-this-week">What I locked in this week</h2>
+<ul>
+<li><strong>Cluster foundations confirmed ready</strong> for real apps except Longhorn
+  placement/backup.</li>
+<li><strong>Portfolio site chosen</strong> as the first real app; <strong>before obsync</strong>, deliberately.</li>
+<li><strong>WireGuard direct via the ONR</strong>: root access found, single UDP 51820 forward
+  to deus, understood as a genuinely low-risk exposure.</li>
+<li><strong>Free 256GB NVMe drives</strong> sourced and a validation workflow set; the "DRAM/HMB +
+  TLC" filter and the ZFS-can't-shrink lesson.</li>
+<li><strong>Node dashboard built</strong> with CPU/RAM/temp/disk/net + nebula GPU row; GPU
+  scraped from a Compose exporter via a ScrapeConfig.</li>
+<li>A <strong>half-resolved ArgoCD/CRD SSA problem</strong> documented well enough to finish
+  later.</li>
+</ul>
+<h2 id="still-open">Still open</h2>
+<ul>
+<li>Finish the ArgoCD CRD <code>Too long</code> / SSA fix (Week 7).</li>
+<li>Register the NVMe drives in Longhorn; validate placement; drop the code-server
+  pin.</li>
+<li>Longhorn NFS backup target.</li>
+<li>Grafana admin password → SealedSecret (Week 7).</li>
+<li>ArgoCD push-on-webhook still broken (poll-only).</li>
+<li>Portfolio rendering-approach decision.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

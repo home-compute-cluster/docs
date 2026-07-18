@@ -1,0 +1,1556 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../..">
+      
+      
+        <link rel="next" href="../02-planning-tradeoffs-choices/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Why - Home Compute Cluster Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#why-i-built-the-cluster-motivation-objectives-and-the-alternatives-i-weighed" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Home Compute Cluster Documentation" class="md-header__button md-logo" aria-label="Home Compute Cluster Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Home Compute Cluster Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Why
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Home Compute Cluster Documentation" class="md-nav__button md-logo" aria-label="Home Compute Cluster Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Home Compute Cluster Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Motivation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Motivation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Why
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Why
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-the-motivation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. The motivation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-the-objectives" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. The objectives
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-the-alternatives-different-ways-of-acquiring-compute" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. The alternatives: different ways of acquiring compute
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. The alternatives: different ways of acquiring compute">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-public-cloud-aws-gcp-azure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Public cloud (AWS / GCP / Azure)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-a-single-powerful-server-one-big-box" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 A single powerful server / one big box
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-raspberry-pi-arm-sbc-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Raspberry Pi / ARM SBC cluster
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-free-tier-student-credit-cloud" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 Free-tier / student-credit cloud
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-vps-fleet-cheap-providers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 VPS fleet (cheap providers)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#36-owned-hardware-the-choice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.6 Owned hardware — the choice
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-the-honest-caveat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. The honest caveat
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-planning-tradeoffs-choices/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trade-offs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-cost-value-singapore/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost vs Value
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system-architecture/home-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CI/CD
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CI/CD
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CICD/cicd-pipeline-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pipeline Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CICD/cicd-offtheshelf-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Off-the-shelf Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../kubernetes-guides/k3s-kubernetes-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    K3s
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Containerization
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Containerization
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../containerization/dockerfile-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dockerfile Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../containerization/dynamic-dev-container-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dev Container Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Weekly Logs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Weekly Logs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-05-10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 01
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-05-14/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 02
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-07/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 03
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-08/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 04
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 05
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-21/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 06
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-26/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 07
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-07-01/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 08
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-07-08/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 09
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-07-15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 10
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-the-motivation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. The motivation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-the-objectives" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. The objectives
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-the-alternatives-different-ways-of-acquiring-compute" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. The alternatives: different ways of acquiring compute
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. The alternatives: different ways of acquiring compute">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-public-cloud-aws-gcp-azure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Public cloud (AWS / GCP / Azure)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-a-single-powerful-server-one-big-box" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 A single powerful server / one big box
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-raspberry-pi-arm-sbc-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Raspberry Pi / ARM SBC cluster
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-free-tier-student-credit-cloud" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 Free-tier / student-credit cloud
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-vps-fleet-cheap-providers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 VPS fleet (cheap providers)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#36-owned-hardware-the-choice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.6 Owned hardware — the choice
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-the-honest-caveat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. The honest caveat
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="why-i-built-the-cluster-motivation-objectives-and-the-alternatives-i-weighed">Why I Built the Cluster: Motivation, Objectives, and the Alternatives I Weighed</h1>
+<p><em>A foundational document. Written after the fact, but describing the reasoning as
+it stood when I decided to build.</em></p>
+<h2 id="1-the-motivation">1. The motivation</h2>
+<p>The honest starting point: I'm a CS student in Singapore interest in the domains
+of computer systems, networks and graphics. I am primarily gearing towards CDN, SRE, 
+and platform-engineering roles, and those roles have a chicken-and-egg problem. 
+They want people who've <em>operated</em> real infrastructure: GitOps, observability,
+distributed storage, ingress, networking. The problem is that you don't get to 
+operate real infrastructure until someone hires you into a role that lets you. 
+Coursework doesn't fill that gap, neither does a tidy GitHub repo full of toy 
+projects that never ran anywhere. </p>
+<p>Over my 2 years as an undergrad in NUS (National University of Singapore),
+I have come to realise that the programming in CS isnt exactly the barrier for your projects.
+In the age of AI and thousands of projects executed through coursework or hackathons,
+you will come to realise what ultimately matters is that your project actually ships out and
+remain reliable during its lifecycle.</p>
+<p>So here comes the question of <strong>how</strong>. To do that, we must first somewhat understand
+the development lifecycle of software, from gathering the requirements to deployment
+and the monitoring + maintenance that comes after.</p>
+<pre><code class="language-text">┌──────┐ → ┌──────────────┐ → ┌─────────────┐ → ┌────────┐ → ┌─────────────┐
+│ Idea │   │ Requirements │   │ Feasibility │   │ Design │   │ Planning    │
+└──────┘   └──────────────┘   └─────────────┘   └────────┘   └─────────────┘
+
+      ↓
+
+┌─────────────┐ → ┌──────────┐ → ┌─────────┐ → ┌─────────────┐
+│ Development │   │ Build/CI │   │ Testing │   │ Release     │
+└─────────────┘   └──────────┘   └─────────┘   └─────────────┘
+
+      ↓
+
+┌────────────┐ → ┌────────────┐ → ┌─────────────┐ → ┌─────────────┐
+│ Deployment │   │ Operations │   │ Maintenance │   │ Feedback    │
+└────────────┘   └────────────┘   └─────────────┘   └─────────────┘
+                                                              │
+                                                              ▼
+                                                    [Requirements]
+
+End-of-Life:
+[Maintenance] → [EOL Planning] → [Decommissioning] → [Retirement]
+</code></pre>
+<p>As a student, you will typically learn the steps from Ideation all the way to development
+and perhaps the steps heading towards deployment. But have though about <strong>how</strong> you
+will actually serve your products to your "customers"? </p>
+<p>Suppose that you are making a website. Ask yourself these questions:
+- How is my website hosted?
+- How does the domain name actually send user traffic to the place that hosts the
+  website?
+- How is the website backend server actually implemented on the physical device? 
+  Afterall, your server must exist as a physical computer 
+- How do we actually reconcile bugs or even service failures during deployments?
+  Or better yet, how do we <strong>anticipate</strong> and <strong>plan</strong> for such cases?</p>
+<p>There are many questions not yet asked for the average student like me trying to
+build our own projects that ultimately ends up in the dumpster due to the lack of 
+deployment infrastructure. Answering these questions won't happen in a single weekend,
+it takes significant amount of time to grasp the IT infrastructure that exists within
+our world.</p>
+<p>So the cluster exists to manufacture the experience I can't otherwise get. It's a
+place to make production-grade mistakes on my own hardware, on my own time, where
+the blast radius is my weekend and not a company's SLA. Every hard thing I'd
+eventually be expected to know on the job, why a CRD sync fails, how to keep a
+database's backups honest, what happens when self-heal fights a manually-edited
+secret, I wanted to have already hit, understood, and fixed at least once.</p>
+<p>There's a second motivation underneath the career one, which is that I actually
+enjoy this. The cluster is a standing invitation to learn GoLang, to hand-write a
+sync protocol, to understand networking from the packet up. The portfolio framing
+keeps me honest about scope and sequencing, but the reason I keep coming back to
+it on weekends is that it's genuinely interesting to build (This is very important
+for us to not just suddenly burn out and drop the project altogether). </p>
+<p>Furthermore, it also provides a highly available infrastructure to actually experiment,
+and most importantly, deploy any projects that you make. This itself would perhaps
+give you a sort of understand and appreciation for the infrastructure that has
+been built from the ground-up to make our daily lives possible (and also to give
+us CS students a job). You will come to see how many people have contributed towards
+the effort, especially in the world of open source, the millions of unpaid contributor
+keep up the dependencies that we rely on </p>
+<h2 id="2-the-objectives">2. The objectives</h2>
+<p>Concretely, I wanted the cluster to demonstrate, and force me to learn the
+following, in roughly this order of priority:</p>
+<ul>
+<li><strong>Container orchestration in practice</strong>, not in theory. A real K3s cluster
+  across heterogeneous nodes, with workloads that actually have to be scheduled,
+  placed, and kept alive.</li>
+<li><strong>GitOps as the operating discipline.</strong> Git as the source of truth, ArgoCD
+  reconciling the cluster to match, CI building and pushing images. The whole
+  <code>git push → build → deploy</code> loop, with no manual <code>kubectl</code> in the critical
+  path.</li>
+<li><strong>Observability that means something.</strong> Prometheus scraping real services,
+  Grafana dashboards I actually read, an understanding of the RED method and how
+  metrics feed autoscaling, not a default dashboard I imported and forgot.</li>
+<li><strong>Networking depth.</strong> Reverse proxies and ingress (Traefik), load balancing
+  (MetalLB), secure external access without opening my router (Cloudflare Tunnel),
+  and a high-throughput private path (WireGuard/Tailscale). Eventually
+  hand-building an L4/L7 proxy and a custom binary protocol to understand what the
+  off-the-shelf tools are doing.</li>
+<li><strong>Distributed storage.</strong> Longhorn for replicated block storage, ZFS for the NAS
+  layer, and a clear rule about which owns what.</li>
+<li><strong>Real, self-hosted services</strong> running on all of it, a portfolio site, a media
+  server (Jellyfin), a file-sync system (Seafile), and my own hand-written
+  Obsidian sync (obsync).</li>
+</ul>
+<p>The meta-objective sitting above all of these: <strong>be able to explain <em>why</em> every
+choice was made.</strong> A cluster I can't reason about is just a pile of YAML. The
+value, to me and to an interviewer, is in the decision log, not the uptime number.</p>
+<h2 id="3-the-alternatives-different-ways-of-acquiring-compute">3. The alternatives: different ways of acquiring compute</h2>
+<p>Before committing to owned hardware I did genuinely consider the alternatives.
+"Build a homelab" was the answer, but it wasn't the only option, and the reasons
+the others lost are part of the justification.</p>
+<h3 id="31-public-cloud-aws-gcp-azure">3.1 Public cloud (AWS / GCP / Azure)</h3>
+<p>The obvious default. Spin up managed Kubernetes (EKS/GKE), pay by the hour, never
+touch hardware. You might have even learnt this back in school, or played with it
+yourselves.</p>
+<p><strong>Why it's attractive:</strong> zero capital outlay, real production-grade networking and
+durability, the exact managed services I'd use at work, and instant scale.</p>
+<p><strong>Why it lost, for <em>this</em> goal:</strong></p>
+<ul>
+<li><strong>Cost shape is exactly wrong for a learning cluster.</strong> A homelab is a <em>steady,
+  always-on, high-utilization</em> workload, the single worst fit for on-demand cloud
+  pricing, which charges a premium precisely so you can scale to zero. I never
+  scale to zero; I'd be paying the elasticity premium for elasticity I don't use.
+  (The full numbers are here, but the headline is that the AWS-equivalent of my 
+  cluster runs roughly <strong>US$11,000+/year</strong>, and my entire hardware build cost less 
+  than one month of that.)</li>
+<li><strong>The managed layer hides the learning.</strong> EKS <em>is</em> the thing I want to
+  understand the guts of. If AWS runs the control plane, provisions the storage
+  CSI, and manages the ingress, I've learned to <em>consume</em> a platform, not
+  <em>operate</em> one. The whole point is to be the person who runs it.</li>
+<li><strong>The bill punishes experimentation.</strong> Leaving a GPU node running over a weekend
+  because I forgot is a rounding error on my electricity bill and a genuinely
+  painful line item on a cloud invoice. Owned hardware makes mistakes cheap, which
+  is what a learning environment needs.</li>
+</ul>
+<p>Cloud isn't wrong, it's the right tool for spiky, unpredictable, or
+scale-out-fast workloads, and I'd reach for it in a heartbeat for a startup's
+production traffic. It's just the wrong tool for <em>sustained self-education on
+owned baseline load.</em></p>
+<h3 id="32-a-single-powerful-server-one-big-box">3.2 A single powerful server / one big box</h3>
+<p>Buy one capable machine, run everything on it (maybe with VMs to fake
+multi-node).</p>
+<p><strong>Why it lost:</strong> the entire point is <em>distributed</em> systems. Scheduling across
+nodes, replica placement, node failure domains, "which node has the GPU,"
+draining a node for a reboot, none of which is real on a single box. VMs can
+simulate it, but they can't teach me what happens when a physical node overheats
+or a laptop's battery-removed worker drops off the network. Heterogeneity and
+genuine node independence are features here, not accidents.</p>
+<h3 id="33-raspberry-pi-arm-sbc-cluster">3.3 Raspberry Pi / ARM SBC cluster</h3>
+<p>The classic homelab starter: a stack of cheap Pis.</p>
+<p><strong>Why it lost (for the main cluster):</strong></p>
+<ul>
+<li><strong>Architecture friction.</strong> My whole pipeline builds <code>linux/amd64</code> images to
+  ghcr.io. Going ARM means multi-arch builds via <code>docker buildx</code> — a real,
+  ongoing tax on every image, for no learning benefit relevant to my goals.</li>
+<li><strong>Underpowered for the real workloads.</strong> Postgres, Jellyfin transcoding, a
+  monitoring stack, dev containers — these want CPU, RAM, and real I/O that a Pi
+  struggles with. I'd spend my time fighting resource limits instead of learning
+  platform patterns.</li>
+</ul>
+<p>It is also worth noting that almost every single piece of software that you use
+or integrate has a compability with x86. The same cannot be guaranteed for ARM.
+That is the reason why the first iteration of the Snapdragon Windows laptops 
+flopped rather badly in the market.</p>
+<p><em>(Worth noting: I kept a Pi cluster on the table as a </em><em>separate</em><em> project for
+CS3210 parallel-computing coursework, OpenMP/MPI compiled from source, where the
+arch concern disappears entirely. Different tool, different job.)</em></p>
+<h3 id="34-free-tier-student-credit-cloud">3.4 Free-tier / student-credit cloud</h3>
+<p>Stretch AWS/GCP free tiers and student credits as far as they go.</p>
+<p><strong>Why it lost:</strong> credits run out, and they run out <em>fastest</em> on exactly the
+always-on compute a homelab needs. The moment the credits lapse I'm back to the
+cloud cost problem, except now my "learning environment" has a countdown timer on
+it. It's a way to <em>try</em> cloud, not to <em>live</em> in an always-on cluster.</p>
+<h3 id="35-vps-fleet-cheap-providers">3.5 VPS fleet (cheap providers)</h3>
+<p>Rent several cheap VPSes and cluster them.</p>
+<p><strong>Why it lost:</strong> it's a middle ground that gets the worst of both. Still a
+recurring bill (smaller, but forever), still someone else's virtualized hardware
+so I don't learn the physical/node layer, and networking between providers is
+its own headache. The one place a cheap VPS <em>did</em> earn a role was as a potential
+WireGuard <em>relay</em>, a single tiny box for NAT traversal,  which is a narrow,
+well-scoped use, not a home for the cluster.</p>
+<h3 id="36-owned-hardware-the-choice">3.6 Owned hardware — the choice</h3>
+<p>What I actually did: three heterogeneous always-on x86 nodes (a Lenovo M910q
+control plane, an i7-6700K desktop with a GTX 1080 doubling as the NAS, and a
+battery-removed laptop worker with a GTX 1060).</p>
+<p><strong>Why it won:</strong></p>
+<ul>
+<li><strong>The cost shape fits.</strong> Capital cost paid once, then only electricity, and at
+  Singapore tariffs that's a small monthly number for an always-on learning rig.</li>
+<li><strong>Hardware availbility.</strong> These kind of used and custom hardware is rather easy
+  to obtain at a reasonable price in singapore.</li>
+<li><strong>I own every layer.</strong> From the physical node and the OS up through K3s, 
+  storage, networking, and the apps, nothing is hidden behind a managed
+  abstraction. That's the entire pedagogical value.</li>
+<li><strong>Mistakes are cheap</strong>, so I experiment freely. Freedom is worth every single
+  penny.</li>
+<li><strong>It's a genuinely learning experience.</strong> "I ran a multi-node K3s platform with
+  GitOps, distributed storage, observability, and custom networking on my own
+  hardware for months" is a concrete valuable project, especially if you can 
+  genuinely reason about it.</li>
+</ul>
+<h2 id="4-the-honest-caveat">4. The honest caveat</h2>
+<p>Owning the hardware is the right call <em>for this goal specifically</em>, but it is not
+apples-to-apples with the cloud, and I want to be clear-eyed about that. AWS
+bundles redundancy, 25Gbit networking, managed durability, and the absence of me
+crawling behind a desk at 3am because a MoCA link is flapping or some sync error
+in ArgoCD preventing the deployment from being updated. I'm not paying the cloud 
+premium because, for a learning cluster, I don't need any of what it buys, and 
+needing to learn all of that <em>myself</em> is the feature. If this were production
+traffic with real users and an SLA, the calculus would flip. The cluster is the
+right answer to "how do I learn to operate infrastructure," not to "how should a
+business run its workloads." Those are different questions, and keeping them
+separate is itself part of what I set out to understand.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

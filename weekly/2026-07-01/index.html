@@ -1,0 +1,1471 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../2026-06-26/">
+      
+      
+        <link rel="next" href="../2026-07-08/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Week 08 - Home Compute Cluster Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#week-8-the-two-plane-ingress-wildcard-tls-and-adopting-everything-into-gitops" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Home Compute Cluster Documentation" class="md-header__button md-logo" aria-label="Home Compute Cluster Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Home Compute Cluster Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Week 08
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Home Compute Cluster Documentation" class="md-nav__button md-logo" aria-label="Home Compute Cluster Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Home Compute Cluster Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Motivation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Motivation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../motivation/01-motivation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Why
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../motivation/02-planning-tradeoffs-choices/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trade-offs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../motivation/03-cost-value-singapore/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost vs Value
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system-architecture/home-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CI/CD
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CI/CD
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CICD/cicd-pipeline-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pipeline Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CICD/cicd-offtheshelf-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Off-the-shelf Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../kubernetes-guides/k3s-kubernetes-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    K3s
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Containerization
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Containerization
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../containerization/dockerfile-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dockerfile Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../containerization/dynamic-dev-container-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dev Container Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Weekly Logs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Weekly Logs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-05-10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 01
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-05-14/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 02
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-06-07/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 03
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-06-08/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 04
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-06-15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 05
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-06-21/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 06
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-06-26/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 07
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 08
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 08
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-the-vps-relay-question-and-why-i-probably-dont-need-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. The VPS relay question, and why I probably don't need it
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-the-two-plane-ingress-split-the-big-architectural-decision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. The two-plane ingress split (the big architectural decision)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-wildcard-tls-via-cert-manager-lets-encrypt-dns-01" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Wildcard TLS via cert-manager + Let's Encrypt DNS-01
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-sealed-secrets-secrets-in-git-done-right" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Sealed Secrets: secrets in Git, done right
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-adopting-hand-installed-helm-releases-into-gitops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Adopting hand-installed Helm releases into GitOps
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Adopting hand-installed Helm releases into GitOps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-gitops-pattern-this-clarified" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The GitOps pattern this clarified
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-cleanup-orphaned-nginx-and-guestbook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Cleanup: orphaned nginx and guestbook
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-i-locked-in-this-week" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What I locked in this week
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#still-open-carried-into-next-weeks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Still open (carried into next weeks)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-07-08/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 09
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-07-15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 10
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-the-vps-relay-question-and-why-i-probably-dont-need-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. The VPS relay question, and why I probably don't need it
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-the-two-plane-ingress-split-the-big-architectural-decision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. The two-plane ingress split (the big architectural decision)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-wildcard-tls-via-cert-manager-lets-encrypt-dns-01" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Wildcard TLS via cert-manager + Let's Encrypt DNS-01
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-sealed-secrets-secrets-in-git-done-right" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Sealed Secrets: secrets in Git, done right
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-adopting-hand-installed-helm-releases-into-gitops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Adopting hand-installed Helm releases into GitOps
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Adopting hand-installed Helm releases into GitOps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-gitops-pattern-this-clarified" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The GitOps pattern this clarified
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-cleanup-orphaned-nginx-and-guestbook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Cleanup: orphaned nginx and guestbook
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-i-locked-in-this-week" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What I locked in this week
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#still-open-carried-into-next-weeks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Still open (carried into next weeks)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="week-8-the-two-plane-ingress-wildcard-tls-and-adopting-everything-into-gitops">Week 8: The Two-Plane Ingress, Wildcard TLS, and Adopting Everything into GitOps</h1>
+<p><em>Covers roughly 27 June – 1 July 2026.</em></p>
+<p>This was the week the network architecture actually took its final shape. Up to
+now I had "Cloudflare for public, WireGuard/Tailscale for bulk" as a <em>direction</em>.
+This week I turned it into a concrete two-plane ingress split with real wildcard
+TLS, moved secrets into Git properly, and started dragging my hand-installed Helm
+releases under ArgoCD so nothing is untracked.</p>
+<h2 id="1-the-vps-relay-question-and-why-i-probably-dont-need-it">1. The VPS relay question, and why I probably don't need it</h2>
+<p>I started the week pricing a cheap VPS to run a WireGuard relay, in case the
+locked Singtel ONR wouldn't forward inbound ports. What I learned about picking
+one: for a WireGuard relay, <strong>CPU and RAM barely matter</strong> (it runs fine on
+512MB); the only things that matter are a <strong>high/unmetered bandwidth allowance</strong>
+and a <strong>1Gbps+ port</strong>. BuyVM's Slice 512 (~$2/month annual, genuinely unmetered
+on 1Gbps) was the pick, with the caveat that stock is often unavailable. Also:
+put the VPS in an <strong>Asian region</strong>, not the US, or I'm compounding trans-Pacific
+latency from Singapore.</p>
+<p>But the real conclusion was: <strong>I probably don't need the VPS at all.</strong> My Singtel
+line has a real routable public IP (confirmed back in Week 3), so if the ONR
+forwards UDP 51820 to deus, a <strong>direct</strong> WireGuard config is strictly better and
+free. Try the direct path first; treat a <code>wg show</code> handshake as proof.</p>
+<h2 id="2-the-two-plane-ingress-split-the-big-architectural-decision">2. The two-plane ingress split (the big architectural decision)</h2>
+<p>This is the one that mattered. I set up Tailscale for private access and, in
+doing so, settled the clean split I'd been circling:</p>
+<ul>
+<li><strong><code>*.packetcraft.dev</code></strong>: public, via Cloudflare Tunnel (outbound-only, no
+  inbound port).</li>
+<li><strong><code>*.lab.packetcraft.dev</code></strong>: <strong>tailnet-only.</strong> Grey-cloud (DNS-only) A records
+  in Cloudflare pointing at the private/Tailscale IPs, plus a Tailscale split-DNS
+  entry forwarding the zone to 1.1.1.1 so the OS resolver actually works.</li>
+</ul>
+<p>The correction that shaped this: <strong>MagicDNS can't hold arbitrary custom
+records.</strong> I'd assumed I could just use Tailscale's own DNS for the <code>lab.</code> names,
+but it doesn't work that way, so Cloudflare public DNS serves as the record
+store even for the tailnet-only names. The records just resolve to private IPs
+that only mean anything if you're on the tailnet.</p>
+<p>Two more decisions here:</p>
+<ul>
+<li><strong>Seafile stays on Cloudflare Tunnel</strong>, not Tailscale. It's a &gt;6-user use case
+  and that doesn't fit the tailnet model (I'd have to enroll every user's
+  device). Public tunnel is the right call for it.</li>
+<li>The <code>lab.</code> zone <strong>needs a real Let's Encrypt wildcard cert</strong>, not self-signed,
+  because <code>.dev</code> is HSTS-preloaded; browsers hard-block plaintext HTTP with no
+  click-through. Same HSTS lesson from the CI/CD week, now applying to the
+  private plane too.</li>
+</ul>
+<h2 id="3-wildcard-tls-via-cert-manager-lets-encrypt-dns-01">3. Wildcard TLS via cert-manager + Let's Encrypt DNS-01</h2>
+<p>To get that wildcard cert for <code>*.lab.packetcraft.dev</code>, I set up cert-manager with
+a DNS-01 challenge against Cloudflare. This is where I hit the most confusing
+debugging loop of the week, and the lesson is worth writing down carefully:</p>
+<p><strong>The Cloudflare API token SealedSecret has to live in the right namespace, and
+"the right namespace" is different for the issuer input vs the cert output.</strong></p>
+<ul>
+<li>The <strong>API token</strong> (the issuer's <em>input</em>) must be in the <strong><code>cert-manager</code></strong>
+  namespace, because cert-manager runs with
+  <code>--cluster-resource-namespace=$(POD_NAMESPACE)</code>, so a ClusterIssuer looks for
+  its credentials there.</li>
+<li>The <strong>cert output</strong> (for the TLSStore) lives in <strong><code>kube-system</code></strong>.</li>
+</ul>
+<p>I had the token sealed for the wrong namespace, so the DNS-01 challenge kept
+failing. Different rules for issuer-input vs cert-output is the thing to
+remember. (SealedSecrets are encrypted per namespace+name, so a namespace
+mismatch = decryption failure, full stop.)</p>
+<p>Also, embarrassingly simple: at one point the <strong>SealedSecret file was generated
+but never <code>kubectl apply</code>'d.</strong> Generating the sealed file isn't the same as
+applying it. Easy to lose an hour to that.</p>
+<h2 id="4-sealed-secrets-secrets-in-git-done-right">4. Sealed Secrets: secrets in Git, done right</h2>
+<p>Tied to the TLS work, I leaned into Sealed Secrets as the way to keep credentials
+in Git safely. The controller encrypts <code>SealedSecret</code> objects that only the
+in-cluster controller can decrypt, so they're safe to commit. Three disciplines
+this demands:</p>
+<ul>
+<li><strong>Namespace scoping</strong>: encrypted per namespace+name; mismatches silently fail
+  to decrypt (exactly what bit me with cert-manager).</li>
+<li><strong><code>existingSecret</code> pattern</strong>: migrate service credentials to reference a secret
+  instead of letting the Helm chart own them. Grafana's admin password is the
+  poster child (more on that in Week 6/7).</li>
+<li><strong>Back up the controller's private key</strong>: outside the cluster <em>and</em> outside
+  Git. If I lose it, every sealed secret is unrecoverable. The command:
+  <code>kubectl get secret -n kube-system -l sealedsecrets.bitnami.com/sealed-secrets-key -o yaml</code>.</li>
+</ul>
+<p>I confirmed I don't need a heavier secrets manager (Vault, External Secrets
+Operator) yet; those only earn their place if I need dynamic secrets, rotation,
+or audit logging. For obsync's Postgres creds and per-device tokens, Sealed
+Secrets is right.</p>
+<h2 id="5-adopting-hand-installed-helm-releases-into-gitops">5. Adopting hand-installed Helm releases into GitOps</h2>
+<p>I'd installed kube-prometheus-stack and ArgoCD itself by hand. This week I
+started adopting them into ArgoCD Applications so they're tracked, not drift.</p>
+<p>A couple of concrete snags:</p>
+<ul>
+<li><strong>Release-name mismatch nearly created a duplicate.</strong> The live
+  kube-prometheus-stack release is actually named <strong><code>kube-prom</code></strong>, not
+  <code>kube-prometheus-stack</code>. Adopting under the wrong name would have stood up a
+  second, conflicting release. Match the existing release name exactly.</li>
+<li><strong>The ArgoCD <code>server.insecure</code> flag goes under <code>configs.params</code></strong>, not under
+  <code>server:</code>. I had it in the wrong place. (It needs to run insecure/HTTP so
+  Traefik + Cloudflare own TLS, otherwise redirect loop, same lesson as the
+  CI/CD guide.)</li>
+</ul>
+<h3 id="the-gitops-pattern-this-clarified">The GitOps pattern this clarified</h3>
+<p>This is where I nailed down the repo conventions:</p>
+<ul>
+<li><strong>Pattern B (upstream Helm charts):</strong> just an <code>argocd/&lt;svc&gt;.yaml</code> Application
+  file. <strong>No <code>apps/&lt;svc&gt;/</code> folder needed.</strong></li>
+<li><strong><code>apps/&lt;svc&gt;/</code> only exists when I author manifests myself.</strong></li>
+<li><strong>Multi-source</strong> when a chart needs my own values + optional custom manifests:
+  chart repo + a <code>$values</code> ref from <code>homelab-cicd-config</code> + an optional custom
+  manifests source.</li>
+</ul>
+<h2 id="6-cleanup-orphaned-nginx-and-guestbook">6. Cleanup: orphaned nginx and guestbook</h2>
+<p>Housekeeping. The old <code>nginx</code> and <code>guestbook</code> test workloads were still running
+even though I thought I'd removed them. The lesson: <strong>deleting an ArgoCD
+Application does not cascade-prune the live resources</strong> unless specific conditions
+are met, so they were orphaned plain Kubernetes objects with no controller
+recreating them (and none resurrecting them either, since the Applications were
+already gone). I confirmed only <code>budget-app-dev</code> and <code>code-server</code> remained as
+Applications, then cleaned up with <code>kubectl delete ns nginx guestbook</code> and
+checked the <code>apps/nginx/</code> and <code>apps/guestbook/</code> folders were gone from the config
+repo so nothing could accidentally resurrect them.</p>
+<h2 id="what-i-locked-in-this-week">What I locked in this week</h2>
+<ul>
+<li><strong>Two-plane ingress:</strong> <code>*.packetcraft.dev</code> public via Cloudflare,
+  <code>*.lab.packetcraft.dev</code> tailnet-only via grey-cloud records + Tailscale
+  split-DNS. MagicDNS can't hold custom records; Cloudflare is the record store.</li>
+<li><strong>Wildcard Let's Encrypt cert</strong> for the <code>lab.</code> zone via cert-manager DNS-01. The
+  API token goes in <code>cert-manager</code>; the cert output in <code>kube-system</code>.</li>
+<li><strong>Sealed Secrets</strong> as the secrets layer, with the private-key backup rule and
+  the <code>existingSecret</code> migration pattern.</li>
+<li><strong>Pattern B / multi-source GitOps conventions</strong> written down. Adopting kube-prom
+  (as <code>kube-prom</code>) and ArgoCD into tracked Applications.</li>
+<li><strong>Orphan cleanup</strong> done; learned that deleting an Application ≠ pruning its
+  resources.</li>
+</ul>
+<h2 id="still-open-carried-into-next-weeks">Still open (carried into next weeks)</h2>
+<ul>
+<li>Grafana <code>lab.</code> IngressRoute is still hand-applied drift → needs to move to
+  <code>apps/monitoring-extras/</code>.</li>
+<li><strong>MetalLB advertising the Traefik VIP on legion</strong> (.249 showed up as an
+  EXTERNAL-IP), flagged as a risk <em>at this point</em> because legion was still
+  thought of as transient. (This becomes acceptable once legion is confirmed
+  always-on.)</li>
+<li>Grafana admin password → SealedSecret migration (<code>grafana.admin.existingSecret</code>).</li>
+<li>node-exporter DaemonSet on legion needs a toleration so a powered-down legion
+  doesn't hold monitoring at <code>Progressing</code>.</li>
+<li>kube-prom chart bump (85.0.2 → newer) deferred until after adoption.</li>
+<li>Renovate still not set up.</li>
+<li>The ArgoCD CRD <code>annotations: Too long</code> problem is looming (surfaces properly in
+  Week 6).</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

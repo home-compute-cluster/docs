@@ -1,0 +1,2069 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../../system-architecture/home-cluster/">
+      
+      
+        <link rel="next" href="../cicd-offtheshelf-software/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Pipeline Setup - Home Compute Cluster Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#gitops-cicd-pipeline-setup-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Home Compute Cluster Documentation" class="md-header__button md-logo" aria-label="Home Compute Cluster Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Home Compute Cluster Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Pipeline Setup
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Home Compute Cluster Documentation" class="md-nav__button md-logo" aria-label="Home Compute Cluster Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Home Compute Cluster Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Motivation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Motivation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../motivation/01-motivation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Why
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../motivation/02-planning-tradeoffs-choices/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trade-offs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../motivation/03-cost-value-singapore/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost vs Value
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system-architecture/home-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CI/CD
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CI/CD
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pipeline Setup
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pipeline Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-mental-model-read-once" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Mental model (read once)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-two-repo-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Two-repo layout
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Two-repo layout">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#app-repo-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        App repo layout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-repo-layout-grows-per-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Config repo layout (grows per service)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-config-repo-the-three-manifest-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Config repo: the three manifest files
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Config repo: the three manifest files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deploymentyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        deployment.yaml
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#serviceyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        service.yaml
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kustomizationyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        kustomization.yaml
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="kustomization.yaml">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gotchas-that-cause-silent-failures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gotchas that cause silent failures
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-app-repo-the-ci-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. App repo: the CI workflow
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-credentials-the-part-thats-easy-to-get-wrong" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Credentials (the part that's easy to get wrong)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Credentials (the part that&#39;s easy to get wrong)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-config_repo_token-one-time-reusable-across-all-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating CONFIG_REPO_TOKEN (one-time, reusable across all services)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#private-package-image-pull-secret" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Private package → image pull secret
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#private-config-repo-argocd-repo-creds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Private config repo → ArgoCD repo creds
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-cd-the-argocd-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. CD: the ArgoCD Application
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-ingress-optional-for-externally-reachable-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Ingress (optional, for externally-reachable services)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-end-to-end-test-proves-the-loop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. End-to-end test (proves the loop)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. End-to-end test (proves the loop)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prove-the-gitops-guarantee-self-heal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prove the GitOps guarantee (self-heal)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-new-service-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. New-service checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-common-failure-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Common failure modes
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cicd-offtheshelf-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Off-the-shelf Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../kubernetes-guides/k3s-kubernetes-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    K3s
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Containerization
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Containerization
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../containerization/dockerfile-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dockerfile Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../containerization/dynamic-dev-container-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dev Container Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Weekly Logs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Weekly Logs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-05-10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 01
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-05-14/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 02
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-07/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 03
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-08/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 04
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 05
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-21/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 06
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-26/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 07
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-07-01/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 08
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-07-08/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 09
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-07-15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 10
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-mental-model-read-once" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Mental model (read once)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-two-repo-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Two-repo layout
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Two-repo layout">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#app-repo-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        App repo layout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-repo-layout-grows-per-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Config repo layout (grows per service)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-config-repo-the-three-manifest-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Config repo: the three manifest files
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Config repo: the three manifest files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deploymentyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        deployment.yaml
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#serviceyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        service.yaml
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kustomizationyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        kustomization.yaml
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="kustomization.yaml">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gotchas-that-cause-silent-failures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gotchas that cause silent failures
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-app-repo-the-ci-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. App repo: the CI workflow
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-credentials-the-part-thats-easy-to-get-wrong" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Credentials (the part that's easy to get wrong)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Credentials (the part that&#39;s easy to get wrong)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-config_repo_token-one-time-reusable-across-all-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating CONFIG_REPO_TOKEN (one-time, reusable across all services)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#private-package-image-pull-secret" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Private package → image pull secret
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#private-config-repo-argocd-repo-creds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Private config repo → ArgoCD repo creds
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-cd-the-argocd-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. CD: the ArgoCD Application
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-ingress-optional-for-externally-reachable-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Ingress (optional, for externally-reachable services)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-end-to-end-test-proves-the-loop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. End-to-end test (proves the loop)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. End-to-end test (proves the loop)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prove-the-gitops-guarantee-self-heal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prove the GitOps guarantee (self-heal)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-new-service-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. New-service checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-common-failure-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Common failure modes
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="gitops-cicd-pipeline-setup-guide">GitOps CI/CD Pipeline — Setup Guide</h1>
+<p>A reusable template for wiring any custom-built service into the homelab's
+<code>git push → build → deploy</code> pipeline. Built around GitHub Actions (CI) +
+ArgoCD/Kustomize (CD) on K3s, with <code>cloudflared</code> + Traefik for ingress.</p>
+<p>The nginx test workload is used throughout as the worked example. To stand up a
+new service, copy the structure and substitute the placeholders marked
+<code>&lt;like-this&gt;</code>.</p>
+<hr />
+<h2 id="1-mental-model-read-once">1. Mental model (read once)</h2>
+<p>The pipeline has two halves that never talk to each other directly. They
+communicate only through the <strong>config repo</strong>.</p>
+<pre><code>  ┌──────────────┐  push code   ┌─────────────────┐
+  │  app repo    │ ───────────▶ │ GitHub Actions  │   CI
+  │ (source+CI)  │              │ build + push    │   (GitHub-hosted runner)
+  └──────────────┘              └────────┬────────┘
+                                         │ 1. push image:SHA
+                                         ▼
+                                   ┌───────────┐
+                                   │  ghcr.io  │
+                                   └───────────┘
+                                         │ 2. write SHA into manifest
+                                         ▼
+  ┌──────────────┐ ArgoCD watches ┌─────────────┐
+  │ config repo  │ ◀───────────── │  kustomize  │
+  │ (manifests)  │                │  edit image │
+  └──────┬───────┘                └─────────────┘
+         │ 3. reconcile
+         ▼
+  ┌──────────────────────────────┐
+  │ ArgoCD (in-cluster, always-on)│ ──▶ Deployment rolls to image:SHA   CD
+  └──────────────────────────────┘
+</code></pre>
+<ul>
+<li><strong>CI</strong> (GitHub runner): turns a commit into a tested, versioned image and
+  publishes it. Then writes the new image tag into the config repo. Has <strong>no
+  cluster access</strong>.</li>
+<li><strong>CD</strong> (ArgoCD, inside the cluster): watches the config repo and reconciles
+  the cluster to match it. <strong>Pulls</strong> desired state; nothing pushes into the
+  cluster from outside.</li>
+</ul>
+<p>Key rule: <strong>CD applies to everything you run; CI only applies to things you
+build.</strong> Off-the-shelf images (Jellyfin, Grafana) skip CI entirely — they need
+only a config-repo manifest + an ArgoCD Application.</p>
+<hr />
+<h2 id="2-two-repo-layout">2. Two-repo layout</h2>
+<p>Always use two repos. One repo causes an infinite loop (CI's write-back
+re-triggers CI).</p>
+<table>
+<thead>
+<tr>
+<th>Repo</th>
+<th>Role</th>
+<th>Who writes</th>
+<th>Who reads</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;service&gt;-app</code></td>
+<td>Source + CI workflow</td>
+<td>You (humans)</td>
+<td>GitHub Actions</td>
+</tr>
+<tr>
+<td><code>homelab-cicd-config</code></td>
+<td>K8s manifests</td>
+<td>GitHub Actions (bot)</td>
+<td>ArgoCD</td>
+</tr>
+</tbody>
+</table>
+<p>The config repo is shared across all services — each service gets its own
+subfolder under <code>apps/</code>.</p>
+<h3 id="app-repo-layout">App repo layout</h3>
+<pre><code>&lt;service&gt;-app/
+├── Dockerfile
+├── &lt;app source files&gt;
+└── .github/
+    └── workflows/
+        └── build.yaml
+</code></pre>
+<h3 id="config-repo-layout-grows-per-service">Config repo layout (grows per service)</h3>
+<pre><code>homelab-cicd-config/
+└── apps/
+    ├── nginx/
+    │   ├── kustomization.yaml
+    │   ├── deployment.yaml
+    │   └── service.yaml
+    └── &lt;service&gt;/
+        ├── kustomization.yaml
+        ├── deployment.yaml
+        └── service.yaml
+</code></pre>
+<hr />
+<h2 id="3-config-repo-the-three-manifest-files">3. Config repo: the three manifest files</h2>
+<p>Per service, under <code>apps/&lt;service&gt;/</code>.</p>
+<h3 id="deploymentyaml"><code>deployment.yaml</code></h3>
+<pre><code class="language-yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: &lt;service&gt;
+  namespace: &lt;service&gt;
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: &lt;service&gt;
+  template:
+    metadata:
+      labels:
+        app: &lt;service&gt;
+    spec:
+      # Pin to the always-on control-plane node (deus = the M910q).
+      # Omit or change for GPU/storage-bound workloads.
+      nodeSelector:
+        kubernetes.io/hostname: deus
+      containers:
+        - name: &lt;service&gt;
+          image: ghcr.io/&lt;owner-lowercase&gt;/&lt;service&gt;-app:latest  # tag rewritten by CI
+          ports:
+            - containerPort: &lt;port&gt;
+</code></pre>
+<h3 id="serviceyaml"><code>service.yaml</code></h3>
+<pre><code class="language-yaml">apiVersion: v1
+kind: Service
+metadata:
+  name: &lt;service&gt;
+  namespace: &lt;service&gt;
+spec:
+  selector:
+    app: &lt;service&gt;
+  ports:
+    - port: &lt;port&gt;
+      targetPort: &lt;port&gt;
+</code></pre>
+<h3 id="kustomizationyaml"><code>kustomization.yaml</code></h3>
+<pre><code class="language-yaml">apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: &lt;service&gt;
+resources:
+  - deployment.yaml
+  - service.yaml
+images:
+  - name: ghcr.io/&lt;owner-lowercase&gt;/&lt;service&gt;-app
+    newTag: latest   # CI overwrites this line via `kustomize edit set image`
+</code></pre>
+<blockquote>
+<p><strong>The <code>images:</code> block is the seam.</strong> CI runs <code>kustomize edit set image</code> which
+surgically rewrites <code>newTag</code> here. You never hand-edit the deployment's image
+line.</p>
+</blockquote>
+<h4 id="gotchas-that-cause-silent-failures">Gotchas that cause silent failures</h4>
+<ul>
+<li><strong>Filenames matter.</strong> Kustomize specifically reads the file named
+  <code>kustomization.yaml</code>. Don't swap file contents.</li>
+<li><strong>ghcr.io is all-lowercase.</strong> <code>&lt;owner-lowercase&gt;</code> must be lowercase even if
+  your GitHub login has capitals (<code>BarneyLaw</code> → <code>barneylaw</code>). <code>kustomize edit
+  set image</code> does a <strong>case-sensitive string match</strong> — a case mismatch matches
+  nothing and the tag silently never updates.</li>
+</ul>
+<hr />
+<h2 id="4-app-repo-the-ci-workflow">4. App repo: the CI workflow</h2>
+<p><code>.github/workflows/build.yaml</code>. Substitute <code>&lt;service&gt;</code> and confirm the config
+repo name.</p>
+<pre><code class="language-yaml">name: build-and-update-config
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+  packages: write          # lets the built-in GITHUB_TOKEN push to ghcr.io
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout app repo
+        uses: actions/checkout@v4
+
+      - name: Log in to ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push image
+        id: build
+        run: |
+          # force lowercase owner — ghcr.io rejects uppercase repo names
+          IMAGE=ghcr.io/$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')/&lt;service&gt;-app
+          SHA=${GITHUB_SHA::7}
+          docker build -t $IMAGE:$SHA -t $IMAGE:latest .
+          docker push $IMAGE:$SHA
+          docker push $IMAGE:latest
+          echo &quot;image=$IMAGE&quot; &gt;&gt; &quot;$GITHUB_OUTPUT&quot;
+          echo &quot;sha=$SHA&quot; &gt;&gt; &quot;$GITHUB_OUTPUT&quot;
+
+      - name: Checkout config repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/homelab-cicd-config
+          token: ${{ secrets.CONFIG_REPO_TOKEN }}
+          path: config
+
+      - name: Install kustomize
+        run: |
+          curl -s &quot;https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh&quot; | bash
+          sudo mv kustomize /usr/local/bin/
+
+      - name: Bump image tag
+        working-directory: config/apps/&lt;service&gt;
+        run: |
+          kustomize edit set image ${{ steps.build.outputs.image }}=${{ steps.build.outputs.image }}:${{ steps.build.outputs.sha }}
+
+      - name: Commit and push tag bump
+        working-directory: config
+        run: |
+          git config user.name  &quot;github-actions[bot]&quot;
+          git config user.email &quot;github-actions[bot]@users.noreply.github.com&quot;
+          git add apps/&lt;service&gt;/kustomization.yaml
+          git commit -m &quot;deploy: &lt;service&gt; ${{ steps.build.outputs.sha }}&quot; || echo &quot;no changes&quot;
+          git push
+</code></pre>
+<p>Image is tagged by <strong>short SHA</strong> (immutable, traceable) and <code>latest</code>
+(convenience). ArgoCD deploys the SHA, so every deploy is pinned to an exact
+build.</p>
+<hr />
+<h2 id="5-credentials-the-part-thats-easy-to-get-wrong">5. Credentials (the part that's easy to get wrong)</h2>
+<p>Three boundaries, each needs its own credential <strong>only when it crosses into
+private</strong>. Scope every credential to the minimum.</p>
+<table>
+<thead>
+<tr>
+<th>Boundary</th>
+<th>Credential</th>
+<th>Who creates it</th>
+<th>Needed when</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CI → ghcr.io (push image)</td>
+<td><code>GITHUB_TOKEN</code> (auto) + <code>packages: write</code></td>
+<td>GitHub, automatic</td>
+<td>always (just declare the permission)</td>
+</tr>
+<tr>
+<td>CI → config repo (write tag)</td>
+<td><code>CONFIG_REPO_TOKEN</code> (fine-grained PAT)</td>
+<td>You, by hand</td>
+<td>always (cross-repo write)</td>
+</tr>
+<tr>
+<td>Cluster → ghcr.io (pull image)</td>
+<td>image pull secret</td>
+<td>You</td>
+<td>only if package is <strong>private</strong></td>
+</tr>
+<tr>
+<td>ArgoCD → config repo (read)</td>
+<td>repo creds</td>
+<td>You</td>
+<td>only if config repo is <strong>private</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="creating-config_repo_token-one-time-reusable-across-all-services">Creating <code>CONFIG_REPO_TOKEN</code> (one-time, reusable across all services)</h3>
+<ol>
+<li>GitHub → avatar → <strong>Settings</strong> → <strong>Developer settings</strong>.</li>
+<li><strong>Personal access tokens → Fine-grained tokens → Generate new token</strong>.</li>
+<li><strong>Repository access:</strong> Only select repositories → <code>homelab-cicd-config</code>.</li>
+<li><strong>Permissions:</strong> Repository permissions → <strong>Contents → Read and write</strong>.
+   Nothing else.</li>
+<li>Generate, copy the <code>github_pat_...</code> value.</li>
+<li>In <strong>each</strong> <code>&lt;service&gt;-app</code> repo → Settings → Secrets and variables →
+   Actions → New repository secret. Name: <code>CONFIG_REPO_TOKEN</code>, value: the token.</li>
+</ol>
+<blockquote>
+<p>One PAT scoped to the config repo works for every app repo, since they all
+write to the same config repo. Add it as a secret in each app repo.</p>
+</blockquote>
+<h3 id="private-package-image-pull-secret">Private package → image pull secret</h3>
+<p>If the ghcr package is private (default), the cluster can't pull. Either make it
+public (Package → settings → Change visibility → Public), or:</p>
+<pre><code class="language-bash">kubectl create secret docker-registry ghcr-pull \
+  --namespace &lt;service&gt; \
+  --docker-server=ghcr.io \
+  --docker-username=&lt;owner&gt; \
+  --docker-password=&lt;PAT-with-read:packages&gt;
+</code></pre>
+<p>then add to the deployment pod spec:</p>
+<pre><code class="language-yaml">    spec:
+      imagePullSecrets:
+        - name: ghcr-pull
+</code></pre>
+<h3 id="private-config-repo-argocd-repo-creds">Private config repo → ArgoCD repo creds</h3>
+<pre><code class="language-bash">argocd repo add https://github.com/&lt;owner&gt;/homelab-cicd-config.git \
+  --username &lt;owner&gt; \
+  --password &lt;PAT-with-repo-read&gt;
+</code></pre>
+<hr />
+<h2 id="6-cd-the-argocd-application">6. CD: the ArgoCD Application</h2>
+<p>Per service. Save as <code>&lt;service&gt;-app.yaml</code>, apply with <code>kubectl apply -f</code>. For
+full GitOps, also commit this into the config repo (e.g. <code>argocd/&lt;service&gt;.yaml</code>)
+so ArgoCD's own app definitions are reproducible.</p>
+<pre><code class="language-yaml">apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: &lt;service&gt;
+  namespace: argocd          # the Application object lives in argocd's namespace
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/&lt;owner&gt;/homelab-cicd-config.git
+    targetRevision: main
+    path: apps/&lt;service&gt;     # the folder ArgoCD watches
+  destination:
+    server: https://kubernetes.default.svc   # &quot;this cluster&quot;
+    namespace: &lt;service&gt;     # where the workload's pods land
+  syncPolicy:
+    automated:
+      prune: true            # delete resources removed from Git
+      selfHeal: true         # revert manual drift back to Git's state
+    syncOptions:
+      - CreateNamespace=true # create the namespace if absent
+</code></pre>
+<pre><code class="language-bash">kubectl apply -f &lt;service&gt;-app.yaml
+</code></pre>
+<blockquote>
+<p><strong><code>repoURL</code> is the entire Gitea migration later</strong> — switch this one line to
+the Gitea URL, re-add repo creds, done.</p>
+</blockquote>
+<hr />
+<h2 id="7-ingress-optional-for-externally-reachable-services">7. Ingress (optional, for externally-reachable services)</h2>
+<p>Architecture: <code>cloudflared</code> (systemd on deus) → Traefik (<code>localhost:80</code>) →
+IngressRoute → service. The tunnel is a dumb pipe; Traefik is the routing brain.</p>
+<ol>
+<li>Add a public hostname to the deus tunnel in Cloudflare:
+   <code>&lt;service&gt;.packetcraft.dev</code> → <code>http://localhost:80</code>. Cloudflare auto-creates
+   a proxied CNAME and terminates TLS at its edge (real cert — required because
+   <code>.dev</code> is HSTS-preloaded and rejects self-signed).</li>
+<li>Create a Traefik IngressRoute:</li>
+</ol>
+<pre><code class="language-yaml">apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: &lt;service&gt;
+  namespace: &lt;service&gt;
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`&lt;service&gt;.packetcraft.dev`)
+      kind: Rule
+      services:
+        - name: &lt;service&gt;
+          port: &lt;port&gt;
+</code></pre>
+<p>Every new externally-exposed service = one CNAME (public hostname on the tunnel)
++ one IngressRoute. The tunnel config itself never changes again.</p>
+<blockquote>
+<p>If the app serves its own TLS / redirects to HTTPS internally (e.g. ArgoCD),
+run it in insecure/HTTP mode so Traefik+Cloudflare own TLS, or you get a
+redirect loop.</p>
+</blockquote>
+<hr />
+<h2 id="8-end-to-end-test-proves-the-loop">8. End-to-end test (proves the loop)</h2>
+<pre><code class="language-bash"># 1. make a visible change in the app repo, push to main
+#    (edit index.html / app source), git commit, git push
+
+# 2. GitHub Actions tab: build-and-update-config runs green
+#    - builds image:SHA, pushes to ghcr
+#    - commits &quot;deploy: &lt;service&gt; &lt;sha&gt;&quot; to homelab-cicd-config
+
+# 3. config repo: confirm the bot commit bumped newTag
+
+# 4. ArgoCD detects change (~3 min poll; force with `argocd app sync &lt;service&gt;`)
+kubectl get application &lt;service&gt; -n argocd      # Synced / Healthy
+kubectl get pods -n &lt;service&gt; -o wide            # new pod, on deus
+kubectl rollout status deployment/&lt;service&gt; -n &lt;service&gt;
+</code></pre>
+<h3 id="prove-the-gitops-guarantee-self-heal">Prove the GitOps guarantee (self-heal)</h3>
+<pre><code class="language-bash">kubectl scale deployment/&lt;service&gt; -n &lt;service&gt; --replicas=3
+# within ~1 min ArgoCD reverts to replicas=1 (the git-declared value)
+kubectl get deployment &lt;service&gt; -n &lt;service&gt;
+</code></pre>
+<hr />
+<h2 id="9-new-service-checklist">9. New-service checklist</h2>
+<p>For each new built-from-source service:</p>
+<ul>
+<li>[ ] Create <code>&lt;service&gt;-app</code> repo with <code>Dockerfile</code>, source, <code>.github/workflows/build.yaml</code>.</li>
+<li>[ ] Add <code>CONFIG_REPO_TOKEN</code> secret to the app repo.</li>
+<li>[ ] Substitute <code>&lt;service&gt;</code>, <code>&lt;port&gt;</code>, <code>&lt;owner-lowercase&gt;</code> in workflow + manifests.</li>
+<li>[ ] Add <code>apps/&lt;service&gt;/</code> (deployment, service, kustomization) to <code>homelab-cicd-config</code>.</li>
+<li>[ ] Push app repo → confirm Actions green → confirm bot commit in config repo.</li>
+<li>[ ] Make ghcr package public (or add pull secret).</li>
+<li>[ ] Apply the ArgoCD Application → confirm Synced/Healthy, pod Running.</li>
+<li>[ ] (Optional) Add tunnel hostname + IngressRoute for external access.</li>
+<li>[ ] Run the end-to-end test + self-heal proof.</li>
+</ul>
+<p>For off-the-shelf images (no source build): skip the app repo and CI entirely.
+Just add <code>apps/&lt;service&gt;/</code> to the config repo pointing at the public image, and
+apply the ArgoCD Application.</p>
+<hr />
+<h2 id="10-common-failure-modes">10. Common failure modes</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>repository name must be lowercase</code></td>
+<td>uppercase owner in image</td>
+<td>force lowercase with <code>tr</code> in workflow</td>
+</tr>
+<tr>
+<td>Build green but no deploy</td>
+<td>ArgoCD Application not created, or <code>images:</code> name mismatch (case)</td>
+<td>create Application; align <code>name:</code> exactly, lowercase</td>
+</tr>
+<tr>
+<td>Checkout config repo fails</td>
+<td>wrong repo name or missing/expired PAT</td>
+<td>fix <code>repository:</code>; regenerate <code>CONFIG_REPO_TOKEN</code></td>
+</tr>
+<tr>
+<td><code>ImagePullBackOff</code> / <code>ErrImagePull</code></td>
+<td>package is private</td>
+<td>make public or add image pull secret</td>
+</tr>
+<tr>
+<td>ArgoCD <code>Unknown</code> / repo error</td>
+<td>private config repo, no creds</td>
+<td><code>argocd repo add</code> with read PAT</td>
+</tr>
+<tr>
+<td>Browser HSTS / self-signed error on <code>.dev</code></td>
+<td>not going through the tunnel (stale hosts entry, DNS-only record)</td>
+<td>remove hosts entry; ensure proxied CNAME; verify edge cert with <code>curl -sv ... | grep issuer</code></td>
+</tr>
+<tr>
+<td>Redirect loop behind tunnel</td>
+<td>app serves its own HTTPS</td>
+<td>run app in insecure/HTTP mode</td>
+</tr>
+<tr>
+<td>Tag never updates</td>
+<td><code>kustomize edit set image</code> name mismatch</td>
+<td><code>name:</code> in kustomization must exactly match built image (case-sensitive)</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

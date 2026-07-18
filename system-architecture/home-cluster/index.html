@@ -1,0 +1,1552 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../../motivation/03-cost-value-singapore/">
+      
+      
+        <link rel="next" href="../../CICD/cicd-pipeline-setup-guide/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Architecture - Home Compute Cluster Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#homelab-kubernetes-platform-architecture" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Home Compute Cluster Documentation" class="md-header__button md-logo" aria-label="Home Compute Cluster Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Home Compute Cluster Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Architecture
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Home Compute Cluster Documentation" class="md-nav__button md-logo" aria-label="Home Compute Cluster Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Home Compute Cluster Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Motivation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Motivation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../motivation/01-motivation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Why
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../motivation/02-planning-tradeoffs-choices/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trade-offs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../motivation/03-cost-value-singapore/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost vs Value
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-node-inventory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Node inventory
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-network-topology" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Network topology
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-internal-cluster-topology" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Internal cluster topology
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-gitops-deployment-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. GitOps deployment flow
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-key-architectural-principles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Key architectural principles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-split-dns-tls-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Split DNS / TLS model
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-known-gaps-horizon" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Known gaps &amp; horizon
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CI/CD
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CI/CD
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CICD/cicd-pipeline-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pipeline Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CICD/cicd-offtheshelf-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Off-the-shelf Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../kubernetes-guides/k3s-kubernetes-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    K3s
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Containerization
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Containerization
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../containerization/dockerfile-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dockerfile Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../containerization/dynamic-dev-container-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dev Container Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Weekly Logs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Weekly Logs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-05-10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 01
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-05-14/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 02
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-07/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 03
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-08/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 04
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 05
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-21/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 06
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-26/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 07
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-07-01/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 08
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-07-08/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 09
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-07-15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 10
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-node-inventory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Node inventory
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-network-topology" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Network topology
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-internal-cluster-topology" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Internal cluster topology
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-gitops-deployment-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. GitOps deployment flow
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-key-architectural-principles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Key architectural principles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-split-dns-tls-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Split DNS / TLS model
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-known-gaps-horizon" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Known gaps &amp; horizon
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="homelab-kubernetes-platform-architecture">Homelab Kubernetes Platform — Architecture</h1>
+<p>A three-node K3s cluster running GitOps-managed services, with a split public/tailnet
+ingress model and Longhorn distributed storage. This document captures the network
+topology (how traffic reaches the cluster) and the internal cluster topology (how
+workloads, storage, and GitOps fit together).</p>
+<p><strong>Domains:</strong> <code>*.packetcraft.dev</code> (public, via Cloudflare Tunnel) · <code>*.lab.packetcraft.dev</code> (tailnet-only)
+<strong>Source of truth:</strong> <code>BarneyLaw/homelab-cicd-config</code> (GitHub) → ArgoCD</p>
+<hr />
+<h2 id="1-node-inventory">1. Node inventory</h2>
+<table>
+<thead>
+<tr>
+<th>Node</th>
+<th>Hardware</th>
+<th>IP</th>
+<th>Role</th>
+<th>Notable duties</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>deus</strong></td>
+<td>Lenovo M910q</td>
+<td><code>192.168.1.250</code></td>
+<td>K3s server (control plane) + always-on</td>
+<td>cloudflared, WireGuard, ArgoCD, Traefik pinned here; <strong>no Longhorn replicas</strong> (thermal)</td>
+</tr>
+<tr>
+<td><strong>nebula</strong></td>
+<td>i7-6700K desktop</td>
+<td><code>192.168.1.248</code></td>
+<td>Worker + always-on</td>
+<td>ZFS NAS (<code>tank</code>), Seafile (Compose), GTX 1080, Longhorn NVMe replica</td>
+</tr>
+<tr>
+<td><strong>legion</strong></td>
+<td>Laptop (battery removed)</td>
+<td><code>192.168.1.249</code></td>
+<td>Worker + always-on</td>
+<td>Longhorn SATA replica (<code>/var/lib/longhorn-disk-sda</code>), MetalLB VIP advertiser</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><code>legion</code> runs 24/7 — it is a permanent node, not a transient/WoL worker.</p>
+</blockquote>
+<hr />
+<h2 id="2-network-topology">2. Network topology</h2>
+<p>How the two ingress planes (public + private) reach a single Traefik routing brain.</p>
+<pre><code class="language-mermaid">flowchart TB
+    subgraph internet[&quot;🌐 Internet&quot;]
+        user_pub[&quot;Public user&lt;br/&gt;*.packetcraft.dev&quot;]
+        user_priv[&quot;You / admin devices&lt;br/&gt;*.lab.packetcraft.dev&quot;]
+    end
+
+    subgraph cf[&quot;Cloudflare Edge&quot;]
+        cf_tunnel[&quot;Cloudflare Tunnel&lt;br/&gt;(TLS terminated at edge)&quot;]
+        cf_dns_grey[&quot;Grey-cloud A records&lt;br/&gt;→ private 192.168.1.x IPs&quot;]
+    end
+
+    subgraph tailnet[&quot;Tailscale Tailnet&quot;]
+        ts_router[&quot;Subnet router on deus&lt;br/&gt;advertises 192.168.1.0/24&quot;]
+    end
+
+    wg[&quot;WireGuard&lt;br/&gt;UDP 51820&lt;br/&gt;(port-forwarded via Singtel ONR)&lt;br/&gt;high-throughput admin path&quot;]
+
+    subgraph lan[&quot;🏠 Home LAN — 192.168.1.0/24&quot;]
+        direction TB
+
+        subgraph deus_node[&quot;deus · 192.168.1.250 (control plane)&quot;]
+            cloudflared[&quot;cloudflared&lt;br/&gt;(outbound-only, dumb pipe)&quot;]
+            traefik[&quot;Traefik&lt;br/&gt;★ single routing brain&lt;br/&gt;IngressRoutes&quot;]
+            metallb_vip[&quot;MetalLB VIP&lt;br/&gt;(Traefik LoadBalancer)&quot;]
+        end
+
+        svc_pool[&quot;K3s Services / Pods&lt;br/&gt;(nebula · legion)&quot;]
+    end
+
+    user_pub --&gt;|&quot;outbound-only&lt;br/&gt;connection&quot;| cf_tunnel
+    cf_tunnel -.-&gt;|&quot;http://localhost:80&quot;| cloudflared
+    cloudflared --&gt; traefik
+
+    user_priv --&gt;|&quot;resolves to&lt;br/&gt;private IP&quot;| cf_dns_grey
+    cf_dns_grey -.-&gt;|&quot;routed over&quot;| ts_router
+    ts_router --&gt; metallb_vip
+    wg --&gt; metallb_vip
+    metallb_vip --&gt; traefik
+
+    traefik --&gt;|&quot;Host-based routing&quot;| svc_pool
+
+    classDef edge fill:#f38020,stroke:#c25e0d,color:#fff
+    classDef ts fill:#4b5563,stroke:#1f2937,color:#fff
+    classDef brain fill:#2563eb,stroke:#1e40af,color:#fff
+    classDef node fill:#e0e7ff,stroke:#6366f1,color:#111
+
+    class cf_tunnel,cf_dns_grey edge
+    class ts_router,wg ts
+    class traefik brain
+    class cloudflared,metallb_vip,svc_pool node
+</code></pre>
+<p><strong>Two ingress pipes, one brain.</strong> Cloudflare Tunnel (public, outbound-only, no open ports)
+and Tailscale/WireGuard (private) are <em>dumb pipes</em>. All routing logic lives in Traefik
+IngressRoutes. This is the single-routing-brain principle: per-app proxies are scoped to
+their own stack and never become a second general-purpose ingress.</p>
+<table>
+<thead>
+<tr>
+<th>Access path</th>
+<th>Domain</th>
+<th>TLS</th>
+<th>Reaches</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cloudflare Tunnel</td>
+<td><code>*.packetcraft.dev</code></td>
+<td>Cloudflare edge cert</td>
+<td>Public services</td>
+</tr>
+<tr>
+<td>Tailscale subnet router</td>
+<td><code>*.lab.packetcraft.dev</code></td>
+<td>Let's Encrypt wildcard (cert-manager DNS-01)</td>
+<td>Tailnet-only services</td>
+</tr>
+<tr>
+<td>WireGuard (UDP 51820)</td>
+<td>private IPs</td>
+<td>—</td>
+<td>High-throughput admin path</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="3-internal-cluster-topology">3. Internal cluster topology</h2>
+<p>Workloads, storage layers, GitOps, and node placement inside K3s.</p>
+<pre><code class="language-mermaid">flowchart TB
+    subgraph gitops[&quot;GitOps Control Loop&quot;]
+        direction LR
+        gh[&quot;GitHub&lt;br/&gt;homelab-cicd-config&lt;br/&gt;(source of truth)&quot;]
+        gha[&quot;GitHub Actions&lt;br/&gt;build → ghcr.io&lt;br/&gt;(SHA-tagged)&quot;]
+        argo[&quot;ArgoCD v3.4.3&lt;br/&gt;selfHeal: true&lt;br/&gt;prune: true&quot;]
+        gha --&gt;|&quot;write tag back&quot;| gh
+        gh --&gt;|&quot;watches / reconciles&quot;| argo
+    end
+
+    subgraph cluster[&quot;K3s Cluster&quot;]
+        direction TB
+
+        subgraph deus[&quot;deus · control plane (always-on)&quot;]
+            k3s_server[&quot;K3s server / etcd&lt;br/&gt;⚠ single-server SPOF&quot;]
+            traefik2[&quot;Traefik&lt;br/&gt;(routing brain)&quot;]
+            cloudflared2[&quot;cloudflared&quot;]
+            wg2[&quot;WireGuard&quot;]
+            argo2[&quot;ArgoCD&quot;]
+            note_deus[&quot;no Longhorn replicas&lt;br/&gt;(thermal)&quot;]
+        end
+
+        subgraph nebula[&quot;nebula · worker (always-on)&quot;]
+            neb_workloads[&quot;K3s workloads&quot;]
+            neb_nvme[&quot;Longhorn replica&lt;br/&gt;(dedicated NVMe, ext4)&quot;]
+            neb_compose[&quot;Docker Compose:&lt;br/&gt;Seafile 13 CE&lt;br/&gt;nvidia_gpu_exporter&lt;br/&gt;cloudflared (separate)&quot;]
+            neb_zfs[&quot;ZFS 'tank' pool&lt;br/&gt;NAS / backups / NFS&quot;]
+            neb_gpu[&quot;GTX 1080&quot;]
+        end
+
+        subgraph legion[&quot;legion · worker (always-on)&quot;]
+            leg_workloads[&quot;K3s workloads&quot;]
+            leg_sata[&quot;Longhorn replica&lt;br/&gt;(WD Red SA500 SATA, ext4)&quot;]
+            leg_metallb[&quot;MetalLB VIP advertiser&quot;]
+        end
+    end
+
+    subgraph storage[&quot;Storage Planes&quot;]
+        longhorn[&quot;Longhorn&lt;br/&gt;distributed block&lt;br/&gt;2 replicas → nebula + legion&quot;]
+        localpath[&quot;local-path&lt;br/&gt;(some workloads)&quot;]
+        zfs_nas[&quot;ZFS 'tank'&lt;br/&gt;NAS owns data&quot;]
+    end
+
+    subgraph obs[&quot;Observability&quot;]
+        prom[&quot;Prometheus&lt;br/&gt;(kube-prometheus-stack)&quot;]
+        graf[&quot;Grafana&quot;]
+        gpu_exp[&quot;nvidia_gpu_exporter&quot;]
+    end
+
+    argo ==&gt;|&quot;applies manifests&quot;| k3s_server
+    argo -.-&gt; neb_workloads
+    argo -.-&gt; leg_workloads
+
+    traefik2 --&gt; neb_workloads
+    traefik2 --&gt; leg_workloads
+
+    neb_nvme --&gt; longhorn
+    leg_sata --&gt; longhorn
+    neb_zfs --&gt; zfs_nas
+
+    prom --&gt; graf
+    neb_compose -.-&gt;|&quot;scraped by&quot;| prom
+    gpu_exp -.-&gt; prom
+
+    classDef control fill:#dbeafe,stroke:#2563eb,color:#111
+    classDef worker fill:#dcfce7,stroke:#16a34a,color:#111
+    classDef store fill:#fef3c7,stroke:#d97706,color:#111
+    classDef warn fill:#fee2e2,stroke:#dc2626,color:#111
+    classDef git fill:#ede9fe,stroke:#7c3aed,color:#111
+
+    class k3s_server,traefik2,cloudflared2,wg2,argo2 control
+    class neb_workloads,neb_nvme,neb_compose,neb_zfs,neb_gpu,leg_workloads,leg_sata,leg_metallb worker
+    class longhorn,localpath,zfs_nas store
+    class note_deus,k3s_server warn
+    class gh,gha,argo git
+</code></pre>
+<hr />
+<h2 id="4-gitops-deployment-flow">4. GitOps deployment flow</h2>
+<p>The <code>git push → build → deploy</code> loop that stands up every built-from-source service.</p>
+<pre><code class="language-mermaid">sequenceDiagram
+    autonumber
+    participant Dev as You (git push)
+    participant App as app repo
+    participant CI as GitHub Actions
+    participant GHCR as ghcr.io
+    participant Cfg as homelab-cicd-config
+    participant Argo as ArgoCD
+    participant K3s as K3s cluster
+
+    Dev-&gt;&gt;App: push to main
+    App-&gt;&gt;CI: trigger build.yaml
+    CI-&gt;&gt;GHCR: build + push image:SHA
+    CI-&gt;&gt;Cfg: kustomize edit set image → commit tag bump
+    Note over CI,Cfg: fine-grained PAT (Contents: RW)&lt;br/&gt;CI has NO cluster access
+    Argo-&gt;&gt;Cfg: watch / detect new commit (~3 min poll)
+    Argo-&gt;&gt;K3s: reconcile Deployment to image:SHA
+    K3s--&gt;&gt;Argo: Synced / Healthy
+    Note over Argo,K3s: selfHeal reverts manual drift&lt;br/&gt;prune removes deleted resources
+</code></pre>
+<p><strong>Two-repo split.</strong> CI writes to the config repo; ArgoCD reads from it. They never talk
+directly — a single repo would loop (CI's write-back re-triggers CI). Off-the-shelf images
+(Grafana, Jellyfin) skip CI entirely: just an <code>apps/&lt;svc&gt;/</code> manifest + ArgoCD Application.</p>
+<hr />
+<h2 id="5-key-architectural-principles">5. Key architectural principles</h2>
+<ul>
+<li><strong>NAS owns data, K3s owns services.</strong> Seafile lives on Compose for data-safety; ZFS <code>tank</code> on nebula holds durable state. Jellyfin placement remains open (GPU is on nebula, a Compose host).</li>
+<li><strong>Cloudflare Tunnel = dumb pipe, Traefik = routing brain.</strong> All routing logic in IngressRoutes; ingress pipes just feed it.</li>
+<li><strong>Single routing brain.</strong> Per-app proxies stay scoped to their stack — never a second general-purpose ingress.</li>
+<li><strong>Longhorn cannot use ZFS.</strong> Needs a dedicated disk formatted ext4/XFS at a stable mount, <code>multipathd</code> blacklisted. 2 replicas = the floor for node-independent redundancy.</li>
+<li><strong><code>selfHeal</code> + Helm-managed secrets = churn.</strong> Chart-owned credentials get reset on reconcile → migrate to <code>existingSecret</code> + SealedSecret.</li>
+<li><strong>Sealed Secrets key backup is critical.</strong> Losing the controller private key makes all sealed secrets unrecoverable.</li>
+<li><strong>Ansible below K3s, ArgoCD in-cluster.</strong> The two layers must not overlap.</li>
+</ul>
+<hr />
+<h2 id="6-split-dns-tls-model">6. Split DNS / TLS model</h2>
+<pre><code class="language-mermaid">flowchart LR
+    subgraph pub[&quot;Public plane&quot;]
+        p1[&quot;*.packetcraft.dev&quot;]
+        p2[&quot;Cloudflare proxied CNAME&lt;br/&gt;(orange cloud)&quot;]
+        p3[&quot;Tunnel → Traefik&quot;]
+        p1 --&gt; p2 --&gt; p3
+    end
+
+    subgraph priv[&quot;Tailnet plane&quot;]
+        t1[&quot;*.lab.packetcraft.dev&quot;]
+        t2[&quot;Grey-cloud A record&lt;br/&gt;→ private IP&quot;]
+        t3[&quot;Tailscale / WireGuard&lt;br/&gt;→ Traefik&quot;]
+        t4[&quot;Let's Encrypt wildcard&lt;br/&gt;cert-manager DNS-01&quot;]
+        t1 --&gt; t2 --&gt; t3
+        t4 -.-&gt;|&quot;serves cert for&quot;| t1
+    end
+
+    classDef pubc fill:#fed7aa,stroke:#ea580c,color:#111
+    classDef privc fill:#c7d2fe,stroke:#4f46e5,color:#111
+    class p1,p2,p3 pubc
+    class t1,t2,t3,t4 privc
+</code></pre>
+<hr />
+<h2 id="7-known-gaps-horizon">7. Known gaps &amp; horizon</h2>
+<p><strong>Open drift / gaps</strong>
+- Grafana <code>lab.</code> IngressRoute still hand-applied → move to <code>apps/monitoring-extras/</code>
+- Grafana admin password → SealedSecret migration pending
+- GitHub webhook for push-triggered ArgoCD sync not yet configured (currently poll-based)
+- Renovate not yet set up
+- code-server ambient credential leak fix deferred</p>
+<p><strong>On the horizon</strong>
+- <strong>Portfolio site</strong> (static + Go API + Postgres) — first real app, before obsync
+- <strong>obsync</strong> (Go backend + Postgres, both in K3s) — deferred to avoid layering Go + Postgres + custom protocol at once
+- <strong>Control-plane HA</strong> — single-server etcd is a known SPOF; endgame is 2–3 dedicated mini-PC server nodes
+- <strong>Longhorn backup target</strong> — NFS share on nebula's <code>tank</code>, to configure before any DB holds real data</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

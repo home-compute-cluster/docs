@@ -1,0 +1,2184 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../../kubernetes-guides/k3s-kubernetes-guide/">
+      
+      
+        <link rel="next" href="../dynamic-dev-container-setup-guide/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Dockerfile Guide - Home Compute Cluster Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#dockerfile-reference-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Home Compute Cluster Documentation" class="md-header__button md-logo" aria-label="Home Compute Cluster Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Home Compute Cluster Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Dockerfile Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Home Compute Cluster Documentation" class="md-nav__button md-logo" aria-label="Home Compute Cluster Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Home Compute Cluster Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Motivation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Motivation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../motivation/01-motivation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Why
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../motivation/02-planning-tradeoffs-choices/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trade-offs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../motivation/03-cost-value-singapore/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost vs Value
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system-architecture/home-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CI/CD
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CI/CD
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CICD/cicd-pipeline-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pipeline Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CICD/cicd-offtheshelf-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Off-the-shelf Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../kubernetes-guides/k3s-kubernetes-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    K3s
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Containerization
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Containerization
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dockerfile Guide
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dockerfile Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-how-a-dockerfile-actually-works-the-mental-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. How a Dockerfile actually works (the mental model)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-the-instructions-one-by-one" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. The instructions, one by one
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. The instructions, one by one">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#from-the-base-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FROM — the base image
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run-execute-a-command-at-build-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RUN — execute a command at build time
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#copy-copy-files-from-build-context-into-the-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COPY — copy files from build context into the image
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-copy-but-with-extra-magic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ADD — copy, but with extra magic
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workdir-set-the-working-directory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WORKDIR — set the working directory
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#env-set-environment-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ENV — set environment variables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#arg-build-time-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ARG — build-time variables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#expose-document-the-listening-port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXPOSE — document the listening port
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cmd-default-command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CMD — default command
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#entrypoint-the-fixed-executable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ENTRYPOINT — the fixed executable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-rest-briefly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The rest, briefly
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-the-cleanup-rule-why-images-bloat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. The cleanup rule (why images bloat)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-layer-caching-order-for-fast-rebuilds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Layer caching: order for fast rebuilds
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-choosing-a-base-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Choosing a base image
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-multi-stage-builds-the-big-one" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Multi-stage builds (the big one)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Multi-stage builds (the big one)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#go-service-tiny-final-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Go service → tiny final image
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#node-app-built-assets-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Node app → built assets only
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#python-app-slim-runtime" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Python app → slim runtime
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-worked-examples-by-use-case" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Worked examples by use case
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Worked examples by use case">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#static-site-nginx-serving-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Static site (nginx serving files)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#go-binary-with-subcommands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Go binary with subcommands
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a-compiled-tool-that-needs-a-shell-for-debugging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A compiled tool that needs a shell for debugging
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-security-and-correctness-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Security and correctness checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-quick-reference-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Quick reference table
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-how-a-dockerfile-fits-a-build-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. How a Dockerfile fits a build pipeline
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dynamic-dev-container-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dev Container Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Weekly Logs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Weekly Logs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-05-10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 01
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-05-14/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 02
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-07/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 03
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-08/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 04
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 05
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-21/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 06
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-06-26/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 07
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-07-01/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 08
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-07-08/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 09
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../weekly/2026-07-15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 10
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-how-a-dockerfile-actually-works-the-mental-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. How a Dockerfile actually works (the mental model)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-the-instructions-one-by-one" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. The instructions, one by one
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. The instructions, one by one">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#from-the-base-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FROM — the base image
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run-execute-a-command-at-build-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RUN — execute a command at build time
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#copy-copy-files-from-build-context-into-the-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COPY — copy files from build context into the image
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-copy-but-with-extra-magic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ADD — copy, but with extra magic
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workdir-set-the-working-directory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WORKDIR — set the working directory
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#env-set-environment-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ENV — set environment variables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#arg-build-time-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ARG — build-time variables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#expose-document-the-listening-port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXPOSE — document the listening port
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cmd-default-command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CMD — default command
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#entrypoint-the-fixed-executable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ENTRYPOINT — the fixed executable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-rest-briefly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The rest, briefly
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-the-cleanup-rule-why-images-bloat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. The cleanup rule (why images bloat)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-layer-caching-order-for-fast-rebuilds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Layer caching: order for fast rebuilds
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-choosing-a-base-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Choosing a base image
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-multi-stage-builds-the-big-one" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Multi-stage builds (the big one)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Multi-stage builds (the big one)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#go-service-tiny-final-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Go service → tiny final image
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#node-app-built-assets-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Node app → built assets only
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#python-app-slim-runtime" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Python app → slim runtime
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-worked-examples-by-use-case" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Worked examples by use case
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Worked examples by use case">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#static-site-nginx-serving-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Static site (nginx serving files)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#go-binary-with-subcommands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Go binary with subcommands
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a-compiled-tool-that-needs-a-shell-for-debugging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A compiled tool that needs a shell for debugging
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-security-and-correctness-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Security and correctness checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-quick-reference-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Quick reference table
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-how-a-dockerfile-fits-a-build-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. How a Dockerfile fits a build pipeline
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="dockerfile-reference-guide">Dockerfile Reference Guide</h1>
+<p>A practical reference for writing Dockerfiles across common use cases. The goal
+throughout is the same: produce a <strong>small, reproducible, cache-friendly</strong> image,
+whether you're building for a CI pipeline, a registry push, or a Kubernetes
+cluster.</p>
+<hr />
+<h2 id="1-how-a-dockerfile-actually-works-the-mental-model">1. How a Dockerfile actually works (the mental model)</h2>
+<p>A Dockerfile is a sequence of instructions. Each instruction that changes the
+filesystem creates a <strong>layer</strong> — an immutable diff stacked on the previous one.
+The final image is all layers stacked together.</p>
+<p>Two consequences drive almost every best practice:</p>
+<ul>
+<li><strong>Layers are cached.</strong> On rebuild, Docker reuses a cached layer if the
+  instruction <em>and all instructions before it</em> are unchanged. The moment one
+  instruction's inputs change, that layer and everything after it rebuild. This
+  is why instruction <em>ordering</em> matters so much: put rarely-changing things
+  (dependency installs) before frequently-changing things (your source code).</li>
+<li><strong>Layers only add, never subtract.</strong> Deleting a file in a later layer doesn't
+  shrink the image — the bytes still exist in the earlier layer. To actually
+  remove something, it must be cleaned up <em>within the same instruction</em> that
+  created it (or avoided via multi-stage builds).</li>
+</ul>
+<p>A build runs in a temporary container per instruction; the result is committed
+as a layer, the container is discarded, and the next instruction starts from
+that layer.</p>
+<hr />
+<h2 id="2-the-instructions-one-by-one">2. The instructions, one by one</h2>
+<h3 id="from-the-base-image"><code>FROM</code> — the base image</h3>
+<p>Starts every build (or every <em>stage</em> of a multi-stage build). Defines the
+starting filesystem and OS userland.</p>
+<pre><code class="language-dockerfile">FROM nginx:1.27-alpine
+FROM golang:1.23 AS builder        # named stage, for multi-stage
+FROM scratch                       # empty — literally nothing
+</code></pre>
+<ul>
+<li><strong>Pin a specific tag</strong>, never bare <code>latest</code>. <code>nginx:1.27-alpine</code> is
+  reproducible; <code>nginx</code> silently changes under you and breaks any "exact build"
+  guarantee your pipeline depends on.</li>
+<li>For maximum reproducibility, pin by digest: <code>FROM nginx:1.27-alpine@sha256:...</code>.</li>
+<li><code>-alpine</code>, <code>-slim</code>, and <code>scratch</code> variants are progressively smaller. More on
+  base-image choice in §5.</li>
+</ul>
+<h3 id="run-execute-a-command-at-build-time"><code>RUN</code> — execute a command at build time</h3>
+<p>Runs a shell command and commits the result as a layer. This is where you
+install packages, compile code, create directories.</p>
+<pre><code class="language-dockerfile">RUN apt-get update &amp;&amp; apt-get install -y --no-install-recommends curl \
+    &amp;&amp; rm -rf /var/lib/apt/lists/*
+</code></pre>
+<p>Two forms:</p>
+<ul>
+<li><strong>Shell form:</strong> <code>RUN apt-get update</code> — runs via <code>/bin/sh -c</code>. Supports <code>&amp;&amp;</code>,
+  pipes, variable expansion.</li>
+<li><strong>Exec form:</strong> <code>RUN ["executable", "arg1", "arg2"]</code> — no shell, no <code>&amp;&amp;</code>. Rare
+  for <code>RUN</code>; common for <code>CMD</code>/<code>ENTRYPOINT</code>.</li>
+</ul>
+<p>Chain related commands with <code>&amp;&amp;</code> and clean up in the same <code>RUN</code> (see §3), since
+a separate <code>RUN rm ...</code> can't shrink the earlier layer.</p>
+<h3 id="copy-copy-files-from-build-context-into-the-image"><code>COPY</code> — copy files from build context into the image</h3>
+<pre><code class="language-dockerfile">COPY index.html /usr/share/nginx/html/index.html
+COPY go.mod go.sum ./          # copy just deps first (cache trick, §4)
+COPY . .                       # copy everything
+</code></pre>
+<ul>
+<li>The <strong>build context</strong> is the directory you pass to <code>docker build</code> (usually
+  <code>.</code>). <code>COPY</code> can only see files inside it — you can't <code>COPY /etc/passwd</code>.</li>
+<li>Prefer <code>COPY</code> over <code>ADD</code> for plain files. <code>COPY</code> does exactly one thing.</li>
+</ul>
+<h3 id="add-copy-but-with-extra-magic"><code>ADD</code> — copy, but with extra magic</h3>
+<p><code>ADD</code> does what <code>COPY</code> does, plus: auto-extracts local tarballs, and can fetch
+URLs. The magic is usually a footgun.</p>
+<pre><code class="language-dockerfile">ADD project.tar.gz /app/       # auto-extracts the tarball
+</code></pre>
+<ul>
+<li>Use <code>ADD</code> <strong>only</strong> when you specifically want tarball auto-extraction.</li>
+<li>For remote files, prefer <code>RUN curl</code>/<code>wget</code> (explicit, lets you verify
+  checksums and clean up in one layer). Don't use <code>ADD &lt;url&gt;</code>.</li>
+</ul>
+<h3 id="workdir-set-the-working-directory"><code>WORKDIR</code> — set the working directory</h3>
+<pre><code class="language-dockerfile">WORKDIR /app
+</code></pre>
+<p>Sets the cwd for subsequent <code>RUN</code>, <code>CMD</code>, <code>ENTRYPOINT</code>, <code>COPY</code>, <code>ADD</code>. Creates
+the directory if absent. Use it instead of <code>RUN cd /app</code> — <code>cd</code> in a <code>RUN</code>
+doesn't persist to the next instruction (each <code>RUN</code> is a fresh shell).</p>
+<h3 id="env-set-environment-variables"><code>ENV</code> — set environment variables</h3>
+<pre><code class="language-dockerfile">ENV APP_PORT=8080 \
+    LOG_LEVEL=info
+</code></pre>
+<p>Persists into the running container (visible to your process). Use for runtime
+config defaults. For build-time-only values, prefer <code>ARG</code>.</p>
+<h3 id="arg-build-time-variables"><code>ARG</code> — build-time variables</h3>
+<pre><code class="language-dockerfile">ARG GO_VERSION=1.23
+FROM golang:${GO_VERSION}
+
+ARG BUILD_ID                   # passed via --build-arg BUILD_ID=...
+RUN echo &quot;building $BUILD_ID&quot;
+</code></pre>
+<ul>
+<li>Only exists during the build; <strong>not</strong> present in the running container.</li>
+<li>An <code>ARG</code> before the first <code>FROM</code> is special — it can parameterize the base
+  image, but is out of scope for stages unless re-declared.</li>
+<li>Don't pass secrets via <code>ARG</code> — they're visible in image history. Use
+  <code>RUN --mount=type=secret</code> instead (§6).</li>
+</ul>
+<h3 id="expose-document-the-listening-port"><code>EXPOSE</code> — document the listening port</h3>
+<pre><code class="language-dockerfile">EXPOSE 80
+</code></pre>
+<p>Pure documentation/metadata. It does <strong>not</strong> publish the port — that's
+<code>-p</code> at run time, or a Kubernetes Service. Worth including so the image is
+self-describing (and whoever wires up ingress knows the port).</p>
+<h3 id="cmd-default-command"><code>CMD</code> — default command</h3>
+<pre><code class="language-dockerfile">CMD [&quot;nginx&quot;, &quot;-g&quot;, &quot;daemon off;&quot;]
+</code></pre>
+<p>The default process the container runs. Overridable at run time
+(<code>docker run image &lt;other-command&gt;</code>). Prefer <strong>exec form</strong> (JSON array) so your
+process is PID 1 and receives signals (clean <code>SIGTERM</code> shutdown — matters for
+Kubernetes pod termination). Shell form (<code>CMD nginx -g ...</code>) wraps your process
+in <code>/bin/sh</code>, which swallows signals.</p>
+<h3 id="entrypoint-the-fixed-executable"><code>ENTRYPOINT</code> — the fixed executable</h3>
+<pre><code class="language-dockerfile">ENTRYPOINT [&quot;/app/server&quot;]
+CMD [&quot;serve&quot;]                  # default args, appended to ENTRYPOINT
+</code></pre>
+<p><code>ENTRYPOINT</code> sets the executable that always runs; <code>CMD</code> provides default
+<em>arguments</em> to it. <code>docker run image migrate</code> would run <code>/app/server migrate</code>.
+This <code>ENTRYPOINT</code> + <code>CMD</code> pairing is the idiomatic pattern for a single binary
+that exposes multiple subcommands (e.g. a server with <code>serve</code> / <code>migrate</code> /
+<code>health</code> verbs).</p>
+<h3 id="the-rest-briefly">The rest, briefly</h3>
+<ul>
+<li><strong><code>USER</code></strong> — drop to a non-root user. <code>USER 1000</code> or <code>USER appuser</code>. Do this
+  for anything you expose; running as root in-container is a needless risk.</li>
+<li><strong><code>VOLUME</code></strong> — declares a mount point for external data. In Kubernetes you
+  manage this via PVCs instead, so you rarely need <code>VOLUME</code> in cluster images.</li>
+<li><strong><code>HEALTHCHECK</code></strong> — a command Docker runs to test liveness. In Kubernetes the
+  kubelet's liveness/readiness probes supersede this, so it's often omitted for
+  cluster workloads.</li>
+<li><strong><code>LABEL</code></strong> — metadata key/values. Useful for
+  <code>org.opencontainers.image.source</code> so a registry (e.g. ghcr.io) links the
+  package back to its source repo.</li>
+<li><strong><code>SHELL</code></strong> — change the shell used by shell-form <code>RUN</code> (e.g. to <code>bash</code>).
+  Rarely needed.</li>
+<li><strong><code>ONBUILD</code></strong> — defers an instruction to child images. Niche; mostly avoid.</li>
+<li><strong><code>STOPSIGNAL</code></strong> — overrides the signal sent to stop the container. Rarely
+  needed.</li>
+</ul>
+<hr />
+<h2 id="3-the-cleanup-rule-why-images-bloat">3. The cleanup rule (why images bloat)</h2>
+<p>Because layers only add, you must clean up <strong>inside the same <code>RUN</code></strong>:</p>
+<pre><code class="language-dockerfile"># GOOD — apt cache removed in the same layer it was created
+RUN apt-get update \
+    &amp;&amp; apt-get install -y --no-install-recommends curl ca-certificates \
+    &amp;&amp; rm -rf /var/lib/apt/lists/*
+</code></pre>
+<pre><code class="language-dockerfile"># BAD — the cache bytes are already committed to an earlier layer;
+# this rm shrinks nothing.
+RUN apt-get update &amp;&amp; apt-get install -y curl
+RUN rm -rf /var/lib/apt/lists/*
+</code></pre>
+<p>Same logic for: <code>pip install --no-cache-dir</code>, <code>npm ci &amp;&amp; npm cache clean
+--force</code>, <code>go build</code> caches, downloaded tarballs you extracted then deleted.
+<code>--no-install-recommends</code> (apt) avoids pulling optional extras you don't need.</p>
+<hr />
+<h2 id="4-layer-caching-order-for-fast-rebuilds">4. Layer caching: order for fast rebuilds</h2>
+<p>The single highest-leverage technique. Copy and install <strong>dependencies before
+source code</strong>, because deps change rarely and source changes every commit:</p>
+<pre><code class="language-dockerfile"># Node example
+WORKDIR /app
+COPY package.json package-lock.json ./   # changes rarely
+RUN npm ci                               # cached unless lockfile changes
+COPY . .                                 # changes every push
+RUN npm run build
+</code></pre>
+<pre><code class="language-dockerfile"># Go example
+WORKDIR /src
+COPY go.mod go.sum ./                     # changes rarely
+RUN go mod download                       # cached unless go.mod/sum change
+COPY . .                                  # changes every push
+RUN go build -o /app/server ./cmd/server
+</code></pre>
+<p>If you wrote <code>COPY . .</code> <em>before</em> the dependency install, every one-character
+source edit would invalidate the install layer and re-download all dependencies
+— turning a 5-second rebuild into minutes. On a CI runner that's build minutes
+and queue time billed directly.</p>
+<hr />
+<h2 id="5-choosing-a-base-image">5. Choosing a base image</h2>
+<table>
+<thead>
+<tr>
+<th>Base</th>
+<th>Size</th>
+<th>When</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Full distro (<code>debian</code>, <code>ubuntu</code>, <code>golang</code>)</td>
+<td>Large (100s of MB)</td>
+<td>Build stages; when you need a full toolchain</td>
+</tr>
+<tr>
+<td><code>-slim</code> (<code>python:3.12-slim</code>, <code>debian:slim</code>)</td>
+<td>Medium</td>
+<td>Runtime when you need glibc + a package manager but not the full distro</td>
+</tr>
+<tr>
+<td><code>-alpine</code> (<code>nginx:1.27-alpine</code>)</td>
+<td>Small (~5–50 MB)</td>
+<td>Runtime; musl libc. Watch for musl-vs-glibc quirks with some binaries/wheels</td>
+</tr>
+<tr>
+<td><code>gcr.io/distroless/*</code></td>
+<td>Small, no shell</td>
+<td>Runtime for compiled binaries; minimal attack surface, no shell to exec into</td>
+</tr>
+<tr>
+<td><code>scratch</code></td>
+<td>Empty</td>
+<td>Fully static binaries (typical static Go); nothing but your binary</td>
+</tr>
+</tbody>
+</table>
+<p>Trade-off: smaller bases pull faster (shorter <code>ImagePullBackOff</code> window on
+Kubernetes), have fewer CVEs, but give you less to debug with (no shell in
+<code>scratch</code>/distroless). For a static Go service, <code>scratch</code> or <code>distroless/static</code>
+is ideal. For nginx serving static files, <code>nginx:1.27-alpine</code> is the standard.</p>
+<hr />
+<h2 id="6-multi-stage-builds-the-big-one">6. Multi-stage builds (the big one)</h2>
+<p>Build in a fat image with the full toolchain; ship only the artifact in a tiny
+image. This is the most important pattern for compiled languages.</p>
+<h3 id="go-service-tiny-final-image">Go service → tiny final image</h3>
+<pre><code class="language-dockerfile"># ---- build stage: has the Go toolchain ----
+FROM golang:1.23 AS builder
+WORKDIR /src
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+# CGO_ENABLED=0 makes a fully static binary that runs on scratch
+RUN CGO_ENABLED=0 GOOS=linux go build -o /out/server ./cmd/server
+
+# ---- final stage: just the binary ----
+FROM scratch
+COPY --from=builder /out/server /server
+# bring CA certs if the binary makes outbound HTTPS calls
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+EXPOSE 8080
+ENTRYPOINT [&quot;/server&quot;]
+CMD [&quot;serve&quot;]
+</code></pre>
+<p>The <code>golang:1.23</code> toolchain (hundreds of MB) never ships. The final image is
+your binary plus certs — often under 20 MB. <code>COPY --from=builder</code> is the key:
+it pulls a file <em>out</em> of an earlier stage into the final one.</p>
+<h3 id="node-app-built-assets-only">Node app → built assets only</h3>
+<pre><code class="language-dockerfile">FROM node:22-slim AS build
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY . .
+RUN npm run build              # produces ./dist
+
+FROM nginx:1.27-alpine
+COPY --from=build /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD [&quot;nginx&quot;, &quot;-g&quot;, &quot;daemon off;&quot;]
+</code></pre>
+<p>A static-site generator (Hugo, Astro, plain webpack/Vite) fits this exactly: a
+<code>build</code> stage runs the generator, the final stage is nginx serving the output.</p>
+<h3 id="python-app-slim-runtime">Python app → slim runtime</h3>
+<pre><code class="language-dockerfile">FROM python:3.12-slim AS build
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
+
+FROM python:3.12-slim
+COPY --from=build /install /usr/local
+COPY . /app
+WORKDIR /app
+EXPOSE 8000
+CMD [&quot;python&quot;, &quot;-m&quot;, &quot;myapp&quot;]
+</code></pre>
+<hr />
+<h2 id="7-worked-examples-by-use-case">7. Worked examples by use case</h2>
+<h3 id="static-site-nginx-serving-files">Static site (nginx serving files)</h3>
+<pre><code class="language-dockerfile">FROM nginx:1.27-alpine
+COPY index.html /usr/share/nginx/html/index.html
+# custom nginx config if you need routing/headers:
+# COPY nginx.conf /etc/nginx/conf.d/default.conf
+EXPOSE 80
+CMD [&quot;nginx&quot;, &quot;-g&quot;, &quot;daemon off;&quot;]
+</code></pre>
+<p><code>daemon off;</code> is required — nginx daemonizes by default, which would make PID 1
+exit and kill the container. This keeps it in the foreground.</p>
+<h3 id="go-binary-with-subcommands">Go binary with subcommands</h3>
+<p>Use the multi-stage Go pattern in §6. The <code>ENTRYPOINT ["/server"]</code> + <code>CMD
+["serve"]</code> shape means:</p>
+<ul>
+<li>default run → <code>/server serve</code></li>
+<li>a one-off Job that overrides <code>CMD</code> with <code>["migrate"]</code> → <code>/server migrate</code></li>
+</ul>
+<p>This maps cleanly onto any single binary that exposes multiple verbs
+(<code>serve</code> / <code>migrate</code> / <code>health</code>), which is a common shape for a service that
+ships its own admin commands.</p>
+<h3 id="a-compiled-tool-that-needs-a-shell-for-debugging">A compiled tool that needs a shell for debugging</h3>
+<p>If <code>scratch</code> is too austere (you want to <code>kubectl exec</code> in and poke around),
+use <code>distroless</code> with a debug variant, or <code>alpine</code>:</p>
+<pre><code class="language-dockerfile">FROM golang:1.23 AS builder
+WORKDIR /src
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN CGO_ENABLED=0 go build -o /out/app ./cmd/app
+
+FROM alpine:3.20
+RUN apk add --no-cache ca-certificates
+COPY --from=builder /out/app /usr/local/bin/app
+USER 1000
+ENTRYPOINT [&quot;app&quot;]
+</code></pre>
+<p><code>alpine</code> gives you a shell and <code>apk</code> while staying small — a good default while
+you're still iterating on and debugging a service, before you tighten it down to
+<code>scratch</code>/distroless for production.</p>
+<hr />
+<h2 id="8-security-and-correctness-checklist">8. Security and correctness checklist</h2>
+<ul>
+<li><strong>Run as non-root.</strong> Add <code>USER</code> once the process doesn't need root. Create a
+  user in the build if needed: <code>RUN adduser -D -u 1000 app</code> then <code>USER app</code>.</li>
+<li><strong>Pin base image tags</strong> (and ideally digests) — reproducibility.</li>
+<li><strong>Don't bake secrets in.</strong> Not via <code>ENV</code>, not via <code>ARG</code>, not <code>COPY .env</code>.
+  They persist in image layers/history. Use Kubernetes Secrets at runtime, or
+  BuildKit secret mounts at build time:
+  <code>dockerfile
+  RUN --mount=type=secret,id=npmrc,target=/root/.npmrc npm ci</code></li>
+<li><strong>Use a <code>.dockerignore</code>.</strong> Keeps junk (<code>.git</code>, <code>node_modules</code>, <code>*.md</code>, local
+  env files) out of the build context — faster builds, smaller context, no
+  accidental secret leakage:
+  <code>.git
+  node_modules
+  *.log
+  .env</code></li>
+<li><strong>Exec form for <code>CMD</code>/<code>ENTRYPOINT</code></strong> so signals reach your process (clean pod
+  termination on Kubernetes).</li>
+<li><strong>Minimal final image</strong> — fewer packages, fewer CVEs, faster pulls.</li>
+</ul>
+<hr />
+<h2 id="9-quick-reference-table">9. Quick reference table</h2>
+<table>
+<thead>
+<tr>
+<th>Instruction</th>
+<th>Purpose</th>
+<th>Key gotcha</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FROM</code></td>
+<td>Base image / start a stage</td>
+<td>Pin the tag; never bare <code>latest</code></td>
+</tr>
+<tr>
+<td><code>RUN</code></td>
+<td>Execute at build time → new layer</td>
+<td>Clean up in the <em>same</em> <code>RUN</code></td>
+</tr>
+<tr>
+<td><code>COPY</code></td>
+<td>Copy context files in</td>
+<td>Source must be inside build context</td>
+</tr>
+<tr>
+<td><code>ADD</code></td>
+<td>Copy + tar-extract / URL fetch</td>
+<td>Avoid unless you want tar extraction</td>
+</tr>
+<tr>
+<td><code>WORKDIR</code></td>
+<td>Set cwd</td>
+<td>Use instead of <code>RUN cd</code> (cd doesn't persist)</td>
+</tr>
+<tr>
+<td><code>ENV</code></td>
+<td>Runtime env var</td>
+<td>Persists into the container</td>
+</tr>
+<tr>
+<td><code>ARG</code></td>
+<td>Build-time var</td>
+<td>Not in the running container; not for secrets</td>
+</tr>
+<tr>
+<td><code>EXPOSE</code></td>
+<td>Document a port</td>
+<td>Doesn't publish anything</td>
+</tr>
+<tr>
+<td><code>CMD</code></td>
+<td>Default command/args</td>
+<td>Exec form for signals; overridable</td>
+</tr>
+<tr>
+<td><code>ENTRYPOINT</code></td>
+<td>Fixed executable</td>
+<td>Pair with <code>CMD</code> for default args</td>
+</tr>
+<tr>
+<td><code>USER</code></td>
+<td>Drop privileges</td>
+<td>Set before the process runs</td>
+</tr>
+<tr>
+<td><code>LABEL</code></td>
+<td>Metadata</td>
+<td><code>image.source</code> links registry package to repo</td>
+</tr>
+<tr>
+<td><code>HEALTHCHECK</code></td>
+<td>Liveness probe</td>
+<td>K8s probes usually supersede</td>
+</tr>
+<tr>
+<td><code>VOLUME</code></td>
+<td>External mount point</td>
+<td>Use PVCs in K8s instead</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="10-how-a-dockerfile-fits-a-build-pipeline">10. How a Dockerfile fits a build pipeline</h2>
+<p>A typical CI step builds from the repo root: <code>docker build -t $IMAGE:$SHA -t
+$IMAGE:latest .</code>. So the Dockerfile lives at the repo root, sees that directory
+as its build context, and should:</p>
+<ol>
+<li><strong>Pin its base image</strong> — the image content becomes as reproducible as the SHA
+   tag, so a given commit always produces a functionally identical image.</li>
+<li><strong>Order deps-before-source</strong> so runner build minutes stay low.</li>
+<li><strong>Multi-stage down to a small final image</strong> so <code>ImagePullBackOff</code> windows are
+   short and the pull onto each node is quick.</li>
+<li><strong>Add <code>LABEL org.opencontainers.image.source=https://github.com/&lt;owner&gt;/&lt;repo&gt;</code></strong>
+   so the registry package auto-links back to the source repo.</li>
+</ol>
+<p>Off-the-shelf images (databases, Grafana, media servers, etc.) have no
+Dockerfile at all — they skip the build step entirely and are referenced
+directly by their upstream image tag in your deployment manifests.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

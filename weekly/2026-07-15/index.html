@@ -1,0 +1,1573 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../2026-07-08/">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Week 10 - Home Compute Cluster Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#week-10-longhorn-disks-live-the-database-lands-and-the-loose-ends-get-tied" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Home Compute Cluster Documentation" class="md-header__button md-logo" aria-label="Home Compute Cluster Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Home Compute Cluster Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Week 10
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Home Compute Cluster Documentation" class="md-nav__button md-logo" aria-label="Home Compute Cluster Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Home Compute Cluster Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Motivation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Motivation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../motivation/01-motivation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Why
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../motivation/02-planning-tradeoffs-choices/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trade-offs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../motivation/03-cost-value-singapore/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost vs Value
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system-architecture/home-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CI/CD
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CI/CD
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CICD/cicd-pipeline-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pipeline Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CICD/cicd-offtheshelf-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Off-the-shelf Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../kubernetes-guides/k3s-kubernetes-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    K3s
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Containerization
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Containerization
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../containerization/dockerfile-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dockerfile Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../containerization/dynamic-dev-container-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dev Container Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Weekly Logs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Weekly Logs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-05-10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 01
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-05-14/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 02
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-06-07/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 03
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-06-08/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 04
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-06-15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 05
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-06-21/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 06
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-06-26/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 07
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-07-01/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 08
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-07-08/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 09
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 10
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 10
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-longhorn-disks-physically-installed-and-configured" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Longhorn disks physically installed and configured
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-bringing-longhorn-itself-under-gitops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Bringing Longhorn itself under GitOps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-killing-the-grafana-password-loop-for-good" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Killing the Grafana password loop for good
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-the-argocd-crd-too-long-problem-resolved" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. The ArgoCD CRD Too long problem: resolved
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-the-database-lands-cloudnativepg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. The database lands: CloudNativePG
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. The database lands: CloudNativePG">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#backups-garage-over-minio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backups: Garage over MinIO
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#infrastructure-gap-audit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Infrastructure gap audit
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-confronting-the-deus-single-point-of-failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Confronting the deus single point of failure
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-smaller-things-this-week" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Smaller things this week
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-i-locked-in-this-week" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What I locked in this week
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#still-open-current-state-going-into-now" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Still open (current state, going into now)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-longhorn-disks-physically-installed-and-configured" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Longhorn disks physically installed and configured
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-bringing-longhorn-itself-under-gitops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Bringing Longhorn itself under GitOps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-killing-the-grafana-password-loop-for-good" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Killing the Grafana password loop for good
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-the-argocd-crd-too-long-problem-resolved" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. The ArgoCD CRD Too long problem: resolved
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-the-database-lands-cloudnativepg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. The database lands: CloudNativePG
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. The database lands: CloudNativePG">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#backups-garage-over-minio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backups: Garage over MinIO
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#infrastructure-gap-audit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Infrastructure gap audit
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-confronting-the-deus-single-point-of-failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Confronting the deus single point of failure
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-smaller-things-this-week" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Smaller things this week
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-i-locked-in-this-week" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What I locked in this week
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#still-open-current-state-going-into-now" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Still open (current state, going into now)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="week-10-longhorn-disks-live-the-database-lands-and-the-loose-ends-get-tied">Week 10: Longhorn Disks Live, the Database Lands, and the Loose Ends Get Tied</h1>
+<p><em>Covers roughly 9 – 15 July 2026. This is the most recent week.</em></p>
+<p>If Week 6 was "get ready," this week was "actually do it." The Longhorn disks went
+in, the observability CRD mess finally got resolved, the Grafana password loop got
+killed properly, and (the milestone) the first real database landed on the
+cluster via CloudNativePG, backups and all. Also confronted the uncomfortable
+truth that deus is a single point of failure.</p>
+<h2 id="1-longhorn-disks-physically-installed-and-configured">1. Longhorn disks physically installed and configured</h2>
+<p>The free NVMe drives from Week 6 went in. Final storage topology, per node:</p>
+<ul>
+<li><strong>deus</strong>: 256GB NVMe is the OS drive; overheats; <strong>no Longhorn replicas.</strong>
+  Scheduling disabled entirely; deus is compute/control only.</li>
+<li><strong>nebula</strong>: got a <strong>256GB WDC PC SN730 NVMe</strong> dedicated entirely to Longhorn
+  (no partitioning). Also has the 931.5G SSD and the two 3.6T ZFS pool drives, OS
+  on sdd. Longhorn scheduling enabled <strong>only</strong> on the dedicated disk.</li>
+<li><strong>legion</strong>: got a <strong>500GB WD Red SA500 SATA SSD</strong> (<code>/dev/sda</code>), <strong>partitioned</strong>:
+  ~400G formatted ext4 directly (no LVM) at <code>/var/lib/longhorn-disk-sda</code> for
+  Longhorn, ~65G as a separate <code>spare-vg</code> on <code>/dev/sda2</code> for general use.</li>
+</ul>
+<p>Key config points:</p>
+<ul>
+<li><strong>2-replica</strong>, targets are <strong>nebula's SN730 + legion's WD Red partition</strong>,
+  meaning <strong>zero placement slack</strong> with only two targets. (I corrected an earlier
+  cached assumption that deus and nebula were the replica pair; deus has <em>no</em>
+  replicas.)</li>
+<li>On every node, the default <code>/var/lib/longhorn</code> OS-disk path is
+  scheduling-disabled; only the dedicated disks schedule.</li>
+<li>The WD Red SA500 being <strong>NAS-rated for 24/7</strong> meaningfully improves the replica
+  posture on legion.</li>
+</ul>
+<p>A couple of hands-on gotchas installing the drives:</p>
+<ul>
+<li>On nebula's NVMe, <code>lsblk</code> showed no partitions but <code>mkfs.ext4</code> detected a
+  <strong>leftover GPT table from the drive's previous life</strong>: had to <code>wipefs -a
+  /dev/nvme0n1</code> first. Correct sequence: <code>wipefs -a</code> → <code>mkfs.ext4 -L
+  longhorn-nebula</code> → mkdir → <code>blkid</code> → fstab entry (by UUID, with <code>nofail</code>) →
+  <code>mount -a</code>.</li>
+<li>Interpreted the SMART check on the used NVMe: PASSED, 0 media/data integrity
+  errors, 100% available spare, 20% wear (~33TB written), 857 unsafe shutdowns
+  (cosmetic, not corruption). Healthy enough.</li>
+</ul>
+<h2 id="2-bringing-longhorn-itself-under-gitops">2. Bringing Longhorn itself under GitOps</h2>
+<p>I adopted the existing Longhorn v1.12.0 Helm install into an ArgoCD Application
+<strong>without reinstalling</strong>: the diff showed only ArgoCD tracking-id annotation
+additions, no pod restarts, confirming a safe adoption. This is the same "adopt,
+don't reinstall" pattern I used for kube-prom in Week 5.</p>
+<h2 id="3-killing-the-grafana-password-loop-for-good">3. Killing the Grafana password loop for good</h2>
+<p>The Grafana admin password kept resetting on every ArgoCD sync. Root cause, stated
+cleanly: the Grafana Helm subchart <strong>generates a random password at
+<code>helm template</code> time</strong>, and <code>selfHeal: true</code> then stamps that over the live
+secret every reconcile. Any credential the Helm chart owns will churn under
+self-heal; that's the general principle.</p>
+<p>The fix (finally committed this week): a <strong>SealedSecret named <code>grafana-admin</code></strong> in
+<code>apps/monitoring-extras/</code>, with <code>values-monitoring.yaml</code> pointing at it via
+<code>grafana.admin.existingSecret: grafana-admin</code> (<code>userKey: admin-user</code>,
+<code>passwordKey: admin-password</code>). That removes password ownership from the Helm
+chart entirely and makes the SealedSecret the git-declared source of truth ArgoCD
+won't churn.</p>
+<p>Two caveats I noted: Grafana only reads <code>admin-password</code> on <strong>first boot / DB
+init</strong>, so if the admin user already exists I may need
+<code>grafana-cli admin reset-admin-password</code> or a PVC wipe; and the Sealed Secrets
+private-key backup must be current before committing. The secret didn't appear at
+first but resolved on its own once the ArgoCD poll caught up, a <strong>timing</strong> issue,
+not a config error (a recurring theme, and an argument for finally fixing the
+webhook).</p>
+<h2 id="4-the-argocd-crd-too-long-problem-resolved">4. The ArgoCD CRD <code>Too long</code> problem: resolved</h2>
+<p>I finally closed out the CRD annotation mess from Week 6. Inspecting the actual
+chart tarball revealed the real situation: <strong>kube-prometheus-stack 85.0.2 ships
+its CRDs as raw untemplated files with no <code>crds.annotations</code> injection point</strong>,
+so the resource-level SSA-via-values approach I'd planned in Week 6 was
+<em>impossible</em> for this chart version.</p>
+<p>The correct fix turned out to be simpler: the <strong>app-level <code>ServerSideApply=true</code>
+already sat in <code>argocd/kube-prometheus-stack.yaml</code> in Git; it just was never
+applied to the live cluster</strong>, because <code>argocd/</code> isn't watched by any app-of-apps
+and requires a manual <code>kubectl apply</code>. So I applied that file and stripped the
+stale <code>kubectl.kubernetes.io/last-applied-configuration</code> annotation off the six
+affected CRDs.</p>
+<p>Then one last sync failure: <code>failed to create typed patch object</code> on the
+node-exporter DaemonSet, because <code>readOnlyRootFilesystem</code> was set inside the
+<strong>pod-level</strong> <code>securityContext</code> where it isn't a valid schema field. Client-side
+apply had silently tolerated it; <strong>SSA's strict schema enforcement surfaced it.</strong>
+Removed that one line (the chart's <code>containerSecurityContext</code> already sets it
+correctly by default).</p>
+<p><strong>The recurring structural lesson from all of this:</strong> the absence of an
+app-of-apps watching <code>argocd/</code> is a silent-drift source in my setup: Application
+definitions committed to <code>argocd/</code> don't take effect until I manually apply them.
+That's a real gap to close.</p>
+<h2 id="5-the-database-lands-cloudnativepg">5. The database lands: CloudNativePG</h2>
+<p>The milestone of the week: the first real stateful workload. I deployed
+<strong>PostgreSQL via the CloudNativePG (CNPG) operator</strong> for the portfolio site.</p>
+<p>The mental model that made it make sense was a <strong>two-layer control loop</strong>: ArgoCD
+owns the <code>Cluster</code> CR (the desired state in Git), and CNPG owns the actual
+pod/PVC/Secret (reconciling the database to match the CR). Decided strategically:
+<strong>Postgres-via-CNPG is the default for all K8s database workloads</strong>, one <code>Cluster</code>
+CR per application (not a shared instance), unless a workload ships its own
+embedded store.</p>
+<p>Real issues diagnosed and fixed along the way:</p>
+<ul>
+<li><strong>CRD-not-found</strong> at first because I'd put the <code>Cluster</code> CR in <code>argocd/cnpg.yaml</code>
+  instead of a proper Application CR.</li>
+<li><strong><code>kubectl apply</code> structural error</strong> switching from <code>source</code> to <code>sources</code>
+  (single- to multi-source): needed <code>--server-side</code>.</li>
+<li><strong>Port collision</strong>: the kubectl port-forward clashed with a Windows-installed
+  PostgreSQL service on 5432.</li>
+<li><strong>pgAdmin instability</strong> over port-forward: port-forward just isn't suited to
+  GUI clients holding persistent connections.</li>
+<li><strong>Backup credential error</strong>: I sealed the Garage key's <em>friendly name</em>
+  (<code>cnpg-key</code>) instead of its actual key ID (<code>GK...</code>).</li>
+<li>A <strong>kubectl ambiguity</strong> worth remembering: after adopting Longhorn,
+  <code>kubectl get backup</code> resolves to <code>backups.longhorn.io</code>, not the CNPG resource,
+  so I need <code>kubectl get backups.postgresql.cnpg.io</code> explicitly now.</li>
+</ul>
+<h3 id="backups-garage-over-minio">Backups: Garage over MinIO</h3>
+<p>For CNPG's S3-compatible backup target I started with <strong>MinIO</strong> but switched to
+<strong>Garage</strong> after finding MinIO's community edition <strong>stripped access-key
+management from the UI</strong> after a mid-2025 product pivot. Garage went up via Docker
+Compose on nebula, data on <code>tank/backups/garage</code> (ZFS), <code>replication_factor = 1</code>,
+a <code>cnpg-backups</code> bucket granted to a dedicated key (<code>garage key create</code> +
+<code>garage bucket allow</code>). The CNPG <code>Cluster</code> CR got a <code>barmanObjectStore</code> pointing
+at <code>http://192.168.1.248:3900</code>, WAL compression on, and a <code>ScheduledBackup</code> CR for
+3am daily.</p>
+<h3 id="infrastructure-gap-audit">Infrastructure gap audit</h3>
+<p>While doing this I did a cluster-wide gap audit and set a priority order:</p>
+<ol>
+<li><strong>Sealed Secrets key backup</strong>: <em>done this week</em> (exported with the label
+   selector, stored outside repo and cluster).</li>
+<li><strong>Longhorn NFS backup target</strong>: via a <code>BackupTarget</code> CR in
+   <code>apps/longhorn-extras/</code>.</li>
+<li><strong>CNPG WAL-aware backups via Garage</strong>: done.</li>
+<li><strong>A restore drill before real data lands</strong>: pending.</li>
+<li><strong>Alertmanager routing</strong>: pending.</li>
+<li><strong>Resource requests on workloads</strong>: pending.</li>
+<li><strong>etcd/K3s server snapshots for deus</strong>: pending.</li>
+</ol>
+<h2 id="6-confronting-the-deus-single-point-of-failure">6. Confronting the deus single point of failure</h2>
+<p>Installing storage made me face that <strong>deus is a SPOF for the K3s control
+plane</strong>: single-server embedded etcd. I'm considering buying a mini PC. The
+important correction I absorbed: <strong>two K3s server nodes with embedded etcd is
+worse than one</strong> (no quorum, an even number can't break ties). Genuine
+control-plane HA needs <strong>three server nodes.</strong> So a single new mini PC is best
+used as a <strong>worker</strong> (to reduce blast radius and migrate pinned services off
+deus), not as a stepping stone to HA. The endgame framing: <strong>two or three
+dedicated mini PCs as the server/etcd tier</strong>, with the current nodes as workers.</p>
+<h2 id="7-smaller-things-this-week">7. Smaller things this week</h2>
+<ul>
+<li><strong>Dev container scale-to-zero.</strong> To turn <code>code-server</code> off when unused without
+  self-heal fighting me: the clean answer is <strong><code>ignoreDifferences</code> on
+  <code>/spec/replicas</code></strong> so "off" is the declared default and manual <code>kubectl scale</code>
+  persists. <code>replicas: 0</code> in Git gets reverted by self-heal; KEDA scale-to-zero is
+  deferred (poorly suited to code-server's long-lived tunnel connection). Scale to
+  zero is safe because the PVC (including tunnel auth at <code>~/.vscode/cli</code>) persists
+  across restarts.</li>
+<li><strong>Headlamp</strong> deployed via ArgoCD with a long-lived ServiceAccount token
+  (<code>headlamp-admin</code> → <code>cluster-admin</code>), the chart's ingress disabled, replaced
+  with a hand-authored Traefik IngressRoute at <code>headlamp.lab.packetcraft.dev</code>.
+  This is where the <strong>ArgoCD-not-auto-syncing-on-push</strong> problem got pinned down:
+  it's the missing GitHub webhook (poll-interval lag). The webhook is the clean
+  fix, contingent on the ArgoCD UI already being exposed through the tunnel.</li>
+<li><strong>Kubernetes dashboard chase.</strong> Tried to add the official kubernetes-dashboard;
+  its Helm repo 404'd and I burned time chasing non-existent OCI/GHCR paths (all
+  403'd) before web search confirmed the HTTP repo is still the documented method.
+  Pivoted to evaluating <strong>kite</strong> (<code>kite-org/kite</code>) instead: actively maintained,
+  but a much heavier platform tool with <strong>write capabilities, an AI agent that can
+  mutate the cluster, and a SQLite+PVC requirement</strong>. If I deploy kite it <strong>must</strong>
+  stay on the tailnet plane (<code>*.lab.packetcraft.dev</code>) given those mutation powers.
+  Left undecided pending read-only-vs-read-write scoping and whether to enable the
+  AI agent. (Headlamp is the lighter option I actually deployed.)</li>
+<li><strong>Regenerated the Docker and K3s guides</strong> to be generalized/reusable rather than
+  project-specific, keeping some first-person voice in the K3s one for the
+  genuinely non-obvious bits (the SSH-localhost trap, taint+toleration as
+  attraction+permission, tunnel ingress as one pattern among several).</li>
+<li><strong>Secrets manager question settled again:</strong> Sealed Secrets is enough; no Vault /
+  ESO until I need dynamic secrets, rotation, or audit logging.</li>
+</ul>
+<h2 id="what-i-locked-in-this-week">What I locked in this week</h2>
+<ul>
+<li><strong>Longhorn is live</strong>: 2-replica across nebula SN730 + legion WD Red, none on
+  deus (thermal), adopted into GitOps without reinstall.</li>
+<li><strong>Grafana password loop killed</strong> via SealedSecret + <code>existingSecret</code>.</li>
+<li><strong>ArgoCD CRD <code>Too long</code> resolved</strong>: app-level SSA applied (it was in Git,
+  unapplied), stale annotation stripped, invalid <code>readOnlyRootFilesystem</code> line
+  removed. Learned the app-of-apps gap.</li>
+<li><strong>First database deployed</strong>: CNPG Postgres with Garage-backed WAL backups and a
+  daily ScheduledBackup. CNPG is now my default DB pattern.</li>
+<li><strong>Sealed Secrets key backed up</strong> (the critical one).</li>
+<li><strong>HA reality accepted:</strong> deus is a SPOF; a new mini PC becomes a worker, not a
+  second server. Three-server etcd is the only real HA path.</li>
+</ul>
+<h2 id="still-open-current-state-going-into-now">Still open (current state, going into now)</h2>
+<ul>
+<li><strong>ArgoCD push-on-webhook still not configured</strong>: poll-only, and it's caused
+  repeated friction. Flagged as the next priority.</li>
+<li><strong>No app-of-apps watching <code>argocd/</code></strong>: silent-drift source; Applications
+  committed there need manual apply.</li>
+<li><strong>Restore drill</strong> before real data lands.</li>
+<li><strong>Longhorn NFS backup target</strong> (<code>BackupTarget</code> CR in <code>apps/longhorn-extras/</code>).</li>
+<li><strong>Alertmanager routing</strong>, resource requests on workloads, etcd/K3s snapshots for
+  deus.</li>
+<li><strong>Grafana <code>lab.</code> IngressRoute</strong> still hand-applied drift → move to
+  <code>apps/monitoring-extras/</code>.</li>
+<li><strong>Renovate</strong> still not set up.</li>
+<li><strong>Portfolio site</strong>: Postgres is down; frontend + Go backend + rendering-approach
+  decision still to come.</li>
+<li><strong>obsync</strong>: still deliberately deferred until after the portfolio site.</li>
+<li><strong>Jellyfin placement</strong>: still open (the oldest open question, from Week 1).</li>
+<li><strong>code-server <code>GIT_ASKPASS</code> PAT-scoping</strong>: the fix is known but was deferred.</li>
+<li><strong>kite vs Headlamp</strong>: Headlamp deployed; kite decision parked.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

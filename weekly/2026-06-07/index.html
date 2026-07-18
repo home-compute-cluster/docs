@@ -1,0 +1,1560 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../2026-05-14/">
+      
+      
+        <link rel="next" href="../2026-06-08/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Week 03 - Home Compute Cluster Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#week-3-consolidating-the-foundation-nas-hardware-monitoring-and-automation" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Home Compute Cluster Documentation" class="md-header__button md-logo" aria-label="Home Compute Cluster Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Home Compute Cluster Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Week 03
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Home Compute Cluster Documentation" class="md-nav__button md-logo" aria-label="Home Compute Cluster Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Home Compute Cluster Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Motivation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Motivation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../motivation/01-motivation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Why
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../motivation/02-planning-tradeoffs-choices/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trade-offs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../motivation/03-cost-value-singapore/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost vs Value
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system-architecture/home-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CI/CD
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CI/CD
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CICD/cicd-pipeline-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pipeline Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CICD/cicd-offtheshelf-software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Off-the-shelf Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../kubernetes-guides/k3s-kubernetes-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    K3s
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Containerization
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Containerization
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../containerization/dockerfile-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dockerfile Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../containerization/dynamic-dev-container-setup-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dev Container Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Weekly Logs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Weekly Logs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-05-10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 01
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-05-14/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 02
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 03
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 03
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-phase-1-phase-2-handoff" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Phase 1 → Phase 2 handoff
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-nebula-acquiring-and-reviving-the-desktopnas-node" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. nebula: acquiring and reviving the desktop/NAS node
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. nebula: acquiring and reviving the desktop/NAS node">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-boot-failure-saga" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The boot-failure saga
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bios-tuning-for-a-247-nas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BIOS tuning for a 24/7 NAS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-gpu-correction-worth-recording" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The GPU correction worth recording
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-node-health-monitoring-in-grafana" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Node-health monitoring in Grafana
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Node-health monitoring in Grafana">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#access-mechanics-learned-the-hard-way" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Access mechanics learned the hard way
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sensor-discovery-what-the-hardware-actually-exposes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sensor discovery: what the hardware actually exposes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-cluster-power-automation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Cluster power automation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-documentation-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Documentation strategy
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#state-at-the-end-of-this-stretch-7-june" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State at the end of this stretch (7 June)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#open-next-this-is-where-the-june-8-logs-pick-up" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Open / next (this is where the June-8 logs pick up)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-06-08/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 04
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-06-15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 05
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-06-21/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 06
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-06-26/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 07
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-07-01/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 08
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-07-08/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 09
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-07-15/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Week 10
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-phase-1-phase-2-handoff" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Phase 1 → Phase 2 handoff
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-nebula-acquiring-and-reviving-the-desktopnas-node" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. nebula: acquiring and reviving the desktop/NAS node
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. nebula: acquiring and reviving the desktop/NAS node">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-boot-failure-saga" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The boot-failure saga
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bios-tuning-for-a-247-nas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BIOS tuning for a 24/7 NAS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-gpu-correction-worth-recording" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The GPU correction worth recording
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-node-health-monitoring-in-grafana" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Node-health monitoring in Grafana
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Node-health monitoring in Grafana">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#access-mechanics-learned-the-hard-way" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Access mechanics learned the hard way
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sensor-discovery-what-the-hardware-actually-exposes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sensor discovery: what the hardware actually exposes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-cluster-power-automation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Cluster power automation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-documentation-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Documentation strategy
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#state-at-the-end-of-this-stretch-7-june" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State at the end of this stretch (7 June)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#open-next-this-is-where-the-june-8-logs-pick-up" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Open / next (this is where the June-8 logs pick up)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="week-3-consolidating-the-foundation-nas-hardware-monitoring-and-automation">Week 3: Consolidating the Foundation, NAS Hardware, Monitoring, and Automation</h1>
+<p><em>Covers roughly 14 May – 7 June 2026. Phase 1 is done; this is everything between a
+working two-node cluster and the ZFS/Seafile build that opens June.</em></p>
+<p>This was a longer, more diffuse stretch: the "make the foundation solid and
+observable" phase. I brought the desktop/NAS node (nebula) online through some
+hardware pain, stood up real node-health monitoring in Grafana, wrote the
+cluster power automation, and settled how I'd document the whole thing. By 7 June
+I had a genuinely instrumented, manageable cluster ready for the ZFS layer.</p>
+<h2 id="1-phase-1-phase-2-handoff">1. Phase 1 → Phase 2 handoff</h2>
+<p>Once the two-node cluster was serving workloads, I explicitly shifted mode: I told
+myself to stop asking for step-by-step hand-holding and start exploring
+independently, wanting high-level orientation rather than prescriptive
+instructions now that the system worked. Two concrete near-term milestones set
+here: <strong>buy a domain by end of week, stand up the NAS node by end of month.</strong></p>
+<p>The Phase 2 landscape (for orientation, not execution yet): external access via
+<strong>Cloudflare Tunnel + Traefik ingress</strong> (with the TLS-termination modes:
+flexible / full / full-strict, and proxy-vs-DNS-only tradeoffs to learn);
+<strong>storage</strong>, splitting into TrueNAS/NFS for bulk media vs <strong>Longhorn</strong> for
+distributed block storage behind stateful workloads; and <strong>Jellyfin</strong> as the first
+real portfolio workload. Natural sequence: Cloudflare + domain → a test service to
+validate the ingress chain → NAS → Jellyfin, with Longhorn and VLANs as
+independent side-explorations.</p>
+<h2 id="2-nebula-acquiring-and-reviving-the-desktopnas-node">2. nebula: acquiring and reviving the desktop/NAS node</h2>
+<p>The third node, <strong>nebula</strong>, is a second-hand desktop: <strong>i7-6700K, GTX 1080,
+24GB RAM, Asus Z170 Pro</strong>. It doubles as the ZFS NAS and the Docker Compose host.
+Getting it running was the most hands-on hardware episode of the whole build.</p>
+<h3 id="the-boot-failure-saga">The boot-failure saga</h3>
+<p>After disassembling it for cleaning, it wouldn't boot: Windows showed nothing in
+the boot manager, and an Ubuntu Server installer crashed mid-install. I'd already
+replaced the CMOS battery. This turned out to be a <strong>reassembly problem</strong>, worked
+through in priority order:</p>
+<ul>
+<li><strong>RAM seating</strong>: top suspect, given the unusual 24GB config.</li>
+<li><strong>GPU seating + power connector.</strong></li>
+<li><strong>SSD cable connections.</strong></li>
+<li><strong>CPU cooler contact.</strong></li>
+</ul>
+<p>I fixed it by pulling and reseating the GPU and RAM. Exact root cause stayed
+unconfirmed, but the lesson stuck: <strong>after any disassembly, reseat everything
+before assuming a component died.</strong> Non-obvious boot failures are usually
+mechanical, not fatal.</p>
+<h3 id="bios-tuning-for-a-247-nas">BIOS tuning for a 24/7 NAS</h3>
+<p>Since nebula runs always-on, I tuned the Z170 for efficiency: enable <strong>Intel
+SpeedStep/EIST</strong> and <strong>C-States (incl. C6/C7)</strong> and <strong>ErP Ready</strong>; optionally cap
+power by disabling Turbo Boost or lowering PL1/PL2; minor wins from disabling
+unused controllers and onboard LEDs. <code>powertop</code> in the OS to verify real draw. The
+board's "power efficient" preset covers most of this but can be beaten manually.</p>
+<p>One hardware note: nebula's PSU is a <strong>CoolerMaster V750 Gold (750W)</strong>: oversized
+for the load, so it runs at the inefficient low end of its curve (~5–8W extra loss
+at idle, minor in real cost). Flagged a right-sized 300–450W Gold unit as a
+someday-if-cheap swap, low priority.</p>
+<h3 id="the-gpu-correction-worth-recording">The GPU correction worth recording</h3>
+<p>A recurring confusion I had to correct myself on: <strong>the discrete GPU (GTX 1080) is
+in nebula, but nebula is a Docker Compose host, not a K3s node.</strong> The only GPU on a
+<em>K3s</em> node is legion's GTX 1060. This matters enormously for Jellyfin placement:
+nebula has the better GPU <em>and</em> the integrated Intel HD 530 (good for QSV
+transcoding), but a K3s-scheduled Jellyfin pod can't reach either, because nebula
+isn't in the cluster. That tension (good GPU on the non-cluster node) is the
+Jellyfin question that stays open for months.</p>
+<h2 id="3-node-health-monitoring-in-grafana">3. Node-health monitoring in Grafana</h2>
+<p>With kube-prometheus-stack installed, I built a real node-health dashboard, the
+first serious observability work. This session also taught me a pile of
+cluster-access mechanics that became permanent knowledge.</p>
+<h3 id="access-mechanics-learned-the-hard-way">Access mechanics learned the hard way</h3>
+<ul>
+<li><strong><code>localhost</code> vs LAN IP over SSH.</strong> Port-forwarding a ClusterIP service and
+  trying to reach it was confusing until I understood: <code>kubectl port-forward
+  --address 0.0.0.0 …</code> binds to all interfaces so I can hit it from Windows at the
+  node's LAN IP (e.g. <code>http://192.168.1.250:9090</code> for Prometheus). ClusterIP
+  services aren't reachable externally without this. (This is the same
+  SSH-localhost trap that recurs throughout the project.)</li>
+<li><strong>The kubeconfig permission fix.</strong> <code>/etc/rancher/k3s/k3s.yaml</code> is root-only by
+  default. Fix: <code>chmod 644</code> <em>and</em> add <strong><code>--write-kubeconfig-mode=644</code></strong> to the K3s
+  systemd service so it survives restarts. This is what later lets me scp the
+  kubeconfig to my laptop without sudo.</li>
+<li>Grafana confirmed on <code>svc/kube-prom-grafana</code> (ClusterIP :80), reached via
+  port-forward <code>8080:80</code>.</li>
+</ul>
+<h3 id="sensor-discovery-what-the-hardware-actually-exposes">Sensor discovery: what the hardware actually exposes</h3>
+<p>Rather than guess PromQL, I queried Prometheus to see which sensors returned data:</p>
+<ul>
+<li><strong>CPU temp</strong> works via <code>node_hwmon_temp_celsius</code> with the <code>coretemp</code> chip.</li>
+<li><strong>CPU voltage does not exist</strong>: <code>node_hwmon_in_volts</code> returned nothing; these
+  boards don't expose voltage rails. Dropped from scope entirely.</li>
+<li><strong>RAPL power</strong> (<code>node_rapl_package_joules_total</code>) returned nothing from the
+  container despite working at the host (<code>sudo cat
+  /sys/class/powercap/intel-rapl:0/energy_uj</code> gave a real value). The fix:
+  node-exporter needs <code>runAsNonRoot: false</code> / <code>runAsUser: 0</code> in its securityContext
+  to read RAPL. (This node-exporter-as-root theme comes back much later during the
+  SSA/CRD work.)</li>
+<li><strong>A real thermal finding:</strong> deus's (M910q) NVMe <code>temp2</code> sensor read <strong>~89.85°C at
+  idle</strong>, a genuine concern flagged for airflow attention. This is the earliest
+  signal of the "deus runs hot" theme that later drives keeping Longhorn replicas
+  off it.</li>
+</ul>
+<p>Delivered: working PromQL for CPU usage/temp, RAM, network (with virtual-interface
+filtering), disk read/write, NVMe temp, plus a <code>PrometheusRule</code> with alerts (CPU
+critical &gt;90°C for 2m, NVMe warning &gt;80°C for 5m), wired to both Alertmanager and
+Grafana alerting. GPU panels deferred (legion's dGPU was disabled via envycontrol).</p>
+<h2 id="4-cluster-power-automation">4. Cluster power automation</h2>
+<p>Because legion was still a come-and-go node, I wrote a pair of scripts to bring the
+cluster up and down cleanly: <strong><code>cluster-shutdown.sh</code></strong> and
+<strong><code>cluster-powerup.sh</code></strong>. These went through several meaningful refinements:</p>
+<ul>
+<li><strong>Shutdown</strong> (runs on deus): SSH into legion, poweroff, then shut down deus
+  itself, but <strong>abort rather than proceed if the worker can't be confirmed
+  offline</strong>, so deus never shuts down while a worker is stranded. A nuance:
+  <code>sudo systemctl poweroff</code> over SSH usually drops the connection before returning
+  a clean exit code, so a <strong>ping-based verification loop is the authoritative
+  check</strong>, not the SSH exit status.</li>
+<li><strong>Powerup:</strong> send a <strong>Wake-on-LAN</strong> magic packet to legion, then poll the K3s API
+  (<code>kubectl get node</code>) until legion reports <code>Ready</code>, a real readiness check, not
+  just a ping.</li>
+<li><strong>Least-privilege security model:</strong> rather than blanket passwordless sudo, scoped
+  <code>/etc/sudoers.d/cluster-poweroff</code> entries granting <code>NOPASSWD</code> only for
+  <code>systemctl poweroff</code> on both machines, plus a dedicated SSH key
+  (<code>~/.ssh/cluster_shutdown</code>) with <code>BatchMode=yes</code> so it fails cleanly instead of
+  hanging on a prompt.</li>
+</ul>
+<p>This is also where the identifiers <strong><code>leifsen</code></strong> (my username) and <strong><code>legion</code></strong>
+(the node) got locked in.</p>
+<p><em>(Worth noting the arc: these WoL/shutdown scripts exist precisely because legion
+was transient. When I later pulled its battery and made it always-on, the scripts'
+importance faded, but the least-privilege sudoers/SSH pattern in them is still
+good practice I carried forward.)</em></p>
+<h2 id="5-documentation-strategy">5. Documentation strategy</h2>
+<p>I also settled <em>how</em> I'd record all this, which is why these very logs exist. Two
+categories:</p>
+<ul>
+<li><strong>Decision logs</strong>: short markdown entries written <em>at decision time</em>, capturing
+  the reasoning behind architectural tradeoffs. These live in a <code>/docs</code> folder.</li>
+<li><strong>Polished technical write-ups</strong>: the "how" and lessons learned, meant as
+  portfolio pieces.</li>
+</ul>
+<p><strong>GitHub is the non-negotiable source of truth</strong> for all of it. Self-hosting the
+docs on the cluster is a Phase 2–3 milestone, <em>not</em> the primary home, because
+cluster downtime during learning makes self-hosting unreliable as the sole
+destination. Plan: GitHub as canonical, GitHub Pages as fallback, and eventually a
+Hugo/Astro static site containerized and deployed through the CI/CD pipeline, so
+the <em>deployment pipeline itself</em> becomes a portfolio artifact.</p>
+<h2 id="state-at-the-end-of-this-stretch-7-june">State at the end of this stretch (7 June)</h2>
+<ul>
+<li>Three nodes online: deus (control plane, .250), legion (worker, .249), nebula
+  (NAS/Compose host, .248, revived and BIOS-tuned).</li>
+<li>Real node-health monitoring in Grafana with temperature alerting; sensor
+  capabilities mapped; deus's hot NVMe already flagged.</li>
+<li>Cluster power automation with a proper least-privilege model.</li>
+<li>Documentation approach decided; GitHub as source of truth.</li>
+<li>Key permanent lessons banked: kubeconfig <code>write-kubeconfig-mode=644</code>, the
+  SSH-localhost trap, node-exporter-as-root for RAPL, "reseat before you panic,"
+  and the nebula-has-the-GPU-but-isn't-in-K3s tension.</li>
+</ul>
+<h2 id="open-next-this-is-where-the-june-8-logs-pick-up">Open / next (this is where the June-8 logs pick up)</h2>
+<ul>
+<li><strong>ZFS pool on nebula</strong>, then <strong>Seafile</strong> via Docker Compose (the June 8 session).</li>
+<li>CI/CD pipeline (the next major push).</li>
+<li>Everything the "NAS owns data, K3s owns services" principle implies, including
+  the still-unresolved Jellyfin GPU-placement question.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
