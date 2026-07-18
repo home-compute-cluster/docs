@@ -1,0 +1,41 @@
+site_name: Home Compute Cluster Documentation
+
+theme:
+  name: material
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - content.code.copy
+
+markdown_extensions:
+  - attr_list
+  - md_in_html
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+nav:
+  - Home: index.md
+  - Motivation:
+    - Why: motivation/01-motivation.md
+    - Trade-offs: motivation/02-planning-tradeoffs-choices.md
+    - Cost vs Value: motivation/03-cost-value-singapore.md
+  - Architecture: system-architecture/home-cluster.md
+  - CI/CD:
+    - Pipeline Setup: CICD/cicd-pipeline-setup-guide.md
+    - Off-the-shelf Software: CICD/cicd-offtheshelf-software.md
+  - K3s: kubernetes-guides/k3s-kubernetes-guide.md
+  - Containerization:
+    - Dockerfile Guide: containerization/dockerfile-guide.md
+    - Dev Container Setup: containerization/dynamic-dev-container-setup-guide.md
+  - Weekly Logs:
+      - Week 01: weekly/2026-05-10.md
+      - Week 02: weekly/2026-05-14.md
+      - Week 03: weekly/2026-06-07.md
+      - Week 04: weekly/2026-06-08.md
+      - Week 05: weekly/2026-06-15.md
+      - Week 06: weekly/2026-06-21.md
+      - Week 07: weekly/2026-06-26.md
+      - Week 08: weekly/2026-07-01.md
+      - Week 09: weekly/2026-07-08.md
+      - Week 10: weekly/2026-07-15.md
