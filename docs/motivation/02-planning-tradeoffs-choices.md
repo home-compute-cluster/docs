@@ -14,14 +14,14 @@ tradeoff, and the tradeoff is the interesting part.
 
 The initial concept, captured in the original spec, was a fairly textbook
 homelab: one Lenovo Legion laptop as control plane + worker, plus **three budget
-N100 mini-PCs** as worker agents, on a S$1,000 budget over 3–6 months. Clean,
+N100 mini-PCs** as worker agents, on a S$1,000 budget over 3-6 months. Clean,
 symmetric, easy to reason about.
 
 What I actually converged on is messier and better: **three heterogeneous
 always-on nodes** using hardware I largely already had or could get cheaply.
 
 - **deus**: Lenovo M910q (i7-6700T class, ~16GB). Always-on control plane. Small,
-  low-power, quiet — ideal for the one node that must never go down.
+  low-power, quiet, ideal for the one node that must never go down.
 - **nebula**: i7-6700K desktop, 24GB, GTX 1080. Doubles as the ZFS NAS and the
   Docker Compose host (This thing only cost me S$270 and 6 hours of cleaning and
   troubleshooting). 
@@ -51,7 +51,7 @@ more interesting and easier to remember.
   my single-arch image pipeline (unlike ARM Pis). Compatibility drove that
   constraint.
 
-## 2. The software stack — what I chose and what I passed on
+## 2. The software stack: what I chose and what I passed on
 
 The stack was chosen to mirror what these tools look like in a real platform team,
 while staying light enough to run on modest hardware.

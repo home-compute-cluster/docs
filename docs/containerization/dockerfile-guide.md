@@ -10,7 +10,7 @@ cluster.
 ## 1. How a Dockerfile actually works (the mental model)
 
 A Dockerfile is a sequence of instructions. Each instruction that changes the
-filesystem creates a **layer** — an immutable diff stacked on the previous one.
+filesystem creates a **layer**, an immutable diff stacked on the previous one.
 The final image is all layers stacked together.
 
 Two consequences drive almost every best practice:
@@ -21,7 +21,7 @@ Two consequences drive almost every best practice:
   is why instruction *ordering* matters so much: put rarely-changing things
   (dependency installs) before frequently-changing things (your source code).
 - **Layers only add, never subtract.** Deleting a file in a later layer doesn't
-  shrink the image — the bytes still exist in the earlier layer. To actually
+  shrink the image, the bytes still exist in the earlier layer. To actually
   remove something, it must be cleaned up *within the same instruction* that
   created it (or avoided via multi-stage builds).
 
@@ -33,7 +33,7 @@ that layer.
 
 ## 2. The instructions, one by one
 
-### `FROM` — the base image
+### `FROM`: the base image
 
 Starts every build (or every *stage* of a multi-stage build). Defines the
 starting filesystem and OS userland.
@@ -41,7 +41,7 @@ starting filesystem and OS userland.
 ```dockerfile
 FROM nginx:1.27-alpine
 FROM golang:1.23 AS builder        # named stage, for multi-stage
-FROM scratch                       # empty — literally nothing
+FROM scratch                       # empty, literally nothing
 ```
 
 - **Pin a specific tag**, never bare `latest`. `nginx:1.27-alpine` is
@@ -51,7 +51,7 @@ FROM scratch                       # empty — literally nothing
 - `-alpine`, `-slim`, and `scratch` variants are progressively smaller. More on
   base-image choice in §5.
 
-### `RUN` — execute a command at build time
+### `RUN`: execute a command at build time
 
 Runs a shell command and commits the result as a layer. This is where you
 install packages, compile code, create directories.
@@ -63,15 +63,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl \
 
 Two forms:
 
-- **Shell form:** `RUN apt-get update` — runs via `/bin/sh -c`. Supports `&&`,
+- **Shell form:** `RUN apt-get update`, runs via `/bin/sh -c`. Supports `&&`,
   pipes, variable expansion.
-- **Exec form:** `RUN ["executable", "arg1", "arg2"]` — no shell, no `&&`. Rare
+- **Exec form:** `RUN ["executable", "arg1", "arg2"]`, no shell, no `&&`. Rare
   for `RUN`; common for `CMD`/`ENTRYPOINT`.
 
 Chain related commands with `&&` and clean up in the same `RUN` (see §3), since
 a separate `RUN rm ...` can't shrink the earlier layer.
 
-### `COPY` — copy files from build context into the image
+### `COPY`: copy files from build context into the image
 
 ```dockerfile
 COPY index.html /usr/share/nginx/html/index.html
@@ -80,10 +80,10 @@ COPY . .                       # copy everything
 ```
 
 - The **build context** is the directory you pass to `docker build` (usually
-  `.`). `COPY` can only see files inside it — you can't `COPY /etc/passwd`.
+  `.`). `COPY` can only see files inside it, you can't `COPY /etc/passwd`.
 - Prefer `COPY` over `ADD` for plain files. `COPY` does exactly one thing.
 
-### `ADD` — copy, but with extra magic
+### `ADD`: copy, but with extra magic
 
 `ADD` does what `COPY` does, plus: auto-extracts local tarballs, and can fetch
 URLs. The magic is usually a footgun.
@@ -96,17 +96,17 @@ ADD project.tar.gz /app/       # auto-extracts the tarball
 - For remote files, prefer `RUN curl`/`wget` (explicit, lets you verify
   checksums and clean up in one layer). Don't use `ADD <url>`.
 
-### `WORKDIR` — set the working directory
+### `WORKDIR`: set the working directory
 
 ```dockerfile
 WORKDIR /app
 ```
 
 Sets the cwd for subsequent `RUN`, `CMD`, `ENTRYPOINT`, `COPY`, `ADD`. Creates
-the directory if absent. Use it instead of `RUN cd /app` — `cd` in a `RUN`
+the directory if absent. Use it instead of `RUN cd /app`, `cd` in a `RUN`
 doesn't persist to the next instruction (each `RUN` is a fresh shell).
 
-### `ENV` — set environment variables
+### `ENV`: set environment variables
 
 ```dockerfile
 ENV APP_PORT=8080 \
@@ -116,7 +116,7 @@ ENV APP_PORT=8080 \
 Persists into the running container (visible to your process). Use for runtime
 config defaults. For build-time-only values, prefer `ARG`.
 
-### `ARG` — build-time variables
+### `ARG`: build-time variables
 
 ```dockerfile
 ARG GO_VERSION=1.23
@@ -127,22 +127,22 @@ RUN echo "building $BUILD_ID"
 ```
 
 - Only exists during the build; **not** present in the running container.
-- An `ARG` before the first `FROM` is special — it can parameterize the base
+- An `ARG` before the first `FROM` is special, it can parameterize the base
   image, but is out of scope for stages unless re-declared.
-- Don't pass secrets via `ARG` — they're visible in image history. Use
+- Don't pass secrets via `ARG`, they're visible in image history. Use
   `RUN --mount=type=secret` instead (§6).
 
-### `EXPOSE` — document the listening port
+### `EXPOSE`: document the listening port
 
 ```dockerfile
 EXPOSE 80
 ```
 
-Pure documentation/metadata. It does **not** publish the port — that's
+Pure documentation/metadata. It does **not** publish the port, that's
 `-p` at run time, or a Kubernetes Service. Worth including so the image is
 self-describing (and whoever wires up ingress knows the port).
 
-### `CMD` — default command
+### `CMD`: default command
 
 ```dockerfile
 CMD ["nginx", "-g", "daemon off;"]
@@ -150,11 +150,11 @@ CMD ["nginx", "-g", "daemon off;"]
 
 The default process the container runs. Overridable at run time
 (`docker run image <other-command>`). Prefer **exec form** (JSON array) so your
-process is PID 1 and receives signals (clean `SIGTERM` shutdown — matters for
+process is PID 1 and receives signals (clean `SIGTERM` shutdown, matters for
 Kubernetes pod termination). Shell form (`CMD nginx -g ...`) wraps your process
 in `/bin/sh`, which swallows signals.
 
-### `ENTRYPOINT` — the fixed executable
+### `ENTRYPOINT`: the fixed executable
 
 ```dockerfile
 ENTRYPOINT ["/app/server"]
@@ -169,20 +169,20 @@ that exposes multiple subcommands (e.g. a server with `serve` / `migrate` /
 
 ### The rest, briefly
 
-- **`USER`** — drop to a non-root user. `USER 1000` or `USER appuser`. Do this
+- **`USER`**: drop to a non-root user. `USER 1000` or `USER appuser`. Do this
   for anything you expose; running as root in-container is a needless risk.
-- **`VOLUME`** — declares a mount point for external data. In Kubernetes you
+- **`VOLUME`**: declares a mount point for external data. In Kubernetes you
   manage this via PVCs instead, so you rarely need `VOLUME` in cluster images.
-- **`HEALTHCHECK`** — a command Docker runs to test liveness. In Kubernetes the
+- **`HEALTHCHECK`**: a command Docker runs to test liveness. In Kubernetes the
   kubelet's liveness/readiness probes supersede this, so it's often omitted for
   cluster workloads.
-- **`LABEL`** — metadata key/values. Useful for
+- **`LABEL`**: metadata key/values. Useful for
   `org.opencontainers.image.source` so a registry (e.g. ghcr.io) links the
   package back to its source repo.
-- **`SHELL`** — change the shell used by shell-form `RUN` (e.g. to `bash`).
+- **`SHELL`**: change the shell used by shell-form `RUN` (e.g. to `bash`).
   Rarely needed.
-- **`ONBUILD`** — defers an instruction to child images. Niche; mostly avoid.
-- **`STOPSIGNAL`** — overrides the signal sent to stop the container. Rarely
+- **`ONBUILD`**: defers an instruction to child images. Niche; mostly avoid.
+- **`STOPSIGNAL`**: overrides the signal sent to stop the container. Rarely
   needed.
 
 ---
@@ -192,14 +192,14 @@ that exposes multiple subcommands (e.g. a server with `serve` / `migrate` /
 Because layers only add, you must clean up **inside the same `RUN`**:
 
 ```dockerfile
-# GOOD — apt cache removed in the same layer it was created
+# GOOD: apt cache removed in the same layer it was created
 RUN apt-get update \
     && apt-get install -y --no-install-recommends curl ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 ```
 
 ```dockerfile
-# BAD — the cache bytes are already committed to an earlier layer;
+# BAD: the cache bytes are already committed to an earlier layer;
 # this rm shrinks nothing.
 RUN apt-get update && apt-get install -y curl
 RUN rm -rf /var/lib/apt/lists/*
@@ -235,8 +235,8 @@ RUN go build -o /app/server ./cmd/server
 ```
 
 If you wrote `COPY . .` *before* the dependency install, every one-character
-source edit would invalidate the install layer and re-download all dependencies
-— turning a 5-second rebuild into minutes. On a CI runner that's build minutes
+source edit would invalidate the install layer and re-download all dependencies,
+turning a 5-second rebuild into minutes. On a CI runner that's build minutes
 and queue time billed directly.
 
 ---
@@ -247,7 +247,7 @@ and queue time billed directly.
 |------|------|------|
 | Full distro (`debian`, `ubuntu`, `golang`) | Large (100s of MB) | Build stages; when you need a full toolchain |
 | `-slim` (`python:3.12-slim`, `debian:slim`) | Medium | Runtime when you need glibc + a package manager but not the full distro |
-| `-alpine` (`nginx:1.27-alpine`) | Small (~5–50 MB) | Runtime; musl libc. Watch for musl-vs-glibc quirks with some binaries/wheels |
+| `-alpine` (`nginx:1.27-alpine`) | Small (~5-50 MB) | Runtime; musl libc. Watch for musl-vs-glibc quirks with some binaries/wheels |
 | `gcr.io/distroless/*` | Small, no shell | Runtime for compiled binaries; minimal attack surface, no shell to exec into |
 | `scratch` | Empty | Fully static binaries (typical static Go); nothing but your binary |
 
@@ -286,7 +286,7 @@ CMD ["serve"]
 ```
 
 The `golang:1.23` toolchain (hundreds of MB) never ships. The final image is
-your binary plus certs — often under 20 MB. `COPY --from=builder` is the key:
+your binary plus certs, often under 20 MB. `COPY --from=builder` is the key:
 it pulls a file *out* of an earlier stage into the final one.
 
 ### Node app → built assets only
@@ -339,7 +339,7 @@ EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
 ```
 
-`daemon off;` is required — nginx daemonizes by default, which would make PID 1
+`daemon off;` is required, nginx daemonizes by default, which would make PID 1
 exit and kill the container. This keeps it in the foreground.
 
 ### Go binary with subcommands
@@ -374,7 +374,7 @@ USER 1000
 ENTRYPOINT ["app"]
 ```
 
-`alpine` gives you a shell and `apk` while staying small — a good default while
+`alpine` gives you a shell and `apk` while staying small, a good default while
 you're still iterating on and debugging a service, before you tighten it down to
 `scratch`/distroless for production.
 
@@ -384,7 +384,7 @@ you're still iterating on and debugging a service, before you tighten it down to
 
 - **Run as non-root.** Add `USER` once the process doesn't need root. Create a
   user in the build if needed: `RUN adduser -D -u 1000 app` then `USER app`.
-- **Pin base image tags** (and ideally digests) — reproducibility.
+- **Pin base image tags** (and ideally digests): reproducibility.
 - **Don't bake secrets in.** Not via `ENV`, not via `ARG`, not `COPY .env`.
   They persist in image layers/history. Use Kubernetes Secrets at runtime, or
   BuildKit secret mounts at build time:
@@ -392,7 +392,7 @@ you're still iterating on and debugging a service, before you tighten it down to
   RUN --mount=type=secret,id=npmrc,target=/root/.npmrc npm ci
   ```
 - **Use a `.dockerignore`.** Keeps junk (`.git`, `node_modules`, `*.md`, local
-  env files) out of the build context — faster builds, smaller context, no
+  env files) out of the build context, faster builds, smaller context, no
   accidental secret leakage:
   ```
   .git
@@ -402,7 +402,7 @@ you're still iterating on and debugging a service, before you tighten it down to
   ```
 - **Exec form for `CMD`/`ENTRYPOINT`** so signals reach your process (clean pod
   termination on Kubernetes).
-- **Minimal final image** — fewer packages, fewer CVEs, faster pulls.
+- **Minimal final image**: fewer packages, fewer CVEs, faster pulls.
 
 ---
 
@@ -433,7 +433,7 @@ A typical CI step builds from the repo root: `docker build -t $IMAGE:$SHA -t
 $IMAGE:latest .`. So the Dockerfile lives at the repo root, sees that directory
 as its build context, and should:
 
-1. **Pin its base image** — the image content becomes as reproducible as the SHA
+1. **Pin its base image**, the image content becomes as reproducible as the SHA
    tag, so a given commit always produces a functionally identical image.
 2. **Order deps-before-source** so runner build minutes stay low.
 3. **Multi-stage down to a small final image** so `ImagePullBackOff` windows are
@@ -442,5 +442,5 @@ as its build context, and should:
    so the registry package auto-links back to the source repo.
 
 Off-the-shelf images (databases, Grafana, media servers, etc.) have no
-Dockerfile at all — they skip the build step entirely and are referenced
+Dockerfile at all, they skip the build step entirely and are referenced
 directly by their upstream image tag in your deployment manifests.

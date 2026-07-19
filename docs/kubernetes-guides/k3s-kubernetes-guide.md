@@ -1,24 +1,24 @@
-# K3s / Kubernetes — Working Reference
+# K3s / Kubernetes: Working Reference
 
 A practical guide to Kubernetes, oriented around K3s. It's written from the seat
-of someone running a small heterogeneous cluster — one always-on control-plane
-node plus a couple of workers of differing capability — so where a real cluster
+of someone running a small heterogeneous cluster, one always-on control-plane
+node plus a couple of workers of differing capability, so where a real cluster
 made a concept concrete, I've kept that context in. Everything here is standard
 Kubernetes unless a section is explicitly flagged K3s-specific.
 
 Throughout, I refer to my own three nodes by name where it helps:
-- **the control-plane node** — a small always-on mini PC; runs the K3s server
+- **the control-plane node**: a small always-on mini PC; runs the K3s server
   and anything stateful-ish that must never move.
-- **a GPU worker** — a laptop-class node with a discrete GPU; transient, so I
+- **a GPU worker**: a laptop-class node with a discrete GPU; transient, so I
   taint it.
-- **a storage worker** — a desktop with the disks; where storage-bound work
+- **a storage worker**: a desktop with the disks; where storage-bound work
   lands.
 
 Substitute your own node names freely.
 
 ---
 
-## 0. K3s vs Kubernetes — settle it first
+## 0. K3s vs Kubernetes: settle it first
 
 K3s **is** Kubernetes. It's a CNCF-certified conformant distribution, so every
 API object, every `kubectl` verb, every manifest you write works identically on
@@ -35,7 +35,7 @@ upstream Kubernetes, EKS, GKE, or a 500-node cluster. What K3s changes is
 | Service LB | cloud provider | Klipper / ServiceLB, bundled |
 | Binary footprint | large | ~70MB, runs on a Pi |
 
-**Takeaway:** describe it as "K3s, a conformant Kubernetes distribution" — it
+**Takeaway:** describe it as "K3s, a conformant Kubernetes distribution": it
 signals you understand the distinction. The skills transfer directly; there's no
 "just homelab" asterisk on them.
 
@@ -45,7 +45,7 @@ signals you understand the distinction. The skills transfer directly; there's no
 
 Kubernetes is a **reconciliation engine**. You declare desired state (YAML
 manifests); controllers continuously work to make actual state match. You almost
-never tell it to *do* a thing — you tell it what should *be true*, and it figures
+never tell it to *do* a thing, you tell it what should *be true*, and it figures
 out the actions. If you run GitOps on top (e.g. ArgoCD's `selfHeal`), that's the
 same principle one layer up: the GitOps controller reconciles Git → cluster,
 while the Kubernetes control plane reconciles manifests → running containers.
@@ -74,38 +74,38 @@ the API server. It's a pull model end to end.
 From smallest to largest, the chain that turns a container image into a running
 thing:
 
-- **Container** — your image (`registry/app:tag`), running.
-- **Pod** — one or more containers sharing a network namespace + storage. The
+- **Container**: your image (`registry/app:tag`), running.
+- **Pod**: one or more containers sharing a network namespace + storage. The
   *smallest schedulable unit*. Pods are cattle: disposable, replaceable, get a
   new IP every time. You rarely create these directly.
-- **ReplicaSet** — keeps N identical Pods alive. You rarely touch these directly.
-- **Deployment** — manages ReplicaSets to give you rolling updates and rollbacks.
+- **ReplicaSet**: keeps N identical Pods alive. You rarely touch these directly.
+- **Deployment**: manages ReplicaSets to give you rolling updates and rollbacks.
   **This is what you write** for stateless services (web servers, APIs, proxies).
-- **StatefulSet** — like a Deployment but Pods get stable identities and stable
+- **StatefulSet**: like a Deployment but Pods get stable identities and stable
   storage (`pod-0`, `pod-1`). For databases and anything where identity matters.
-- **DaemonSet** — one Pod on *every* node (or every matching node). Used for
+- **DaemonSet**: one Pod on *every* node (or every matching node). Used for
   node-level agents: Prometheus `node-exporter`, log collectors, CNI, device
   plugins.
-- **Job / CronJob** — run-to-completion and scheduled tasks. Backups, batch,
+- **Job / CronJob**: run-to-completion and scheduled tasks. Backups, batch,
   migrations.
 
 Supporting objects:
 
-- **Service** — a stable virtual IP + DNS name fronting a set of Pods (Pods die;
+- **Service**: a stable virtual IP + DNS name fronting a set of Pods (Pods die;
   the Service endpoint doesn't). Three flavors in §6.
-- **Namespace** — a logical partition (`argocd`, `monitoring`, `kube-system`,
+- **Namespace**: a logical partition (`argocd`, `monitoring`, `kube-system`,
   one per app). Scopes names and lets you apply quotas/policies per tenant.
-- **ConfigMap / Secret** — config and credentials injected into Pods as env vars
+- **ConfigMap / Secret**: config and credentials injected into Pods as env vars
   or mounted files. Secrets are base64, *not* encrypted at rest by default.
-- **PersistentVolume (PV) / PersistentVolumeClaim (PVC)** — storage abstraction.
+- **PersistentVolume (PV) / PersistentVolumeClaim (PVC)**: storage abstraction.
   A Pod asks for storage via a PVC; a StorageClass provisions a PV to satisfy it.
-- **Ingress / IngressRoute** — HTTP routing from outside into Services. With
+- **Ingress / IngressRoute**: HTTP routing from outside into Services. With
   Traefik you get its `IngressRoute` CRD, a richer Traefik-specific version of
   the standard `Ingress` object.
 
 ---
 
-## 3. kubectl — the commands you'll actually run
+## 3. kubectl: the commands you'll actually run
 
 `kubectl` is your single interface. The pattern is almost always
 `kubectl <verb> <resource> [name] [flags]`.
@@ -150,14 +150,14 @@ node's IP (`https://<control-plane-ip>:6443`), and run `kubectl` locally. Then
 
 ### Applying & deleting
 ```bash
-kubectl apply -f deployment.yaml       # declarative — create or update to match file
+kubectl apply -f deployment.yaml       # declarative, create or update to match file
 kubectl apply -k apps/<svc>/           # apply a Kustomize directory
 kubectl delete -f deployment.yaml
-kubectl delete pod <pod> -n <ns>       # pod gets recreated by its ReplicaSet — a quick restart
+kubectl delete pod <pod> -n <ns>       # pod gets recreated by its ReplicaSet, a quick restart
 ```
 **Prefer `apply` (declarative) over `create`/`edit` (imperative).** Everything in
 the cluster should be reproducible from source. The imperative commands are for
-debugging and learning, not for the running state — and if you run GitOps, a
+debugging and learning, not for the running state, and if you run GitOps, a
 `selfHeal` controller will literally undo any imperative change you make to a
 managed resource, by design.
 
@@ -172,7 +172,7 @@ kubectl rollout restart deployment/<svc> -n <ns>       # restart all pods (re-pu
 ### Scaling
 ```bash
 kubectl scale deployment/<svc> -n <ns> --replicas=3
-# (a GitOps controller reverts this if the app is git-managed — the self-heal proof)
+# (a GitOps controller reverts this if the app is git-managed: the self-heal proof)
 ```
 
 ### Quality-of-life
@@ -196,7 +196,7 @@ kind: Deployment        # the object type
 metadata:
   name: web             # unique within namespace+kind
   namespace: web
-spec:                   # DESIRED STATE — the only part you really design
+spec:                   # DESIRED STATE, the only part you really design
   replicas: 1
   selector:             # how this Deployment finds "its" pods (must match template labels)
     matchLabels: { app: web }
@@ -211,7 +211,7 @@ spec:                   # DESIRED STATE — the only part you really design
           image: registry/web-app:latest
           ports:
             - containerPort: 80
-# status:               # ACTUAL STATE — k8s writes this, you never do
+# status:               # ACTUAL STATE: k8s writes this, you never do
 ```
 
 The **labels/selector** coupling trips everyone up early: a Service finds Pods by
@@ -221,24 +221,24 @@ manages nothing. They're the glue.
 
 ---
 
-## 5. Scheduling — placement in a heterogeneous cluster
+## 5. Scheduling: placement in a heterogeneous cluster
 
-This matters most when your nodes are *not* interchangeable — different CPUs,
+This matters most when your nodes are *not* interchangeable, different CPUs,
 some with a GPU, some always-on and some transient. The scheduler decides
 placement **once, at creation time**, based on `resources.requests` (declared,
-not actual usage) — there's no automatic rebalancing afterward. You steer it with
+not actual usage), there's no automatic rebalancing afterward. You steer it with
 four tools.
 
-### nodeSelector — simplest, exact-match
+### nodeSelector: simplest, exact-match
 ```yaml
 spec:
   nodeSelector:
     kubernetes.io/hostname: <control-plane-node>    # "only here"
 ```
-Good for "this must run on the always-on node" — I pin the GitOps controller and
+Good for "this must run on the always-on node", I pin the GitOps controller and
 any always-up service this way.
 
-### Node labels — your own taxonomy
+### Node labels: your own taxonomy
 ```bash
 kubectl label node <storage-node> role=storage
 kubectl label node <gpu-node> gpu=true
@@ -247,7 +247,7 @@ kubectl get nodes --show-labels
 Then `nodeSelector: { role: storage }` is more meaningful than a hostname and
 survives a hardware swap.
 
-### Affinity / anti-affinity — expressive rules
+### Affinity / anti-affinity: expressive rules
 `nodeSelector` is hard AND-only. Affinity adds OR, preferences (soft), and
 pod-relative rules:
 ```yaml
@@ -269,7 +269,7 @@ spec:
             topologyKey: kubernetes.io/hostname
 ```
 
-### Taints & tolerations — the node says NO by default
+### Taints & tolerations: the node says NO by default
 A **taint** repels Pods *unless* they explicitly **tolerate** it. This is exactly
 the pattern for a transient node: taint it so stateful/general workloads stay
 off, and only the workloads that opt in land there.
@@ -287,15 +287,15 @@ spec:
       effect: NoSchedule
 ```
 Effects: `NoSchedule` (won't place new), `PreferNoSchedule` (soft), `NoExecute`
-(also *evicts* running pods that don't tolerate — this is what drains a node).
+(also *evicts* running pods that don't tolerate, this is what drains a node).
 
 **The combined pattern for GPU routing:** label the GPU node `gpu=true`, and
 taint it `transient=true:NoSchedule`. A GPU workload then needs *both* a
 `nodeSelector`/affinity for `gpu=true` (to be attracted) *and* a toleration for
-`transient` (to be permitted). Attraction + permission — you need both, and
+`transient` (to be permitted). Attraction + permission, you need both, and
 that's the bit people forget.
 
-### Resource requests & limits — feed the scheduler real numbers
+### Resource requests & limits: feed the scheduler real numbers
 ```yaml
 containers:
   - name: web
@@ -308,22 +308,22 @@ containers:
         memory: 256Mi
 ```
 Without requests, the scheduler assumes ~0 and can overpack a node. On modest
-nodes (say 16GB) this bites fast — set requests so placement reflects reality.
+nodes (say 16GB) this bites fast, set requests so placement reflects reality.
 
 ---
 
-## 6. Networking — how traffic actually flows
+## 6. Networking: how traffic actually flows
 
 Three Service types, each a different exposure level:
 
-- **ClusterIP** (default) — internal-only virtual IP. Reachable as
+- **ClusterIP** (default): internal-only virtual IP. Reachable as
   `<svc>.<ns>.svc.cluster.local` from any pod. Most services should be ClusterIP
   and get exposed via Ingress.
-- **NodePort** — opens a high port (30000–32767) on *every* node's IP. Crude;
+- **NodePort**: opens a high port (30000-32767) on *every* node's IP. Crude;
   mostly a debugging/legacy step. Usually skipped.
-- **LoadBalancer** — asks for an external IP. In cloud, provisions a cloud LB; in
+- **LoadBalancer**: asks for an external IP. In cloud, provisions a cloud LB; in
   K3s, the bundled ServiceLB (Klipper) fakes it using node IPs. MetalLB is the
-  common bare-metal alternative — but if you front the cluster with a tunnel
+  common bare-metal alternative, but if you front the cluster with a tunnel
   (below), you may not need LoadBalancer Services or MetalLB at all.
 
 **A tunnel-based ingress path** (the one I run) avoids opening any router ports:
@@ -333,7 +333,7 @@ Internet ─▶ Cloudflare edge (TLS) ─▶ cloudflared tunnel ─▶ Traefik :
 ```
 No router ports opened, no MetalLB, no LoadBalancer Services. `cloudflared` is a
 dumb pipe; Traefik is the routing brain. Every new external service = one DNS
-record + one IngressRoute. It's one of several valid patterns — a LoadBalancer +
+record + one IngressRoute. It's one of several valid patterns, a LoadBalancer +
 MetalLB + real Ingress is equally legitimate; the tunnel just trades a dependency
 on Cloudflare for not touching the router.
 
@@ -349,11 +349,11 @@ know the pod network (`10.42.0.0/16` by default in K3s) is separate from your LA
 
 ---
 
-## 7. Storage — PVCs, StorageClasses, and node-locality
+## 7. Storage: PVCs, StorageClasses, and node-locality
 
 The PVC/PV/StorageClass dance:
 
-- A **StorageClass** is a *provisioner* — a recipe for making volumes on demand.
+- A **StorageClass** is a *provisioner*, a recipe for making volumes on demand.
 - A Pod declares a **PVC** ("I want 10Gi, ReadWriteOnce").
 - The StorageClass dynamically creates a **PV** to satisfy it; the PVC binds.
 
@@ -383,19 +383,19 @@ spec:
 ```
 
 **Access modes matter for a multi-node cluster:**
-- `ReadWriteOnce` (RWO) — one *node* at a time. Fine for single-replica apps.
-- `ReadWriteMany` (RWX) — many nodes simultaneously. Needs a networked backend
+- `ReadWriteOnce` (RWO), one *node* at a time. Fine for single-replica apps.
+- `ReadWriteMany` (RWX), many nodes simultaneously. Needs a networked backend
   (NFS, or Longhorn with RWX). Required for anything that must be writable from
   pods on different nodes at once.
 
 Two common classes:
 - **`local-path`** (bundled, default): writes to a directory on whatever node the
-  pod lands on. Fast, zero-config, but the data is *pinned to that node* — if the
+  pod lands on. Fast, zero-config, but the data is *pinned to that node*, if the
   pod reschedules elsewhere, the data doesn't follow. Fine for state that lives
   on an always-on node. **Not** fine for anything that might move.
 - **Longhorn** (or similar distributed block storage): replicated across nodes,
   survives node loss, supports RWX, gives you snapshots. The "real" answer for
-  stateful workloads — at the cost of needing dedicated disks and some operational
+  stateful workloads, at the cost of needing dedicated disks and some operational
   care.
 
 This is the crux of a **"durable data lives outside the disposable layer"**
@@ -437,14 +437,14 @@ Inject into a pod:
 ```
 **Secrets are base64, not encrypted.** Anyone with `kubectl get secret -o yaml`
 can decode them. That may be acceptable behind a private network, but the "real"
-answer — Sealed Secrets, SOPS, or external-secrets — lets you commit *encrypted*
+answer, Sealed Secrets, SOPS, or external-secrets, lets you commit *encrypted*
 secrets to a config repo, which plain Secrets can't safely do. If you're doing
 GitOps, this is the piece that makes secrets fit the model instead of being a
 manual out-of-band step.
 
 ---
 
-## 9. Health & self-healing — the probes
+## 9. Health & self-healing: the probes
 
 Kubernetes restarts and reroutes based on three probes you define per container:
 
@@ -509,7 +509,7 @@ sudo cat /etc/rancher/k3s/k3s.yaml
 sudo systemctl status k3s
 sudo journalctl -u k3s -f                 # control-plane logs
 
-# agent service — on a worker
+# agent service: on a worker
 sudo systemctl status k3s-agent
 sudo journalctl -u k3s-agent -f
 
@@ -531,11 +531,11 @@ sudo k3s crictl images
 
 **Node lifecycle** (the graceful way to power a node down):
 ```bash
-kubectl cordon <node>        # mark unschedulable — no NEW pods, existing stay
+kubectl cordon <node>        # mark unschedulable, no NEW pods, existing stay
 kubectl drain <node> --ignore-daemonsets --delete-emptydir-data  # evict pods, prep for shutdown
 kubectl uncordon <node>      # back into rotation
 ```
-`drain` before powering a node down reschedules evictable pods elsewhere first —
+`drain` before powering a node down reschedules evictable pods elsewhere first,
 the right move for any node you shut down regularly (a transient laptop worker, a
 node you patch and reboot). DaemonSets are excluded because they're node-bound by
 definition; hence `--ignore-daemonsets`.
@@ -552,7 +552,7 @@ recreated.
 ## 12. A debugging playbook (the 80% of incidents)
 
 ```bash
-# Pod won't start — read the events FIRST, they almost always say why
+# Pod won't start: read the events FIRST, they almost always say why
 kubectl describe pod <pod> -n <ns>      # look at the Events: section at the bottom
 kubectl get events -n <ns> --sort-by=.lastTimestamp
 ```
@@ -564,7 +564,7 @@ Common states and what they mean:
 | `ImagePullBackOff` | can't pull the image | private registry needs a pull secret, or wrong image name/case |
 | `CrashLoopBackOff` | container starts then dies repeatedly | `kubectl logs <pod> --previous` to see the death |
 | `ContainerCreating` (stuck) | volume won't mount / image still pulling | `describe pod` for the mount or pull error |
-| `Running` but no traffic | readiness probe failing or label/selector mismatch | check `kubectl get endpoints <svc>` — empty means selector miss |
+| `Running` but no traffic | readiness probe failing or label/selector mismatch | check `kubectl get endpoints <svc>`: empty means selector miss |
 | `Terminating` (stuck) | finalizers or a wedged node | `describe`, check node health |
 
 ```bash
@@ -587,24 +587,24 @@ kubectl top pods -A
 A few recurring patterns, in increasing order of scheduling complexity:
 
 - **Stateless service:** Deployment + ClusterIP Service + IngressRoute, pinned to
-  a specific node if it must be always-on. The template for everything stateless
-  — web servers, APIs, reverse proxies.
+  a specific node if it must be always-on. The template for everything stateless,
+  web servers, APIs, reverse proxies.
 - **GPU workload:** Deployment with `nodeSelector`/affinity for a `gpu=true`
   label + a toleration for whatever taint guards that node + a GPU resource
   request (`nvidia.com/gpu: 1`, once the NVIDIA device plugin DaemonSet is
   installed). The device plugin is the missing link that exposes the GPU to the
-  scheduler — without it, `nvidia.com/gpu` requests never satisfy.
+  scheduler, without it, `nvidia.com/gpu` requests never satisfy.
 - **Stateful service (database, etc.):** StatefulSet + a PVC on replicated
   storage (Longhorn/NFS), *not* `local-path`, so the data survives a
   reschedule. If you don't yet have replicated storage, it's often cleaner to run
   the database outside the cluster than to pin it fragilely to one node.
-- **Node-level agent:** DaemonSet — exporters, log shippers, device plugins.
+- **Node-level agent:** DaemonSet, exporters, log shippers, device plugins.
 
 ---
 
 ## 14. Minimal end-to-end example to internalize the model
 
-Deploy something from scratch, by hand, once — then never again (because you'll
+Deploy something from scratch, by hand, once, then never again (because you'll
 move to declarative manifests / GitOps). It cements what the automation is doing
 for you:
 
@@ -622,7 +622,7 @@ kubectl port-forward -n demo svc/hello 8080:80             # (mind the SSH-local
 
 kubectl delete namespace demo                              # tears down everything in it
 ```
-Then realize a GitOps loop does all of this from a `git push` — declaratively,
+Then realize a GitOps loop does all of this from a `git push`, declaratively,
 self-healing, with the image pinned to an exact build. Being able to do it by
 hand *and* having built the automation that makes doing it by hand unnecessary is
 the whole competency.

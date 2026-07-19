@@ -1,4 +1,4 @@
-# Homelab Kubernetes Platform — Architecture
+# Homelab Kubernetes Platform: Architecture
 
 A three-node K3s cluster running GitOps-managed services, with a split public/tailnet
 ingress model and Longhorn distributed storage. This document captures the network
@@ -18,7 +18,7 @@ workloads, storage, and GitOps fit together).
 | **nebula** | i7-6700K desktop | `192.168.1.248` | Worker + always-on | ZFS NAS (`tank`), Seafile (Compose), GTX 1080, Longhorn NVMe replica |
 | **legion** | Laptop (battery removed) | `192.168.1.249` | Worker + always-on | Longhorn SATA replica (`/var/lib/longhorn-disk-sda`), MetalLB VIP advertiser |
 
-> `legion` runs 24/7 — it is a permanent node, not a transient/WoL worker.
+> `legion` runs 24/7, it is a permanent node, not a transient/WoL worker.
 
 ---
 
@@ -44,7 +44,7 @@ flowchart TB
 
     wg["WireGuard<br/>UDP 51820<br/>(port-forwarded via Singtel ONR)<br/>high-throughput admin path"]
 
-    subgraph lan["🏠 Home LAN — 192.168.1.0/24"]
+    subgraph lan["🏠 Home LAN, 192.168.1.0/24"]
         direction TB
 
         subgraph deus_node["deus · 192.168.1.250 (control plane)"]
@@ -88,7 +88,7 @@ their own stack and never become a second general-purpose ingress.
 |-------------|--------|-----|---------|
 | Cloudflare Tunnel | `*.packetcraft.dev` | Cloudflare edge cert | Public services |
 | Tailscale subnet router | `*.lab.packetcraft.dev` | Let's Encrypt wildcard (cert-manager DNS-01) | Tailnet-only services |
-| WireGuard (UDP 51820) | private IPs | — | High-throughput admin path |
+| WireGuard (UDP 51820) | private IPs | N/A | High-throughput admin path |
 
 ---
 
@@ -203,7 +203,7 @@ sequenceDiagram
 ```
 
 **Two-repo split.** CI writes to the config repo; ArgoCD reads from it. They never talk
-directly — a single repo would loop (CI's write-back re-triggers CI). Off-the-shelf images
+directly, a single repo would loop (CI's write-back re-triggers CI). Off-the-shelf images
 (Grafana, Jellyfin) skip CI entirely: just an `apps/<svc>/` manifest + ArgoCD Application.
 
 ---
@@ -212,7 +212,7 @@ directly — a single repo would loop (CI's write-back re-triggers CI). Off-the-
 
 - **NAS owns data, K3s owns services.** Seafile lives on Compose for data-safety; ZFS `tank` on nebula holds durable state. Jellyfin placement remains open (GPU is on nebula, a Compose host).
 - **Cloudflare Tunnel = dumb pipe, Traefik = routing brain.** All routing logic in IngressRoutes; ingress pipes just feed it.
-- **Single routing brain.** Per-app proxies stay scoped to their stack — never a second general-purpose ingress.
+- **Single routing brain.** Per-app proxies stay scoped to their stack, never a second general-purpose ingress.
 - **Longhorn cannot use ZFS.** Needs a dedicated disk formatted ext4/XFS at a stable mount, `multipathd` blacklisted. 2 replicas = the floor for node-independent redundancy.
 - **`selfHeal` + Helm-managed secrets = churn.** Chart-owned credentials get reset on reconcile → migrate to `existingSecret` + SealedSecret.
 - **Sealed Secrets key backup is critical.** Losing the controller private key makes all sealed secrets unrecoverable.
@@ -258,7 +258,7 @@ flowchart LR
 - code-server ambient credential leak fix deferred
 
 **On the horizon**
-- **Portfolio site** (static + Go API + Postgres) — first real app, before obsync
-- **obsync** (Go backend + Postgres, both in K3s) — deferred to avoid layering Go + Postgres + custom protocol at once
-- **Control-plane HA** — single-server etcd is a known SPOF; endgame is 2–3 dedicated mini-PC server nodes
-- **Longhorn backup target** — NFS share on nebula's `tank`, to configure before any DB holds real data
+- **Portfolio site** (static + Go API + Postgres): first real app, before obsync
+- **obsync** (Go backend + Postgres, both in K3s): deferred to avoid layering Go + Postgres + custom protocol at once
+- **Control-plane HA**: single-server etcd is a known SPOF; endgame is 2-3 dedicated mini-PC server nodes
+- **Longhorn backup target**: NFS share on nebula's `tank`, to configure before any DB holds real data

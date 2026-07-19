@@ -43,10 +43,10 @@ If someone replicated this from nothing, at Singapore retail (July 2026):
 | Item | Qty | Unit (S$) | Subtotal (S$) |
 |---|---|---|---|
 | N100 mini-PC (16GB / 500GB, new) | 3 | ~400 | 1200 |
-| — *or* refurb USFF (EliteDesk / ThinkCentre, Carousell) | 3 | ~300 | 900 |
+| *or* refurb USFF (EliteDesk / ThinkCentre, Carousell) | 3 | ~300 | 900 |
 | Managed switch (TP-Link SG108E class) | 1 | ~40 | 40 |
-| NAS-rated SSD / drives for storage | — | — | ~600 |
-| Cables, USB sticks, surge strip, misc | — | — | ~80 |
+| NAS-rated SSD / drives for storage | N/A | N/A | ~600 |
+| Cables, USB sticks, surge strip, misc | N/A | N/A | ~80 |
 | **Total (new mini-PCs)** | | | **~S$1920** |
 | **Total (refurb path)** | | | **~S$1620** |
 
@@ -62,8 +62,8 @@ price matters a lot here, because it's currently at a **record high.**
 
 ### The tariff (dated, re-check quarterly)
 
-For **1 July – 30 September 2026**, SP Group's regulated household tariff is
-**31.91 cents/kWh before GST, or 34.78 cents/kWh with 9% GST** — the highest in
+For **1 July - 30 September 2026**, SP Group's regulated household tariff is
+**31.91 cents/kWh before GST, or 34.78 cents/kWh with 9% GST**: the highest in
 Singapore's history, up 17% from the previous quarter, driven by higher natural
 gas costs. It's reviewed every quarter, and EMA has flagged Q4 could ease *or*
 rise further depending on global fuel prices. For this analysis I use the all-in
@@ -87,7 +87,7 @@ motherboard and other components (GPU is your worst nightware here), not the CPU
 - **At idle (~80W):** 80W × 24h × 30d = 57.6 kWh → **~S$20/month**
 - **With moderate load (~130W):** ~94 kWh → **~S$33/month**
 
-So realistically **S$25–33/month**, call it **~S$300–400/year.** deus alone is
+So realistically **S$25-33/month**, call it **~S$300-400/year.** deus alone is
 almost free (~S$4/month); nebula with the 1080 is the main contributor.
 
 ### The one lever
@@ -120,11 +120,11 @@ node, with EBS gp3 for storage):
 
 - **Capital:** my whole build (or a ~S$1,000 from-scratch equivalent) costs **less
   than a single month** of the AWS-equivalent on-demand bill.
-- **Running:** ~S\$20–33/month of electricity vs. ~US$970/month of cloud compute.
+- **Running:** ~S\$20-33/month of electricity vs. ~US$970/month of cloud compute.
   The homelab's *entire annual running cost* is roughly what the cloud equivalent
   bills in **a week and a half.**
-- **Over a year:** owned hardware total (build + power) sits around **S\$1,300–1,400
-  all-in**; the cloud equivalent is **US$7,000–11,600+.** Roughly an
+- **Over a year:** owned hardware total (build + power) sits around **S\$1,300-1,400
+  all-in**; the cloud equivalent is **US$7,000-11,600+.** Roughly an
   **order of magnitude** difference.
 
 ### But value isn't only the dollar delta
@@ -137,7 +137,7 @@ So the real value has two parts:
 1. **The compute-per-dollar**, which is overwhelmingly in the homelab's favour for
    a steady always-on workload.
 2. **The learning and portfolio value**, which is the actual point. The cluster is
-   a standing, defensible demonstration of platform engineering — every
+   a standing, defensible demonstration of platform engineering, every
    post-mortem, every open item, every "here's *why* this CRD sync failed and how
    I fixed it" is evidence I can operate and reason about infrastructure. That's
    worth more to my career goal than the dollar saving, and it's something no
@@ -162,8 +162,8 @@ about acquiring compute in Singapore right now.
 
 Singapore generates ~95% of its electricity from imported natural gas, so the
 tariff tracks global gas prices with a ~one-quarter lag. In 2026 that's meant a
-climb to a **record 34.78 cents/kWh (with GST) for Q3** — a 17% single-quarter
-jump. For a hobbyist homelab this is a rounding error (S$25–33/month). But it's
+climb to a **record 34.78 cents/kWh (with GST) for Q3**, a 17% single-quarter
+jump. For a hobbyist homelab this is a rounding error (S$25-33/month). But it's
 the reason Singapore is an *expensive place to run always-on compute at scale*,
 and it's a real input into why large-scale compute here leans toward efficiency
 and toward the cloud's shared-infrastructure model. Land and power are both scarce
@@ -175,7 +175,7 @@ here are still cheaper than the UK or Australia.
 
 ### The cloud is dominant here, and the pricing reflects premium demand
 
-Singapore is a major cloud hub — AWS (`ap-southeast-1`), GCP, and Azure all have
+Singapore is a major cloud hub, AWS (`ap-southeast-1`), GCP, and Azure all have
 strong regional presence, and `ap-southeast-1` offers 800+ EC2 instance types. But
 regional pricing runs *above* the US reference regions. For businesses with spiky
 or unpredictable load, or that need managed durability and compliance, the cloud
@@ -190,8 +190,8 @@ utilisation**, because the cloud's core value is elasticity, and if you never
 scale to zero you're paying an elasticity premium for nothing. The signals that
 tip an organisation toward owning or colocating hardware:
 
-- **Flat, high baseline utilisation** (nodes pinned at 60–80% around the clock) —
-  the classic "we're paying a 3–5× markup on compute we could own" realisation.
+- **Flat, high baseline utilisation** (nodes pinned at 60-80% around the clock),
+  the classic "we're paying a 3-5× markup on compute we could own" realisation.
 - **Sustained spend into the seven-figures-a-year range**, where it earns a
   dedicated finance/infra analysis.
 - **GPU-heavy workloads**, where rental premiums accelerate the breakeven.
@@ -216,13 +216,13 @@ year's power bill is less than a fortnight of the cloud-equivalent invoice.
 ## 5. The bottom line
 
 - **Capital:** ~S$1,200 once, more with further upgrades or additional nodes.
-- **Running:** ~S$25–33/month of electricity at the current record-high tariff
+- **Running:** ~S$25-33/month of electricity at the current record-high tariff
   the only recurring cost, and a small one.
-- **Cloud-equivalent:** ~US$7,000–11,600+/year, higher still at Singapore-region
+- **Cloud-equivalent:** ~US$7,000-11,600+/year, higher still at Singapore-region
   pricing.
 - **Value:** an order-of-magnitude compute-per-dollar advantage for this
   always-on workload, *plus* the learning and portfolio value that was the actual
-  goal — which the cloud would have hidden rather than taught.
+  goal, which the cloud would have hidden rather than taught.
 
 Money well spent. The hardware is already amortised many times over against the
 cloud line item, the electricity is the rounding error, and the thing I walk away
@@ -235,7 +235,7 @@ as well as a hobby worth exploring.
 
 ---
 
-*Tariff figure: SP Group regulated tariff, Q3 2026 (1 Jul–30 Sep), 34.78 ¢/kWh
-incl. GST — re-check quarterly. Cloud figures: AWS on-demand, us-east-1 reference
+*Tariff figure: SP Group regulated tariff, Q3 2026 (1 Jul-30 Sep), 34.78 ¢/kWh
+incl. GST, re-check quarterly. Cloud figures: AWS on-demand, us-east-1 reference
 with note that ap-southeast-1 runs higher; re-verify at aws.amazon.com/ec2/pricing
 before quoting.*

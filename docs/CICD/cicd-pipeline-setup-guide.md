@@ -1,4 +1,4 @@
-# GitOps CI/CD Pipeline — Setup Guide
+# GitOps CI/CD Pipeline: Setup Guide
 
 A reusable template for wiring any custom-built service into the homelab's
 `git push → build → deploy` pipeline. Built around GitHub Actions (CI) +
@@ -46,7 +46,7 @@ communicate only through the **config repo**.
   cluster from outside.
 
 Key rule: **CD applies to everything you run; CI only applies to things you
-build.** Off-the-shelf images (Jellyfin, Grafana) skip CI entirely — they need
+build.** Off-the-shelf images (Jellyfin, Grafana) skip CI entirely, they need
 only a config-repo manifest + an ArgoCD Application.
 
 ---
@@ -61,7 +61,7 @@ re-triggers CI).
 | `<service>-app` | Source + CI workflow | You (humans) | GitHub Actions |
 | `homelab-cicd-config` | K8s manifests | GitHub Actions (bot) | ArgoCD |
 
-The config repo is shared across all services — each service gets its own
+The config repo is shared across all services, each service gets its own
 subfolder under `apps/`.
 
 ### App repo layout
@@ -159,7 +159,7 @@ images:
   `kustomization.yaml`. Don't swap file contents.
 - **ghcr.io is all-lowercase.** `<owner-lowercase>` must be lowercase even if
   your GitHub login has capitals (`BarneyLaw` → `barneylaw`). `kustomize edit
-  set image` does a **case-sensitive string match** — a case mismatch matches
+  set image` does a **case-sensitive string match**, a case mismatch matches
   nothing and the tag silently never updates.
 
 ---
@@ -194,7 +194,7 @@ jobs:
       - name: Build and push image
         id: build
         run: |
-          # force lowercase owner — ghcr.io rejects uppercase repo names
+          # force lowercase owner: ghcr.io rejects uppercase repo names
           IMAGE=ghcr.io/$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')/<service>-app
           SHA=${GITHUB_SHA::7}
           docker build -t $IMAGE:$SHA -t $IMAGE:latest .
@@ -320,7 +320,7 @@ spec:
 kubectl apply -f <service>-app.yaml
 ```
 
-> **`repoURL` is the entire Gitea migration later** — switch this one line to
+> **`repoURL` is the entire Gitea migration later**, switch this one line to
 > the Gitea URL, re-add repo creds, done.
 
 ---
@@ -332,7 +332,7 @@ IngressRoute → service. The tunnel is a dumb pipe; Traefik is the routing brai
 
 1. Add a public hostname to the deus tunnel in Cloudflare:
    `<service>.packetcraft.dev` → `http://localhost:80`. Cloudflare auto-creates
-   a proxied CNAME and terminates TLS at its edge (real cert — required because
+   a proxied CNAME and terminates TLS at its edge (real cert, required because
    `.dev` is HSTS-preloaded and rejects self-signed).
 2. Create a Traefik IngressRoute:
 ```yaml

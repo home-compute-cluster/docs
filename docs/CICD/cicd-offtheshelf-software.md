@@ -1,14 +1,14 @@
-# GitOps for Off-the-Shelf Software — Setup Guide
+# GitOps for Off-the-Shelf Software: Setup Guide
 
 A companion to `cicd-pipeline-setup-guide.md`. That guide covers
 **built-from-source** services (you write the code, CI builds an image). This one
-covers **off-the-shelf software** you don't compile — Grafana, Jellyfin,
+covers **off-the-shelf software** you don't compile, Grafana, Jellyfin,
 Longhorn, cert-manager, anything that already ships an image or a Helm chart.
 
 The key difference: **off-the-shelf software has no app repo and no CI.** There is
 nothing to build. You only declare *what to run*; ArgoCD reconciles the cluster to
 match. This is the `CD applies to everything you run; CI only applies to things
-you build` rule from the main guide — here, CI is simply absent.
+you build` rule from the main guide, here, CI is simply absent.
 
 ---
 
@@ -19,20 +19,20 @@ how the software is distributed.
 
 | Shape | Example | Pattern |
 |-------|---------|---------|
-| A plain container image | Jellyfin, a public nginx, linuxserver.io images | **Pattern A — raw manifests** |
-| A Helm chart | kube-prometheus-stack, Longhorn, cert-manager, ArgoCD itself | **Pattern B — ArgoCD Application pointing at a Helm chart** |
+| A plain container image | Jellyfin, a public nginx, linuxserver.io images | **Pattern A: raw manifests** |
+| A Helm chart | kube-prometheus-stack, Longhorn, cert-manager, ArgoCD itself | **Pattern B: ArgoCD Application pointing at a Helm chart** |
 
 Rule of thumb: if the project's install docs say "here's our image, write your own
-Deployment," use Pattern A. If they say "`helm install ...`," use Pattern B — never
+Deployment," use Pattern A. If they say "`helm install ...`," use Pattern B, never
 hand-translate a chart into raw manifests, you lose every upstream default and
 every future upgrade.
 
 ---
 
-## 2. Pattern A — raw manifests for a plain image
+## 2. Pattern A: raw manifests for a plain image
 
 Identical to the source-built layout in the main guide, minus the app repo and the
-`images:` tag-bump seam (there's no CI to bump it — you pin the version yourself).
+`images:` tag-bump seam (there's no CI to bump it, you pin the version yourself).
 
 ### Config repo layout
 ```
@@ -66,7 +66,7 @@ spec:
         kubernetes.io/hostname: nebula
       containers:
         - name: jellyfin
-          image: jellyfin/jellyfin:10.9.11   # PIN A VERSION — never :latest
+          image: jellyfin/jellyfin:10.9.11   # PIN A VERSION, never :latest
           ports:
             - containerPort: 8096
 ```
@@ -96,7 +96,7 @@ resources:
   - service.yaml
 ```
 
-> No `images:` block needed — there's no CI rewriting a tag. You set the version in
+> No `images:` block needed, there's no CI rewriting a tag. You set the version in
 > `deployment.yaml` by hand and commit it. **Renovate** (already on your roadmap)
 > watches these pinned tags and opens a PR when `jellyfin/jellyfin:10.9.12` ships,
 > so upgrades stay declarative: review PR → merge → ArgoCD rolls it.
@@ -128,12 +128,12 @@ spec:
 
 ---
 
-## 3. Pattern B — ArgoCD Application pointing at a Helm chart
+## 3. Pattern B: ArgoCD Application pointing at a Helm chart
 
 This is the important one, because most serious off-the-shelf infra ships as a
 chart, and **it's how Grafana already arrived on your cluster** (via
 kube-prometheus-stack). The mistake to avoid: `helm install` by hand. That puts the
-release outside Git — exactly the drift that bit the Grafana `lab.` IngressRoute.
+release outside Git, exactly the drift that bit the Grafana `lab.` IngressRoute.
 
 ArgoCD renders Helm charts itself. You point an Application at the chart and supply
 values; ArgoCD templates it and reconciles the output. The chart's release is now
@@ -142,7 +142,7 @@ applies.
 
 ### Two ways to feed values
 
-**B1 — inline values in the Application** (fine for small overrides):
+**B1: inline values in the Application** (fine for small overrides):
 ```yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -172,7 +172,7 @@ spec:
       - ServerSideApply=true          # big CRD-heavy charts need this
 ```
 
-**B2 — values file in the config repo** (better once values grow; this is the
+**B2: values file in the config repo** (better once values grow; this is the
 clean long-term shape). Use a multi-source Application: one source is the upstream
 chart, the other is your repo holding the values file.
 ```yaml
@@ -218,16 +218,16 @@ homelab-cicd-config/
 > than duplicating it, *provided* chart name, version, namespace, and release name
 > line up. Pin `targetRevision` to the version you actually have now (find it with
 > `helm list -A`), sync, confirm Healthy, *then* bump the version in a later commit.
-> Don't combine "adopt" and "upgrade" in one move — you won't know which broke what.
+> Don't combine "adopt" and "upgrade" in one move, you won't know which broke what.
 
 ### Where the Grafana `lab.` IngressRoute belongs now
 
 Two clean homes, pick one:
 
-1. **In the chart values** — kube-prometheus-stack exposes
+1. **In the chart values**, kube-prometheus-stack exposes
    `grafana.extraObjects` (or you template the IngressRoute through the chart),
    so the `lab.` IngressRoute is rendered by the same Application. Most cohesive.
-2. **As a sibling raw manifest** — a small `apps/monitoring-extras/` folder
+2. **As a sibling raw manifest**, a small `apps/monitoring-extras/` folder
    (Pattern A, manifests only, no Deployment) holding just the Grafana
    IngressRoute, with its own ArgoCD Application. Simpler to reason about; keeps
    "the chart" and "my routing for the chart" as separate Applications.
@@ -261,7 +261,7 @@ New software to run?
 
 - [ ] Decide Pattern A (image) vs B (chart). When in doubt, follow how upstream
       tells you to install it.
-- [ ] **Pin the version** — image tag (A) or `targetRevision` chart version (B).
+- [ ] **Pin the version**: image tag (A) or `targetRevision` chart version (B).
       Never `:latest`, never an unpinned chart.
 - [ ] Add `apps/<service>/` to `homelab-cicd-config` (manifests, or chart values).
 - [ ] Create the ArgoCD Application (commit it into the repo too, e.g.

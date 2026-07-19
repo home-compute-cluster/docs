@@ -176,10 +176,10 @@ The classic homelab starter: a stack of cheap Pis.
 **Why it lost (for the main cluster):**
 
 - **Architecture friction.** My whole pipeline builds `linux/amd64` images to
-  ghcr.io. Going ARM means multi-arch builds via `docker buildx` — a real,
+  ghcr.io. Going ARM means multi-arch builds via `docker buildx`, a real,
   ongoing tax on every image, for no learning benefit relevant to my goals.
 - **Underpowered for the real workloads.** Postgres, Jellyfin transcoding, a
-  monitoring stack, dev containers — these want CPU, RAM, and real I/O that a Pi
+  monitoring stack, dev containers, these want CPU, RAM, and real I/O that a Pi
   struggles with. I'd spend my time fighting resource limits instead of learning
   platform patterns.
 
@@ -212,7 +212,7 @@ its own headache. The one place a cheap VPS *did* earn a role was as a potential
 WireGuard *relay*, a single tiny box for NAT traversal,  which is a narrow,
 well-scoped use, not a home for the cluster.
 
-### 3.6 Owned hardware — the choice
+### 3.6 Owned hardware: the choice
 
 What I actually did: three heterogeneous always-on x86 nodes (a Lenovo M910q
 control plane, an i7-6700K desktop with a GTX 1080 doubling as the NAS, and a
