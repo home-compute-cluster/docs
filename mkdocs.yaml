@@ -39,6 +39,11 @@ nav:
   - Containerization:
     - Dockerfile Guide: containerization/dockerfile-guide.md
     - Dev Container Setup: containerization/dynamic-dev-container-setup-guide.md
+  - Postmortems:
+    - Overview: postmortems/index.md
+    - 2026-09-02 deus lockup: postmortems/2026-09-02-deus-lockup.md
+    - 2026-09-06 opus reset loop: postmortems/2026-09-06-opus-reset-loop.md
+    - 2026-09-08 deus control-plane outage: postmortems/2026-09-08-deus-control-plane-outage.md
   - Weekly Logs:
       - Week 01: weekly/2026-05-10.md
       - Week 02: weekly/2026-05-14.md
