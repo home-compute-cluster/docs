@@ -35,7 +35,19 @@ nav:
   - CI/CD:
     - Pipeline Setup: CICD/cicd-pipeline-setup-guide.md
     - Off-the-shelf Software: CICD/cicd-offtheshelf-software.md
-  - K3s: kubernetes-guides/k3s-kubernetes-guide.md
+  - K3s:
+    - Overview: kubernetes-guides/k3s-kubernetes-guide.md
+    - Components: kubernetes-guides/components.md
+    - Objects and Workloads: kubernetes-guides/objects-and-workloads.md
+    - kubectl: kubernetes-guides/kubectl.md
+    - Scheduling: kubernetes-guides/scheduling.md
+    - Networking: kubernetes-guides/networking.md
+    - Storage: kubernetes-guides/storage.md
+    - Configuration and Security: kubernetes-guides/configuration-and-security.md
+    - Packaging and Patterns: kubernetes-guides/packaging-and-patterns.md
+    - Deployment Modes: kubernetes-guides/deployment-modes.md
+    - K3s Operations: kubernetes-guides/k3s-operations.md
+    - Debugging: kubernetes-guides/debugging.md
   - Containerization:
     - Dockerfile Guide: containerization/dockerfile-guide.md
     - Dev Container Setup: containerization/dynamic-dev-container-setup-guide.md
