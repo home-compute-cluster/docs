@@ -302,16 +302,24 @@ flowchart LR
 
 ## 7. Known gaps & horizon
 
-**Open drift / gaps**
+**Highest priority (from the September postmortems)**
+- **Tailscale and `ufw` state in Ansible**, asserted on every run. Both September faults came from settings applied by hand on one node.
+- **A second Tailscale subnet router** on sol, so losing deus no longer removes all remote access.
+- **etcd visibility**: K3s does not expose etcd metrics by default (`--etcd-expose-metrics` is false) and the kube-prometheus-stack etcd job looks for etcd pods that do not exist under K3s, so losing a member currently alerts nobody.
+
+**Other open gaps**
+- Alerts for unexpected reboots and `k3s.service` restarts, and an alert path that does not depend on the lab plane
+- Hardware watchdog (`RuntimeWatchdogSec`) on every node
+- An app-of-apps watching `argocd/`, and the GitHub webhook so ArgoCD syncs on push instead of polling
+- A restore drill for the portfolio database; WAL archiving works, restore is unproven
+- An off-site copy of the most important backups (today they all end up on nebula)
+- Taint deus, which carries the most cluster-critical roles, to keep general workloads off it
 - Grafana `lab.` IngressRoute still hand-applied; move it to `apps/monitoring-extras/`
-- Grafana admin password migration to a SealedSecret pending
-- GitHub webhook for push-triggered ArgoCD sync not yet configured (currently poll-based)
 - Renovate not yet set up
-- code-server ambient credential leak fix deferred
+- Deployment guide still needs sections on secrets and IngressRoutes
 
 **On the horizon**
-- **Portfolio site** (static + Go API + Postgres): first real app, before obsync
-- **obsync** (Go backend + Postgres, both in K3s): deferred to avoid layering Go + Postgres + custom protocol at once
-- **etcd visibility**: K3s does not expose etcd metrics by default (`--etcd-expose-metrics` is false) and the kube-prometheus-stack etcd job looks for etcd pods that do not exist under K3s, so losing a member currently alerts nobody
-- **Taint deus**: it carries the most cluster-critical roles and should stop taking general workloads
-- **Longhorn backup target**: NFS share on nebula's `tank`, to configure before any DB holds real data
+- **obsync**: a pull-based Canvas mirror first, then real-time sync, with a late October target
+- **Penny**: the tutoring payments app (Flutter and Go), still at the schema and skeleton stage
+- **Moving the remaining Compose services** on nebula, such as Seafile, into K3s when it is worth the effort
+- **Tailscale Kubernetes operator**: worth evaluating once the subnet router work is stable, since it would expose services as tailnet devices directly
