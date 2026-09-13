@@ -1,7 +1,7 @@
 # GitOps CI/CD Pipeline: Setup Guide
 
 A reusable template for wiring any custom-built service into the homelab's
-`git push → build → deploy` pipeline. Built around GitHub Actions (CI) +
+`git push -> build -> deploy` pipeline. Built around GitHub Actions (CI) +
 ArgoCD/Kustomize (CD) on K3s, with `cloudflared` + Traefik for ingress.
 
 The nginx test workload is used throughout as the worked example. To stand up a
@@ -17,24 +17,24 @@ communicate only through the **config repo**.
 
 ```
   ┌──────────────┐  push code   ┌─────────────────┐
-  │  app repo    │ ───────────▶ │ GitHub Actions  │   CI
+  │  app repo    │ ───────────> │ GitHub Actions  │   CI
   │ (source+CI)  │              │ build + push    │   (GitHub-hosted runner)
   └──────────────┘              └────────┬────────┘
                                          │ 1. push image:SHA
-                                         ▼
+                                         v
                                    ┌───────────┐
                                    │  ghcr.io  │
                                    └───────────┘
                                          │ 2. write SHA into manifest
-                                         ▼
+                                         v
   ┌──────────────┐ ArgoCD watches ┌─────────────┐
-  │ config repo  │ ◀───────────── │  kustomize  │
+  │ config repo  │ <───────────── │  kustomize  │
   │ (manifests)  │                │  edit image │
   └──────┬───────┘                └─────────────┘
          │ 3. reconcile
-         ▼
+         v
   ┌──────────────────────────────┐
-  │ ArgoCD (in-cluster, always-on)│ ──▶ Deployment rolls to image:SHA   CD
+  │ ArgoCD (in-cluster, always-on)│ ──> Deployment rolls to image:SHA   CD
   └──────────────────────────────┘
 ```
 
@@ -156,7 +156,7 @@ images:
 - **Filenames matter.** Kustomize specifically reads the file named
   `kustomization.yaml`. Don't swap file contents.
 - **ghcr.io is all-lowercase.** `<owner-lowercase>` must be lowercase even if
-  your GitHub login has capitals (`BarneyLaw` → `barneylaw`). `kustomize edit
+  your GitHub login has capitals (`BarneyLaw` becomes `barneylaw`). `kustomize edit
   set image` does a **case-sensitive string match**, a case mismatch matches
   nothing and the tag silently never updates.
 
@@ -241,27 +241,27 @@ private**. Scope every credential to the minimum.
 
 | Boundary | Credential | Who creates it | Needed when |
 |----------|-----------|----------------|-------------|
-| CI → ghcr.io (push image) | `GITHUB_TOKEN` (auto) + `packages: write` | GitHub, automatic | always (just declare the permission) |
-| CI → config repo (write tag) | `CONFIG_REPO_TOKEN` (fine-grained PAT) | You, by hand | always (cross-repo write) |
-| Cluster → ghcr.io (pull image) | image pull secret | You | only if package is **private** |
-| ArgoCD → config repo (read) | repo creds | You | only if config repo is **private** |
+| CI to ghcr.io (push image) | `GITHUB_TOKEN` (auto) + `packages: write` | GitHub, automatic | always (just declare the permission) |
+| CI to config repo (write tag) | `CONFIG_REPO_TOKEN` (fine-grained PAT) | You, by hand | always (cross-repo write) |
+| Cluster to ghcr.io (pull image) | image pull secret | You | only if package is **private** |
+| ArgoCD to config repo (read) | repo creds | You | only if config repo is **private** |
 
 ### Creating `CONFIG_REPO_TOKEN` (one-time, reusable across all services)
-1. GitHub → avatar → **Settings** → **Developer settings**.
-2. **Personal access tokens → Fine-grained tokens → Generate new token**.
-3. **Repository access:** Only select repositories → `homelab-cicd-config`.
-4. **Permissions:** Repository permissions → **Contents → Read and write**.
+1. GitHub, then your avatar, then **Settings**, then **Developer settings**.
+2. **Personal access tokens**, then **Fine-grained tokens**, then **Generate new token**.
+3. **Repository access:** Only select repositories, then pick `homelab-cicd-config`.
+4. **Permissions:** under Repository permissions, set **Contents** to **Read and write**.
    Nothing else.
 5. Generate, copy the `github_pat_...` value.
-6. In **each** `<service>-app` repo → Settings → Secrets and variables →
-   Actions → New repository secret. Name: `CONFIG_REPO_TOKEN`, value: the token.
+6. In **each** `<service>-app` repo, go to Settings, then Secrets and variables,
+   then Actions, then New repository secret. Name: `CONFIG_REPO_TOKEN`, value: the token.
 
 > One PAT scoped to the config repo works for every app repo, since they all
 > write to the same config repo. Add it as a secret in each app repo.
 
-### Private package → image pull secret
+### Private package: image pull secret
 If the ghcr package is private (default), the cluster can't pull. Either make it
-public (Package → settings → Change visibility → Public), or:
+public (the package settings, then Change visibility, then Public), or:
 ```bash
 kubectl create secret docker-registry ghcr-pull \
   --namespace <service> \
@@ -276,7 +276,7 @@ then add to the deployment pod spec:
         - name: ghcr-pull
 ```
 
-### Private config repo → ArgoCD repo creds
+### Private config repo: ArgoCD repo creds
 ```bash
 argocd repo add https://github.com/<owner>/homelab-cicd-config.git \
   --username <owner> \
@@ -397,9 +397,9 @@ For each new built-from-source service:
 - [ ] Add `CONFIG_REPO_TOKEN` secret to the app repo.
 - [ ] Substitute `<service>`, `<port>`, `<owner-lowercase>` in workflow + manifests.
 - [ ] Add `apps/<service>/` (deployment, service, kustomization) to `homelab-cicd-config`.
-- [ ] Push app repo → confirm Actions green → confirm bot commit in config repo.
+- [ ] Push the app repo, confirm Actions is green, and confirm the bot commit in the config repo.
 - [ ] Make ghcr package public (or add pull secret).
-- [ ] Apply the ArgoCD Application → confirm Synced/Healthy, pod Running.
+- [ ] Apply the ArgoCD Application and confirm Synced/Healthy, pod Running.
 - [ ] (Optional) Add tunnel hostname + IngressRoute for external access.
 - [ ] Run the end-to-end test + self-heal proof.
 

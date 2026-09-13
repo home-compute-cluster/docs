@@ -25,27 +25,27 @@ the development lifecycle of software, from gathering the requirements to deploy
 and the monitoring + maintenance that comes after.
 
 ```text
-┌──────┐ → ┌──────────────┐ → ┌─────────────┐ → ┌────────┐ → ┌─────────────┐
+┌──────┐ -> ┌──────────────┐ -> ┌─────────────┐ -> ┌────────┐ -> ┌─────────────┐
 │ Idea │   │ Requirements │   │ Feasibility │   │ Design │   │ Planning    │
 └──────┘   └──────────────┘   └─────────────┘   └────────┘   └─────────────┘
 
-      ↓
+      v
 
-┌─────────────┐ → ┌──────────┐ → ┌─────────┐ → ┌─────────────┐
+┌─────────────┐ -> ┌──────────┐ -> ┌─────────┐ -> ┌─────────────┐
 │ Development │   │ Build/CI │   │ Testing │   │ Release     │
 └─────────────┘   └──────────┘   └─────────┘   └─────────────┘
 
-      ↓
+      v
 
-┌────────────┐ → ┌────────────┐ → ┌─────────────┐ → ┌─────────────┐
+┌────────────┐ -> ┌────────────┐ -> ┌─────────────┐ -> ┌─────────────┐
 │ Deployment │   │ Operations │   │ Maintenance │   │ Feedback    │
 └────────────┘   └────────────┘   └─────────────┘   └─────────────┘
                                                               │
-                                                              ▼
+                                                              v
                                                     [Requirements]
 
 End-of-Life:
-[Maintenance] → [EOL Planning] → [Decommissioning] → [Retirement]
+[Maintenance] -> [EOL Planning] -> [Decommissioning] -> [Retirement]
 ```
 
 As a student, you will typically learn the steps from Ideation all the way to development
@@ -99,7 +99,7 @@ following, in roughly this order of priority:
   placed, and kept alive.
 - **GitOps as the operating discipline.** Git as the source of truth, ArgoCD
   reconciling the cluster to match, CI building and pushing images. The whole
-  `git push → build → deploy` loop, with no manual `kubectl` in the critical
+  `git push -> build -> deploy` loop, with no manual `kubectl` in the critical
   path.
 - **Observability that means something.** Prometheus scraping real services,
   Grafana dashboards I actually read, an understanding of the RED method and how

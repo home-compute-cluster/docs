@@ -1,7 +1,7 @@
 # Dynamic Dev Container: Setup Guide
 
 A disposable, cluster-scheduled VS Code dev environment that lands on whichever
-always-on node has capacity, deployed through the same `git push → ghcr →
+always-on node has capacity, deployed through the same `git push -> ghcr ->
 ArgoCD` pipeline as everything else. Doubles as a contained sandbox for letting
 an AI agent run without reaching the host or your LAN.
 
@@ -17,17 +17,17 @@ push`; the network policy keeps the agent off your home network).
 ```
    local VS Code (Remote-Tunnels extension)
         │  attaches to the named tunnel "homelab-dev"
-        ▼
-   Microsoft tunnel relay  ◀── code tunnel (in the pod) phones out on 443
-        ▲
+        v
+   Microsoft tunnel relay  <── code tunnel (in the pod) phones out on 443
+        ^
         │  pod scheduled by K3s onto deus OR nebula (prefers nebula)
    ┌────┴──────────────────────────────────────────┐
    │  code-server pod                               │
-   │   • init container: git clone → emptyDir       │
-   │   • workspace = EPHEMERAL (resets on restart)  │
-   │   • NetworkPolicy: DNS + cluster + internet,   │
+   │   - init container: git clone -> emptyDir      │
+   │   - workspace = EPHEMERAL (resets on restart)  │
+   │   - NetworkPolicy: DNS + cluster + internet,   │
    │     but LAN (192.168/16) BLOCKED               │
-   │   • non-root, caps dropped, resource ceilings  │
+   │   - non-root, caps dropped, resource ceilings  │
    └────────────────────────────────────────────────┘
 ```
 
@@ -75,7 +75,7 @@ code-server-app/
 ```
 apps/code-server/
 ├── namespace.yaml
-├── pvc.yaml                 # tiny, tunnel-auth only (see §6 for the tradeoff)
+├── pvc.yaml                 # tiny, tunnel-auth only (see section 6 for the tradeoff)
 ├── networkpolicy.yaml       # egress containment
 ├── deployment.yaml          # affinity + hardening + ephemeral workspace
 └── kustomization.yaml
@@ -115,7 +115,7 @@ Before pushing, replace these across the files:
 #    VS Code CLI): expect the first build to take a few minutes.
 
 # 4. Make the ghcr package public (simplest) OR add a pull secret:
-#    GitHub → Packages → code-server-app → settings → Change visibility → Public
+#    GitHub > Packages > code-server-app > settings > Change visibility > Public
 
 # 5. Register the ArgoCD Application:
 kubectl apply -f argocd/code-server.yaml
@@ -125,7 +125,7 @@ kubectl get application code-server -n argocd      # Synced / Healthy
 kubectl get pods -n code-server -o wide            # note which node it landed on
 ```
 
-### First-time tunnel login (one-time, see §6)
+### First-time tunnel login (one-time, see section 6)
 `code tunnel` needs to authenticate once. Read the device-login URL from the
 pod logs and complete it in a browser:
 
@@ -136,7 +136,7 @@ kubectl logs -n code-server deploy/code-server -f
 ```
 
 After login, the tunnel "homelab-dev" appears in your laptop VS Code:
-**Command Palette → Remote-Tunnels: Connect to Tunnel → homelab-dev**.
+**Command Palette**, then **Remote-Tunnels: Connect to Tunnel**, then **homelab-dev**.
 
 ---
 
@@ -172,12 +172,12 @@ start with **(B)**, it's the purest expression of the thesis. You can move to
 The NetworkPolicy (`networkpolicy.yaml`) enforces, via kube-router on your
 stock K3s:
 
-- ✅ **LAN blocked**: the agent cannot reach `192.168.x.x`: not your router,
+- **LAN blocked**: the agent cannot reach `192.168.x.x`: not your router,
   not deus/nebula/legion management, not NAS admin, not other devices. *This is
   the containment that matters most.*
-- ✅ Link-local / metadata (`169.254/16`) blocked.
-- ✅ DNS + intra-cluster allowed (needed to function).
-- ⚠️ **General internet on 443/80 is allowed**: required because `code tunnel`
+- Link-local / metadata (`169.254/16`) blocked.
+- DNS + intra-cluster allowed (needed to function).
+- **Caution, general internet on 443/80 is allowed**: required because `code tunnel`
   and `git clone` need out. This is IP-based, so it's "all internet on 443," not
   a domain allowlist.
 
@@ -198,7 +198,7 @@ distinct project worth its own write-up:
 
 1. Run a small **Squid** (or similar) in-cluster with a domain allowlist
    (`github.com`, `ghcr.io`, `pypi.org`, `crates.io`, `go.dev`, the VS Code
-   tunnel domains, …).
+   tunnel domains, and so on).
 2. Set `HTTP_PROXY`/`HTTPS_PROXY` env in the dev pod to point at it.
 3. Tighten this NetworkPolicy to **block direct 443/80** and allow egress *only*
    to the proxy's ClusterIP, so the proxy is the single way out and the
@@ -236,12 +236,12 @@ If the LAN checks print "blocked (good)", the sandbox is doing its job.
 
 ## 10. Success criteria
 
-- [ ] `git push` to `code-server-app` → new image in ghcr → ArgoCD syncs,
+- [ ] `git push` to `code-server-app` builds a new image in ghcr and ArgoCD syncs it,
       no manual `kubectl`.
 - [ ] Pod schedules on `nebula` (or `deus` if nebula is loaded), never `legion`.
 - [ ] Laptop VS Code connects to the `homelab-dev` tunnel and opens the cloned
       workspace.
-- [ ] LAN-block verification (§9) passes.
+- [ ] LAN-block verification (section 9) passes.
 - [ ] Deleting the pod reschedules it (placement re-evaluated) and, with
       option A, it reconnects without re-login.
 
@@ -258,7 +258,7 @@ the sandbox.
 
 Natural follow-ups, in rough order:
 1. Option (B) or wait-for-Longhorn (C) on the workspace/auth storage question.
-2. The egress-proxy domain allowlist (§8), own write-up.
+2. The egress-proxy domain allowlist (section 8), own write-up.
 3. A second profile of this image (e.g. a GPU-tolerating variant pinned to
    `legion` for AI inference work) once you want the GTX in the loop.
 ```

@@ -49,7 +49,7 @@ FROM scratch                       # empty, literally nothing
   guarantee your pipeline depends on.
 - For maximum reproducibility, pin by digest: `FROM nginx:1.27-alpine@sha256:...`.
 - `-alpine`, `-slim`, and `scratch` variants are progressively smaller. More on
-  base-image choice in §5.
+  base-image choice in section 5.
 
 ### `RUN`: execute a command at build time
 
@@ -68,14 +68,14 @@ Two forms:
 - **Exec form:** `RUN ["executable", "arg1", "arg2"]`, no shell, no `&&`. Rare
   for `RUN`; common for `CMD`/`ENTRYPOINT`.
 
-Chain related commands with `&&` and clean up in the same `RUN` (see §3), since
+Chain related commands with `&&` and clean up in the same `RUN` (see section 3), since
 a separate `RUN rm ...` can't shrink the earlier layer.
 
 ### `COPY`: copy files from build context into the image
 
 ```dockerfile
 COPY index.html /usr/share/nginx/html/index.html
-COPY go.mod go.sum ./          # copy just deps first (cache trick, §4)
+COPY go.mod go.sum ./          # copy just deps first (cache trick, section 4)
 COPY . .                       # copy everything
 ```
 
@@ -130,7 +130,7 @@ RUN echo "building $BUILD_ID"
 - An `ARG` before the first `FROM` is special, it can parameterize the base
   image, but is out of scope for stages unless re-declared.
 - Don't pass secrets via `ARG`, they're visible in image history. Use
-  `RUN --mount=type=secret` instead (§6).
+  `RUN --mount=type=secret` instead (section 6).
 
 ### `EXPOSE`: document the listening port
 
@@ -263,7 +263,7 @@ is ideal. For nginx serving static files, `nginx:1.27-alpine` is the standard.
 Build in a fat image with the full toolchain; ship only the artifact in a tiny
 image. This is the most important pattern for compiled languages.
 
-### Go service → tiny final image
+### Go service to a tiny final image
 
 ```dockerfile
 # ---- build stage: has the Go toolchain ----
@@ -289,7 +289,7 @@ The `golang:1.23` toolchain (hundreds of MB) never ships. The final image is
 your binary plus certs, often under 20 MB. `COPY --from=builder` is the key:
 it pulls a file *out* of an earlier stage into the final one.
 
-### Node app → built assets only
+### Node app to built assets only
 
 ```dockerfile
 FROM node:22-slim AS build
@@ -308,7 +308,7 @@ CMD ["nginx", "-g", "daemon off;"]
 A static-site generator (Hugo, Astro, plain webpack/Vite) fits this exactly: a
 `build` stage runs the generator, the final stage is nginx serving the output.
 
-### Python app → slim runtime
+### Python app to a slim runtime
 
 ```dockerfile
 FROM python:3.12-slim AS build
@@ -344,11 +344,11 @@ exit and kill the container. This keeps it in the foreground.
 
 ### Go binary with subcommands
 
-Use the multi-stage Go pattern in §6. The `ENTRYPOINT ["/server"]` + `CMD
+Use the multi-stage Go pattern in section 6. The `ENTRYPOINT ["/server"]` + `CMD
 ["serve"]` shape means:
 
-- default run → `/server serve`
-- a one-off Job that overrides `CMD` with `["migrate"]` → `/server migrate`
+- default run: `/server serve`
+- a one-off Job that overrides `CMD` with `["migrate"]` runs `/server migrate`
 
 This maps cleanly onto any single binary that exposes multiple verbs
 (`serve` / `migrate` / `health`), which is a common shape for a service that
@@ -411,7 +411,7 @@ you're still iterating on and debugging a service, before you tighten it down to
 | Instruction | Purpose | Key gotcha |
 |-------------|---------|-----------|
 | `FROM` | Base image / start a stage | Pin the tag; never bare `latest` |
-| `RUN` | Execute at build time → new layer | Clean up in the *same* `RUN` |
+| `RUN` | Execute at build time, creating a new layer | Clean up in the *same* `RUN` |
 | `COPY` | Copy context files in | Source must be inside build context |
 | `ADD` | Copy + tar-extract / URL fetch | Avoid unless you want tar extraction |
 | `WORKDIR` | Set cwd | Use instead of `RUN cd` (cd doesn't persist) |

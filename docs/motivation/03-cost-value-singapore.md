@@ -26,9 +26,9 @@ compute power.
 | deus M910q Lenovo Thinkcentre Mini-PC | Bought online, i7-6700T + 16GB Ram | $280 |
 | nebula Used custom gaming pc | Bought from a seller in Carousell, came with i7-6700K, 24GB Ram and a GTX 1080| $270 |
 | legion Lenovo Legion gaming laptop | Used to belong to Red Hat, sold off for free in their company marketplace | $0 |
-| Longhorn NVMe drives (×3, 256GB) | **Free** used, from company IT (pretty good quality) | S$0 |
+| Longhorn NVMe drives (3 drives, 256GB) | **Free** used, from company IT (pretty good quality) | S$0 |
 | legion's WD Red SA500 500GB SATA | NAS-rated, for the Longhorn partition | ~S$103 |
-| ZFS NAS drives (nebula) | 2× ~3.6TB in a mirror | $400 |
+| ZFS NAS drives (nebula) | 2 x 3.6TB in a mirror | $400 |
 | Networking (switch, cables, MoCA) | Omada switch, Cat6, MoCA over coax | ~S200 |
 | Misc (thermal pads, USB sticks, etc.) | | ~S$30 |
 
@@ -89,8 +89,8 @@ motherboard and other components (GPU is your worst nightware here), not the CPU
 
 ### The monthly bill
 
-- **At idle (~80W):** 80W × 24h × 30d = 57.6 kWh → **~S$20/month**
-- **With moderate load (~130W):** ~94 kWh → **~S$33/month**
+- **At idle (~80W):** 80W x 24h x 30d = 57.6 kWh, so **~S$20/month**
+- **With moderate load (~130W):** ~94 kWh, so **~S$33/month**
 
 So realistically **S$25-33/month**, call it **~S$300-400/year.** deus alone is
 almost free (~S$4/month); nebula with the 1080 is the main contributor.
@@ -114,7 +114,7 @@ Mapping my nodes to the nearest AWS instances (a GPU-worker-heavy cluster like
 mine maps to `g4dn.xlarge`-class GPU instances plus a `t3.xlarge`-class control
 node, with EBS gp3 for storage):
 
-- On-demand, this lands around **US\$970/month ≈ US$11,600/year.**
+- On-demand, this lands around **US\$970/month, roughly US$11,600/year.**
 - On 1-year reserved pricing it drops to roughly **US$7,000/year.**
 - And that's *before* the Singapore-region premium: `ap-southeast-1` runs
   meaningfully higher than the `us-east-1` reference (a `g4dn.xlarge` is ~US$0.526/hr
@@ -196,7 +196,7 @@ scale to zero you're paying an elasticity premium for nothing. The signals that
 tip an organisation toward owning or colocating hardware:
 
 - **Flat, high baseline utilisation** (nodes pinned at 60-80% around the clock),
-  the classic "we're paying a 3-5× markup on compute we could own" realisation.
+  the classic "we're paying a 3-5x markup on compute we could own" realisation.
 - **Sustained spend into the seven-figures-a-year range**, where it earns a
   dedicated finance/infra analysis.
 - **GPU-heavy workloads**, where rental premiums accelerate the breakeven.
@@ -240,7 +240,7 @@ as well as a hobby worth exploring.
 
 ---
 
-*Tariff figure: SP Group regulated tariff, Q3 2026 (1 Jul-30 Sep), 34.78 ¢/kWh
+*Tariff figure: SP Group regulated tariff, Q3 2026 (1 Jul-30 Sep), 34.78 cents/kWh
 incl. GST, re-check quarterly. Cloud figures: AWS on-demand, us-east-1 reference
 with note that ap-southeast-1 runs higher; re-verify at aws.amazon.com/ec2/pricing
 before quoting.*

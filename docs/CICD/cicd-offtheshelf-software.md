@@ -97,10 +97,10 @@ resources:
 > No `images:` block needed, there's no CI rewriting a tag. You set the version in
 > `deployment.yaml` by hand and commit it. **Renovate** (already on your roadmap)
 > watches these pinned tags and opens a PR when a newer `louislam/uptime-kuma` tag ships,
-> so upgrades stay declarative: review PR → merge → ArgoCD rolls it.
+> so upgrades stay declarative: review the PR, merge it, and ArgoCD rolls it out.
 
 ### ArgoCD Application
-Same as any service (from the main guide §6):
+Same as any service (from section 6 of the main guide):
 ```yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -242,13 +242,13 @@ wrote into `apps/monitoring-extras/`, add an Application, and ArgoCD adopts it.
 New software to run?
 │
 ├─ Do you write its source code?
-│   ├─ YES → main guide (app repo + CI + config repo). CI builds & bumps tag.
-│   └─ NO  → this guide (config repo only, no CI):
+│   ├─ YES -> main guide (app repo + CI + config repo). CI builds & bumps tag.
+│   └─ NO  -> this guide (config repo only, no CI):
 │           │
 │           ├─ Distributed as a Helm chart?
-│           │   ├─ YES → Pattern B (ArgoCD App → chart + pinned version + values)
-│           │   │         small values → B1 inline; growing values → B2 values file
-│           │   └─ NO (plain image) → Pattern A (raw manifests, pinned tag)
+│           │   ├─ YES -> Pattern B (ArgoCD App -> chart + pinned version + values)
+│           │   │         small values -> B1 inline; growing values -> B2 values file
+│           │   └─ NO (plain image) -> Pattern A (raw manifests, pinned tag)
 │           │
 │           └─ Keep upgrades declarative with Renovate watching pinned versions.
 ```

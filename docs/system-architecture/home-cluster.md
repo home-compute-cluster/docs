@@ -6,8 +6,8 @@ sharing an embedded etcd datastore. This document captures the network topology 
 traffic reaches the cluster) and the internal cluster topology (how workloads,
 storage, and GitOps fit together).
 
-**Domains:** `*.packetcraft.dev` (public, via Cloudflare Tunnel) · `*.lab.packetcraft.dev` (tailnet-only)
-**Source of truth:** `BarneyLaw/homelab-cicd-config` (GitHub) → ArgoCD
+**Domains:** `*.packetcraft.dev` (public, via Cloudflare Tunnel) and `*.lab.packetcraft.dev` (tailnet-only)
+**Source of truth:** `BarneyLaw/homelab-cicd-config` (GitHub), reconciled by ArgoCD
 
 ---
 
@@ -218,7 +218,7 @@ flowchart LR
 
 ## 4. GitOps deployment flow
 
-The `git push → build → deploy` loop that stands up every built-from-source service.
+The `git push -> build -> deploy` loop that stands up every built-from-source service.
 
 ```mermaid
 sequenceDiagram
@@ -253,10 +253,10 @@ directly, a single repo would loop (CI's write-back re-triggers CI). Off-the-she
 ## 5. Key architectural principles
 
 - **Let K3s manage as much as it can.** The aim is for the cluster to run and reconcile everything from Git, not to split ownership between K3s and a NAS. nebula is simply the node with the most storage: it holds the ZFS `tank` pool and is the backup path for most deployments (CNPG WAL archives and base backups go to Garage on `tank`, and the Longhorn backup target sits on nebula too). Seafile still runs under Docker Compose on nebula for now.
-- **Cloudflare Tunnel = dumb pipe, Traefik = routing brain.** All routing logic in IngressRoutes; ingress pipes just feed it.
+- **Cloudflare Tunnel is a dumb pipe, Traefik is the routing brain.** All routing logic in IngressRoutes; ingress pipes just feed it.
 - **Single routing brain.** Per-app proxies stay scoped to their stack, never a second general-purpose ingress.
 - **Longhorn cannot use ZFS.** Needs a dedicated disk formatted ext4/XFS at a stable mount, `multipathd` blacklisted. 2 replicas = the floor for node-independent redundancy.
-- **`selfHeal` + Helm-managed secrets = churn.** Chart-owned credentials get reset on reconcile → migrate to `existingSecret` + SealedSecret.
+- **`selfHeal` and Helm-managed secrets do not mix.** Chart-owned credentials get reset on every reconcile, so move them to `existingSecret` + SealedSecret.
 - **Sealed Secrets key backup is critical.** Losing the controller private key makes all sealed secrets unrecoverable.
 - **Ansible below K3s, ArgoCD in-cluster.** The two layers must not overlap.
 
@@ -293,8 +293,8 @@ flowchart LR
 ## 7. Known gaps & horizon
 
 **Open drift / gaps**
-- Grafana `lab.` IngressRoute still hand-applied → move to `apps/monitoring-extras/`
-- Grafana admin password → SealedSecret migration pending
+- Grafana `lab.` IngressRoute still hand-applied; move it to `apps/monitoring-extras/`
+- Grafana admin password migration to a SealedSecret pending
 - GitHub webhook for push-triggered ArgoCD sync not yet configured (currently poll-based)
 - Renovate not yet set up
 - code-server ambient credential leak fix deferred

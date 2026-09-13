@@ -87,10 +87,10 @@ The names stuck, so they stayed.
 | **nebula** | worker + storage | i7-6700K, GTX 1080 | Most storage in the cluster, ZFS, backup target, Longhorn replica |
 | **legion** | worker | Laptop, GTX 1060 | Longhorn replica |
 
-**Stack:** K3s · ArgoCD · Traefik · ServiceLB · kube-vip · Longhorn · ZFS · Prometheus ·
-Grafana · Cloudflare Tunnel · Tailscale · WireGuard
+**Stack:** K3s, ArgoCD, Traefik, ServiceLB, kube-vip, Longhorn, ZFS, Prometheus,
+Grafana, Cloudflare Tunnel, Tailscale, WireGuard
 
-**Domains:** `*.packetcraft.dev` (public) · `*.lab.packetcraft.dev` (tailnet-only)
+**Domains:** `*.packetcraft.dev` (public) and `*.lab.packetcraft.dev` (tailnet-only)
 
 ---
 
