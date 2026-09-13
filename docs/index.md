@@ -1,6 +1,6 @@
 # Home Compute Cluster
 
-*A three-node bare-metal K3s platform, built to learn how real infrastructure is actually operated.*
+*A five-node bare-metal K3s platform, built to learn how real infrastructure is actually operated.*
 
 Not a toy repo, not a cloud tutorial. A standing homelab where GitOps, distributed
 storage, observability, and hand-rolled networking run on hardware I own, so the
@@ -57,12 +57,16 @@ mistakes are cheap and the lessons are real.
 
 ## The rig
 
-Three heterogeneous, always-on x86 nodes. The names stuck, so they stayed.
+Five heterogeneous, always-on x86 nodes. Three of them run the K3s control plane
+with embedded etcd, so losing any single server no longer takes the cluster down.
+The names stuck, so they stayed.
 
 | Node | Callsign | Hardware | Role |
 |------|----------|----------|------|
-| **deus** | control plane | Lenovo M910q | K3s server, ingress brain, ArgoCD |
-| **nebula** | worker + NAS | i7-6700K, GTX 1080 | ZFS storage, Seafile, Longhorn replica |
+| **deus** | control plane | Lenovo M910q, i7-6700T | K3s server, etcd member, Tailscale subnet router |
+| **sol** | control plane | Intel NUC, i5-10210U, 16GB | K3s server, etcd member |
+| **opus** | control plane | HP EliteDesk 800 G4 Mini, i5-8500 | K3s server, etcd member |
+| **nebula** | worker + storage | i7-6700K, GTX 1080 | Most storage in the cluster, ZFS, backup target, Longhorn replica |
 | **legion** | worker | Laptop, GTX 1060 | Longhorn replica, MetalLB VIP advertiser |
 
 **Stack:** K3s · ArgoCD · Traefik · MetalLB · Longhorn · ZFS · Prometheus ·

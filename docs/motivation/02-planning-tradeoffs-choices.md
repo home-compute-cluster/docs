@@ -31,6 +31,20 @@ always-on nodes** using hardware I largely already had or could get cheaply.
 Why these names for the machine? Well no real reason, I just find the latin names
 more interesting and easier to remember.
 
+### Later additions: sol and opus
+
+Three nodes carried the project through July, but deus was a single point of
+failure for the whole control plane. In August I added two refurbished mini PCs:
+
+- **sol**: an Intel NUC with an i5-10210U and 16GB of RAM.
+- **opus**: an HP EliteDesk 800 G4 Desktop Mini with an i5-8500.
+
+Both joined as **K3s servers**, not workers. Together with deus that makes three
+servers sharing an embedded etcd datastore, which is the smallest setup that can
+actually lose a server and keep going. Both were provisioned with Ansible from the
+start, so they are the first nodes whose setup is written down as code rather than
+remembered.
+
 ### The tradeoffs in that shift
 
 - **Symmetric N100 fleet vs. heterogeneous existing hardware.** Symmetric nodes
@@ -64,7 +78,7 @@ while staying light enough to run on modest hardware.
 | Load balancer | **MetalLB** | Cloud LB. Doesn't exist on bare metal; MetalLB is *the* answer for LoadBalancer VIPs on a home cluster. |
 | Public access | **Cloudflare Tunnel** | Port-forwarding. My ISP router was locked at planning time; the tunnel dials *outbound*, sidestepping inbound ports entirely. |
 | Private/bulk access | **WireGuard + Tailscale** | Cloudflare Tunnel for *everything*. the tunnel hairpins through an edge PoP and is slow for bulk transfer. |
-| Storage (block) | **Longhorn** | Rook/Ceph. Far heavier operationally; Longhorn is right-sized for three nodes. |
+| Storage (block) | **Longhorn** | Rook/Ceph. Far heavier operationally; Longhorn is right-sized for a small cluster with a handful of storage nodes. |
 | Storage (bulk/NAS) | **ZFS** | Plain ext4/mdadm. ZFS gives snapshots, checksums, and mirror integrity the NAS role needs. |
 | Secrets | **Sealed Secrets** | Vault / External Secrets Operator, overkill until I need dynamic secrets, rotation, or audit logging. |
 | Observability | **kube-prometheus-stack** | Rolling my own Prometheus/Grafana. the Helm stack is the industry-standard bundle, they work together and I might as well just use as it is. |
@@ -177,9 +191,10 @@ explicit tradeoffs about managing simultaneous novelty.
 Good planning also means naming what you *don't* decide. Carried forward
 deliberately:
 
-- **Control-plane HA**: deus is a known single point of failure. I decided *not*
+- **Control-plane HA**: deus was a known single point of failure. I decided *not*
   to chase HA prematurely: two etcd servers is worse than one (no quorum), real HA
-  needs three, so a future mini-PC becomes a *worker* to shrink blast radius first.
+  needs three. I held off until I could buy two nodes at once, and in August sol
+  and opus joined as the second and third servers. This one is now closed.
 - **KEDA / autoscaling**: gated behind Traefik metrics existing first.
 - **Renovate**: planned for dependency PRs, not yet stood up.
 

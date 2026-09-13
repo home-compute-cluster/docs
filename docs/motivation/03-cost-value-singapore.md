@@ -36,6 +36,10 @@ The total cost is about **S\$1283**, not too bad at this day and age with balloo
 memory and storage prices, and the single most important storage component 
 (the Longhorn drives) was free.
 
+> **Note (September 2026):** these figures cover the original three nodes. Two more
+> control-plane nodes, sol (Intel NUC) and opus (HP EliteDesk 800 G4 Mini), joined
+> in August. Their purchase price and power draw are not in this document yet.
+
 ### What it would cost to build fresh
 
 If someone replicated this from nothing, at Singapore retail (July 2026):
@@ -71,7 +75,8 @@ rise further depending on global fuel prices. For this analysis I use the all-in
 
 ### The draw
 
-The recurring cost is the **always-on** draw. All three nodes now run 24/7:
+The recurring cost is the **always-on** draw. The original three nodes all run
+24/7 (sol and opus are not measured yet):
 
 - **deus** (M910q): idles low, ~15W.
 - **nebula** (i7-6700K + GTX 1080): the heavy one; higher idle ~50W, more under load.
