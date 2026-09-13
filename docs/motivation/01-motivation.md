@@ -113,9 +113,8 @@ following, in roughly this order of priority:
 - **Distributed storage.** Longhorn for replicated block storage, ZFS on the
   storage-heavy node for bulk data and backups, and backup and restore paths I have
   actually tested for anything stateful.
-- **Real, self-hosted services** running on all of it, a portfolio site, a media
-  server (Jellyfin), a file-sync system (Seafile), and my own hand-written
-  Obsidian sync (obsync).
+- **Real, self-hosted services** running on all of it: a portfolio site, a file-sync
+  system (Seafile), and my own hand-written Obsidian sync (obsync).
 
 The meta-objective sitting above all of these: **be able to explain *why* every
 choice was made.** A cluster I can't reason about is just a pile of YAML. The
@@ -180,7 +179,7 @@ The classic homelab starter: a stack of cheap Pis.
 - **Architecture friction.** My whole pipeline builds `linux/amd64` images to
   ghcr.io. Going ARM means multi-arch builds via `docker buildx`, a real,
   ongoing tax on every image, for no learning benefit relevant to my goals.
-- **Underpowered for the real workloads.** Postgres, Jellyfin transcoding, a
+- **Underpowered for the real workloads.** Postgres, a
   monitoring stack, dev containers, these want CPU, RAM, and real I/O that a Pi
   struggles with. I'd spend my time fighting resource limits instead of learning
   platform patterns.

@@ -2,7 +2,7 @@
 
 A companion to `cicd-pipeline-setup-guide.md`. That guide covers
 **built-from-source** services (you write the code, CI builds an image). This one
-covers **off-the-shelf software** you don't compile, Grafana, Jellyfin,
+covers **off-the-shelf software** you don't compile, Grafana, Headlamp,
 Longhorn, cert-manager, anything that already ships an image or a Helm chart.
 
 The key difference: **off-the-shelf software has no app repo and no CI.** There is
@@ -19,7 +19,7 @@ how the software is distributed.
 
 | Shape | Example | Pattern |
 |-------|---------|---------|
-| A plain container image | Jellyfin, a public nginx, linuxserver.io images | **Pattern A: raw manifests** |
+| A plain container image | Uptime Kuma, a public nginx, linuxserver.io images | **Pattern A: raw manifests** |
 | A Helm chart | kube-prometheus-stack, Longhorn, cert-manager, ArgoCD itself | **Pattern B: ArgoCD Application pointing at a Helm chart** |
 
 Rule of thumb: if the project's install docs say "here's our image, write your own
@@ -38,7 +38,7 @@ Identical to the source-built layout in the main guide, minus the app repo and t
 ```
 homelab-cicd-config/
 └── apps/
-    └── jellyfin/
+    └── uptime-kuma/
         ├── kustomization.yaml
         ├── deployment.yaml
         └── service.yaml
@@ -49,26 +49,24 @@ homelab-cicd-config/
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: jellyfin
-  namespace: jellyfin
+  name: uptime-kuma
+  namespace: uptime-kuma
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: jellyfin
+      app: uptime-kuma
   template:
     metadata:
       labels:
-        app: jellyfin
+        app: uptime-kuma
     spec:
-      # placement: pin to wherever the workload belongs (GPU node, storage node…)
-      nodeSelector:
-        kubernetes.io/hostname: nebula
+      # placement: only add a nodeSelector if the workload really belongs on one node
       containers:
-        - name: jellyfin
-          image: jellyfin/jellyfin:10.9.11   # PIN A VERSION, never :latest
+        - name: uptime-kuma
+          image: louislam/uptime-kuma:1.23.16   # PIN A VERSION, never :latest
           ports:
-            - containerPort: 8096
+            - containerPort: 3001
 ```
 
 ### `service.yaml`
@@ -76,21 +74,21 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: jellyfin
-  namespace: jellyfin
+  name: uptime-kuma
+  namespace: uptime-kuma
 spec:
   selector:
-    app: jellyfin
+    app: uptime-kuma
   ports:
-    - port: 8096
-      targetPort: 8096
+    - port: 3001
+      targetPort: 3001
 ```
 
 ### `kustomization.yaml`
 ```yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: jellyfin
+namespace: uptime-kuma
 resources:
   - deployment.yaml
   - service.yaml
@@ -98,7 +96,7 @@ resources:
 
 > No `images:` block needed, there's no CI rewriting a tag. You set the version in
 > `deployment.yaml` by hand and commit it. **Renovate** (already on your roadmap)
-> watches these pinned tags and opens a PR when `jellyfin/jellyfin:10.9.12` ships,
+> watches these pinned tags and opens a PR when a newer `louislam/uptime-kuma` tag ships,
 > so upgrades stay declarative: review PR → merge → ArgoCD rolls it.
 
 ### ArgoCD Application
@@ -107,17 +105,17 @@ Same as any service (from the main guide §6):
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: jellyfin
+  name: uptime-kuma
   namespace: argocd
 spec:
   project: default
   source:
     repoURL: https://github.com/BarneyLaw/homelab-cicd-config.git
     targetRevision: main
-    path: apps/jellyfin
+    path: apps/uptime-kuma
   destination:
     server: https://kubernetes.default.svc
-    namespace: jellyfin
+    namespace: uptime-kuma
   syncPolicy:
     automated:
       prune: true

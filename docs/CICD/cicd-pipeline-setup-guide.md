@@ -46,7 +46,7 @@ communicate only through the **config repo**.
   cluster from outside.
 
 Key rule: **CD applies to everything you run; CI only applies to things you
-build.** Off-the-shelf images (Jellyfin, Grafana) skip CI entirely, they need
+build.** Off-the-shelf images (Grafana, Headlamp) skip CI entirely, they need
 only a config-repo manifest + an ArgoCD Application.
 
 ---

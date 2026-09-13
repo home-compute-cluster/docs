@@ -242,13 +242,13 @@ sequenceDiagram
 
 **Two-repo split.** CI writes to the config repo; ArgoCD reads from it. They never talk
 directly, a single repo would loop (CI's write-back re-triggers CI). Off-the-shelf images
-(Grafana, Jellyfin) skip CI entirely: just an `apps/<svc>/` manifest + ArgoCD Application.
+(Grafana, Headlamp) skip CI entirely: just an `apps/<svc>/` manifest + ArgoCD Application.
 
 ---
 
 ## 5. Key architectural principles
 
-- **Let K3s manage as much as it can.** The aim is for the cluster to run and reconcile everything from Git, not to split ownership between K3s and a NAS. nebula is simply the node with the most storage: it holds the ZFS `tank` pool and is the backup path for most deployments (CNPG WAL archives and base backups go to Garage on `tank`, and the Longhorn backup target sits on nebula too). Seafile still runs under Docker Compose on nebula for now. Jellyfin placement remains open (the GTX 1080 is on nebula).
+- **Let K3s manage as much as it can.** The aim is for the cluster to run and reconcile everything from Git, not to split ownership between K3s and a NAS. nebula is simply the node with the most storage: it holds the ZFS `tank` pool and is the backup path for most deployments (CNPG WAL archives and base backups go to Garage on `tank`, and the Longhorn backup target sits on nebula too). Seafile still runs under Docker Compose on nebula for now.
 - **Cloudflare Tunnel = dumb pipe, Traefik = routing brain.** All routing logic in IngressRoutes; ingress pipes just feed it.
 - **Single routing brain.** Per-app proxies stay scoped to their stack, never a second general-purpose ingress.
 - **Longhorn cannot use ZFS.** Needs a dedicated disk formatted ext4/XFS at a stable mount, `multipathd` blacklisted. 2 replicas = the floor for node-independent redundancy.
