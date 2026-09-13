@@ -18,7 +18,7 @@ storage, and GitOps fit together).
 | **deus** | Lenovo M910q, i7-6700T | `192.168.1.250` | K3s server + etcd member | Tailscale subnet router; **no Longhorn replicas** (thermal) |
 | **sol** | Intel NUC, i5-10210U, 16GB | `192.168.1.251` | K3s server + etcd member | Provisioned with Ansible; also schedules workloads |
 | **opus** | HP EliteDesk 800 G4 Mini, i5-8500 | `192.168.1.252` | K3s server + etcd member | Provisioned with Ansible; also schedules workloads |
-| **nebula** | i7-6700K desktop | `192.168.1.248` | Agent (worker) | Most storage in the cluster: ZFS `tank`, Garage (S3 backup store), Seafile (Compose), GTX 1080, Longhorn NVMe replica |
+| **nebula** | i7-6700K desktop | `192.168.1.248` | Agent (worker) | Most storage in the cluster: ZFS `tank`, Garage on Docker Compose (external S3 backup store), GTX 1080, Longhorn NVMe replica |
 | **legion** | Laptop (battery removed) | `192.168.1.249` | Agent (worker) | Longhorn SATA replica (`/var/lib/longhorn-disk-sda`) |
 
 > Every node runs 24/7. `legion` is a permanent node, not a transient or Wake-on-LAN worker.
@@ -167,7 +167,7 @@ flowchart TB
 
     subgraph agents["Agents"]
         direction LR
-        nebula["nebula, .248<br/>most storage: ZFS tank<br/>Garage, Seafile on Compose<br/>Longhorn NVMe replica<br/>GTX 1080"]
+        nebula["nebula, .248<br/>most storage: ZFS tank<br/>Garage on Compose<br/>(external backups)<br/>Longhorn NVMe replica<br/>GTX 1080"]
         legion["legion, .249<br/>Longhorn SATA replica<br/>GTX 1060"]
     end
 
@@ -198,7 +198,7 @@ flowchart LR
     longhorn["Longhorn volumes<br/>2 replicas"]
     neb_nvme["nebula<br/>dedicated NVMe"]
     leg_sata["legion<br/>WD Red SATA partition"]
-    garage["Garage S3<br/>on ZFS tank, nebula"]
+    garage["Garage S3, outside K3s<br/>Compose on nebula, ZFS tank"]
     lh_backup["Longhorn backup target<br/>on nebula"]
 
     apps --> longhorn
@@ -262,7 +262,7 @@ directly, a single repo would loop (CI's write-back re-triggers CI). Off-the-she
 
 ## 5. Key architectural principles
 
-- **Let K3s manage as much as it can.** The aim is for the cluster to run and reconcile everything from Git, not to split ownership between K3s and a NAS. nebula is simply the node with the most storage: it holds the ZFS `tank` pool and is the backup path for most deployments (CNPG WAL archives and base backups go to Garage on `tank`, and the Longhorn backup target sits on nebula too). Seafile still runs under Docker Compose on nebula for now.
+- **Let K3s manage as much as it can.** The aim is for the cluster to run and reconcile everything from Git, not to split ownership between K3s and a NAS. nebula is simply the node with the most storage: it holds the ZFS `tank` pool and is the backup path for most deployments (CNPG WAL archives and base backups go to Garage on `tank`, and the Longhorn backup target sits on nebula too). Seafile now runs entirely in K3s. Garage is the one deliberate exception: it stays on Docker Compose on nebula because it is the external backup target, and a backup store should not depend on the cluster it backs up.
 - **Cloudflare Tunnel is a dumb pipe, Traefik is the routing brain.** All routing logic in IngressRoutes; ingress pipes just feed it.
 - **Single routing brain.** Per-app proxies stay scoped to their stack, never a second general-purpose ingress.
 - **Longhorn cannot use ZFS.** Needs a dedicated disk formatted ext4/XFS at a stable mount, `multipathd` blacklisted. 2 replicas = the floor for node-independent redundancy.
@@ -321,5 +321,4 @@ flowchart LR
 **On the horizon**
 - **obsync**: a pull-based Canvas mirror first, then real-time sync, with a late October target
 - **Penny**: the tutoring payments app (Flutter and Go), still at the schema and skeleton stage
-- **Moving the remaining Compose services** on nebula, such as Seafile, into K3s when it is worth the effort
 - **Tailscale Kubernetes operator**: worth evaluating once the subnet router work is stable, since it would expose services as tailnet devices directly

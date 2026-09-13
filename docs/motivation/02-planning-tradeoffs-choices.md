@@ -119,10 +119,14 @@ WAL archives and base backups land in Garage on `tank`, and Longhorn backups go 
 nebula as well. That makes nebula important, but it is still just a node in the
 cluster, not a separate system with its own set of rules.
 
-A few things still run under Docker Compose on nebula, Seafile being the main one.
-Seafile went there early because I did not yet trust a week-old cluster with
-people's files. That was a reasonable call at the time, not a principle to
-preserve, and those services move into K3s when it is worth the effort.
+Seafile started out under Docker Compose on nebula, because I did not yet trust a
+week-old cluster with people's files. That was a reasonable call at the time, not a
+principle to preserve, and Seafile has since moved entirely into K3s.
+
+The one thing that deliberately stays outside the cluster is Garage, the S3 store
+that database backups are written to. It runs under Docker Compose on nebula on
+purpose: a backup target that needs the cluster to be healthy is not much of a
+backup, so keeping Garage outside K3s makes it an external copy in practice.
 
 ### "Cloudflare Tunnel = dumb pipe, Traefik = routing brain"
 
