@@ -63,39 +63,39 @@ How the two ingress planes (public + private) reach a single Traefik routing bra
 
 ```mermaid
 flowchart TB
-    subgraph internet["🌐 Internet"]
+    subgraph internet["Internet"]
         user_pub["Public user<br/>*.packetcraft.dev"]
         user_priv["You / admin devices<br/>*.lab.packetcraft.dev"]
     end
 
-    subgraph cf["Cloudflare Edge"]
-        cf_tunnel["Cloudflare Tunnel<br/>(TLS terminated at edge)"]
-        cf_dns_grey["Grey-cloud A records<br/>→ private 192.168.1.x IPs"]
+    subgraph cf["Cloudflare edge"]
+        cf_tunnel["Cloudflare Tunnel<br/>TLS terminated at the edge"]
+        cf_dns_grey["Grey-cloud A records<br/>pointing at private IPs"]
     end
 
-    subgraph tailnet["Tailscale Tailnet"]
+    subgraph tailnet["Tailscale tailnet"]
         ts_router["Subnet router on deus<br/>advertises 192.168.1.0/24"]
     end
 
-    wg["WireGuard<br/>UDP 51820<br/>(port-forwarded via Singtel ONR)<br/>high-throughput admin path"]
+    wg["WireGuard, UDP 51820<br/>port-forwarded on the router<br/>high-throughput admin path"]
 
-    subgraph lan["🏠 Home LAN, 192.168.1.0/24"]
+    subgraph lan["Home LAN, 192.168.1.0/24"]
         direction TB
 
-        subgraph deus_node["deus · 192.168.1.250 (control plane)"]
-            cloudflared["cloudflared<br/>(outbound-only, dumb pipe)"]
+        subgraph deus_node["deus, 192.168.1.250"]
+            cloudflared["cloudflared<br/>outbound only"]
         end
 
         svclb["ServiceLB<br/>Traefik on host ports 80/443<br/>of every node"]
-        traefik["Traefik<br/>★ single routing brain<br/>IngressRoutes"]
-        svc_pool["K3s Services / Pods<br/>(all five nodes)"]
+        traefik["Traefik<br/>the single routing brain<br/>IngressRoutes"]
+        svc_pool["K3s Services and Pods<br/>on all five nodes"]
     end
 
-    user_pub -->|"outbound-only<br/>connection"| cf_tunnel
+    user_pub -->|"HTTPS"| cf_tunnel
     cf_tunnel -.->|"http://localhost:80"| cloudflared
     cloudflared --> traefik
 
-    user_priv -->|"resolves to<br/>private IP"| cf_dns_grey
+    user_priv -->|"resolves to<br/>a private IP"| cf_dns_grey
     cf_dns_grey -.->|"routed over"| ts_router
     ts_router --> svclb
     wg --> svclb
@@ -103,15 +103,15 @@ flowchart TB
 
     traefik -->|"Host-based routing"| svc_pool
 
-    classDef edge fill:#f38020,stroke:#c25e0d,color:#fff
-    classDef ts fill:#4b5563,stroke:#1f2937,color:#fff
-    classDef brain fill:#2563eb,stroke:#1e40af,color:#fff
-    classDef node fill:#e0e7ff,stroke:#6366f1,color:#111
+    classDef edge fill:#ffedd5,stroke:#c2410c,stroke-width:2px,color:#111
+    classDef ts fill:#e5e7eb,stroke:#374151,stroke-width:2px,color:#111
+    classDef brain fill:#dbeafe,stroke:#1d4ed8,stroke-width:3px,color:#111
+    classDef node fill:#eef2ff,stroke:#6366f1,color:#111
 
     class cf_tunnel,cf_dns_grey edge
     class ts_router,wg ts
     class traefik brain
-    class cloudflared,svclb,svc_pool node
+    class cloudflared,svclb,svc_pool,user_pub,user_priv node
 ```
 
 **Two ingress pipes, one brain.** Cloudflare Tunnel (public, outbound-only, no open ports)
@@ -138,92 +138,77 @@ single address instead of at a specific node.
 
 ## 3. Internal cluster topology
 
-Workloads, storage layers, GitOps, and node placement inside K3s.
+Node roles and how the control plane fits together. Storage and observability follow as separate diagrams so each one stays readable.
 
 ```mermaid
 flowchart TB
-    subgraph gitops["GitOps Control Loop"]
+    subgraph cp["Control plane: three K3s servers, embedded etcd, quorum 2 of 3"]
         direction LR
-        gh["GitHub<br/>homelab-cicd-config<br/>(source of truth)"]
-        gha["GitHub Actions<br/>build → ghcr.io<br/>(SHA-tagged)"]
-        argo["ArgoCD v3.4.3<br/>selfHeal: true<br/>prune: true"]
-        gha -->|"write tag back"| gh
-        gh -->|"watches / reconciles"| argo
+        deus["deus, .250<br/>K3s server + etcd<br/>Tailscale subnet router<br/>cloudflared, WireGuard<br/>no Longhorn replicas"]
+        sol["sol, .251<br/>K3s server + etcd"]
+        opus["opus, .252<br/>K3s server + etcd"]
     end
 
-    subgraph cluster["K3s Cluster"]
-        direction TB
+    vip["kube-vip<br/>API address 192.168.1.241"]
 
-        subgraph deus["deus · control plane (always-on)"]
-            k3s_server["K3s server<br/>etcd member 1 of 3"]
-            traefik2["Traefik<br/>(routing brain)"]
-            cloudflared2["cloudflared"]
-            wg2["WireGuard"]
-            argo2["ArgoCD"]
-            note_deus["no Longhorn replicas<br/>(thermal)"]
-        end
-
-        subgraph sol["sol · control plane (always-on)"]
-            sol_server["K3s server<br/>etcd member 2 of 3"]
-        end
-
-        subgraph opus["opus · control plane (always-on)"]
-            opus_server["K3s server<br/>etcd member 3 of 3"]
-        end
-
-        subgraph nebula["nebula · worker (always-on)"]
-            neb_workloads["K3s workloads"]
-            neb_nvme["Longhorn replica<br/>(dedicated NVMe, ext4)"]
-            neb_compose["Docker Compose:<br/>Seafile 13 CE<br/>nvidia_gpu_exporter<br/>cloudflared (separate)"]
-            neb_zfs["ZFS 'tank' pool<br/>NAS / backups / NFS"]
-            neb_gpu["GTX 1080"]
-        end
-
-        subgraph legion["legion · worker (always-on)"]
-            leg_workloads["K3s workloads"]
-            leg_sata["Longhorn replica<br/>(WD Red SA500 SATA, ext4)"]
-        end
+    subgraph agents["Agents"]
+        direction LR
+        nebula["nebula, .248<br/>most storage: ZFS tank<br/>Garage, Seafile on Compose<br/>Longhorn NVMe replica<br/>GTX 1080"]
+        legion["legion, .249<br/>Longhorn SATA replica<br/>GTX 1060"]
     end
 
-    subgraph storage["Storage Planes"]
-        longhorn["Longhorn<br/>distributed block<br/>2 replicas → nebula + legion"]
-        localpath["local-path<br/>(some workloads)"]
-        zfs_nas["ZFS 'tank' on nebula<br/>bulk data + backup path"]
-    end
+    argo["ArgoCD<br/>reconciles homelab-cicd-config"]
 
-    subgraph obs["Observability"]
-        prom["Prometheus<br/>(kube-prometheus-stack)"]
-        graf["Grafana"]
-        gpu_exp["nvidia_gpu_exporter"]
-    end
+    vip --- deus
+    vip --- sol
+    vip --- opus
+    argo -->|"applies manifests<br/>through the API"| vip
+    cp -->|"schedules pods onto"| agents
 
-    argo ==>|"applies manifests"| k3s_server
-    argo -.-> neb_workloads
-    argo -.-> leg_workloads
+    classDef control fill:#dbeafe,stroke:#1d4ed8,color:#111
+    classDef worker fill:#dcfce7,stroke:#15803d,color:#111
+    classDef git fill:#ede9fe,stroke:#6d28d9,color:#111
+    classDef vipc fill:#f3f4f6,stroke:#374151,color:#111
 
-    traefik2 --> neb_workloads
-    traefik2 --> leg_workloads
-
-    neb_nvme --> longhorn
-    leg_sata --> longhorn
-    neb_zfs --> zfs_nas
-
-    prom --> graf
-    neb_compose -.->|"scraped by"| prom
-    gpu_exp -.-> prom
-
-    classDef control fill:#dbeafe,stroke:#2563eb,color:#111
-    classDef worker fill:#dcfce7,stroke:#16a34a,color:#111
-    classDef store fill:#fef3c7,stroke:#d97706,color:#111
-    classDef warn fill:#fee2e2,stroke:#dc2626,color:#111
-    classDef git fill:#ede9fe,stroke:#7c3aed,color:#111
-
-    class k3s_server,sol_server,opus_server,traefik2,cloudflared2,wg2,argo2 control
-    class neb_workloads,neb_nvme,neb_compose,neb_zfs,neb_gpu,leg_workloads,leg_sata worker
-    class longhorn,localpath,zfs_nas store
-    class note_deus warn
-    class gh,gha,argo git
+    class deus,sol,opus control
+    class nebula,legion worker
+    class argo git
+    class vip vipc
 ```
+
+### 3.1 Storage and backup paths
+
+```mermaid
+flowchart LR
+    apps["Stateful pods<br/>CNPG Postgres, app PVCs"]
+    longhorn["Longhorn volumes<br/>2 replicas"]
+    neb_nvme["nebula<br/>dedicated NVMe"]
+    leg_sata["legion<br/>WD Red SATA partition"]
+    garage["Garage S3<br/>on ZFS tank, nebula"]
+    lh_backup["Longhorn backup target<br/>on nebula"]
+
+    apps --> longhorn
+    longhorn --> neb_nvme
+    longhorn --> leg_sata
+    apps -->|"WAL archive and<br/>base backups"| garage
+    longhorn -->|"volume backups"| lh_backup
+
+    classDef store fill:#fef3c7,stroke:#b45309,color:#111
+    classDef worker fill:#dcfce7,stroke:#15803d,color:#111
+    classDef app fill:#eef2ff,stroke:#6366f1,color:#111
+
+    class longhorn,garage,lh_backup store
+    class neb_nvme,leg_sata worker
+    class apps app
+```
+
+### 3.2 Observability
+
+- **kube-prometheus-stack** (Prometheus, Alertmanager, Grafana) scrapes every node's
+  node-exporter plus Traefik, Longhorn, CNPG, cert-manager and ArgoCD, each with its
+  own dashboard stored as a ConfigMap in Git.
+- **nvidia_gpu_exporter** runs on nebula and is pulled in through a `ScrapeConfig`.
+- **Known blind spot:** etcd itself is not scraped yet (see section 7).
 
 ---
 
@@ -234,24 +219,26 @@ The `git push → build → deploy` loop that stands up every built-from-source 
 ```mermaid
 sequenceDiagram
     autonumber
-    participant Dev as You (git push)
-    participant App as app repo
-    participant CI as GitHub Actions
-    participant GHCR as ghcr.io
-    participant Cfg as homelab-cicd-config
+    participant Dev as You
+    participant CI as CI
+    participant Reg as ghcr.io
+    participant Cfg as Config
     participant Argo as ArgoCD
-    participant K3s as K3s cluster
+    participant K3s as K3s
 
-    Dev->>App: push to main
-    App->>CI: trigger build.yaml
-    CI->>GHCR: build + push image:SHA
-    CI->>Cfg: kustomize edit set image → commit tag bump
-    Note over CI,Cfg: fine-grained PAT (Contents: RW)<br/>CI has NO cluster access
-    Argo->>Cfg: watch / detect new commit (~3 min poll)
-    Argo->>K3s: reconcile Deployment to image:SHA
-    K3s-->>Argo: Synced / Healthy
-    Note over Argo,K3s: selfHeal reverts manual drift<br/>prune removes deleted resources
+    Dev->>CI: push to main
+    CI->>Reg: push image:SHA
+    CI->>Cfg: bump image tag
+    Argo->>Cfg: poll for changes
+    Argo->>K3s: apply image:SHA
+    K3s-->>Argo: Synced, Healthy
 ```
+
+- **CI** is GitHub Actions in the app repo. It writes to the config repo with a
+  fine-grained PAT (Contents read and write) and has no access to the cluster.
+- **ArgoCD** polls `homelab-cicd-config` roughly every three minutes, since the GitHub
+  webhook is not set up yet.
+- **selfHeal** reverts manual drift and **prune** removes resources deleted from Git.
 
 **Two-repo split.** CI writes to the config repo; ArgoCD reads from it. They never talk
 directly, a single repo would loop (CI's write-back re-triggers CI). Off-the-shelf images
@@ -277,22 +264,22 @@ directly, a single repo would loop (CI's write-back re-triggers CI). Off-the-she
 flowchart LR
     subgraph pub["Public plane"]
         p1["*.packetcraft.dev"]
-        p2["Cloudflare proxied CNAME<br/>(orange cloud)"]
-        p3["Tunnel → Traefik"]
+        p2["Cloudflare proxied CNAME<br/>orange cloud"]
+        p3["Tunnel to Traefik"]
         p1 --> p2 --> p3
     end
 
     subgraph priv["Tailnet plane"]
         t1["*.lab.packetcraft.dev"]
-        t2["Grey-cloud A record<br/>→ private IP"]
-        t3["Tailscale / WireGuard<br/>→ Traefik"]
+        t2["Grey-cloud A record<br/>private IP"]
+        t3["Tailscale or WireGuard<br/>to Traefik"]
         t4["Let's Encrypt wildcard<br/>cert-manager DNS-01"]
         t1 --> t2 --> t3
         t4 -.->|"serves cert for"| t1
     end
 
-    classDef pubc fill:#fed7aa,stroke:#ea580c,color:#111
-    classDef privc fill:#c7d2fe,stroke:#4f46e5,color:#111
+    classDef pubc fill:#ffedd5,stroke:#c2410c,color:#111
+    classDef privc fill:#e0e7ff,stroke:#4338ca,color:#111
     class p1,p2,p3 pubc
     class t1,t2,t3,t4 privc
 ```
