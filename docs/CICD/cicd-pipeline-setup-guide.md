@@ -111,10 +111,8 @@ spec:
       labels:
         app: <service>
     spec:
-      # Pin to the always-on control-plane node (deus = the M910q).
-      # Omit or change for GPU/storage-bound workloads.
-      nodeSelector:
-        kubernetes.io/hostname: deus
+      # No nodeSelector: let K3s place the Pod. Only pin a workload that
+      # really needs one node (a GPU, or node-local storage).
       containers:
         - name: <service>
           image: ghcr.io/<owner-lowercase>/<service>-app:latest  # tag rewritten by CI
@@ -327,11 +325,15 @@ kubectl apply -f <service>-app.yaml
 
 ## 7. Ingress (optional, for externally-reachable services)
 
-Architecture: `cloudflared` (systemd on deus) → Traefik (`localhost:80`) →
-IngressRoute → service. The tunnel is a dumb pipe; Traefik is the routing brain.
+Architecture: the Cloudflare edge sends requests down the tunnel to the cluster's
+`cloudflared` Deployment, which forwards them to the Traefik Service, where an
+IngressRoute sends them on to your Service. `cloudflared` runs inside K3s (two
+replicas, schedulable on any node), so the tunnel does not depend on a single node.
+The tunnel is a dumb pipe; Traefik is the routing brain.
 
-1. Add a public hostname to the deus tunnel in Cloudflare:
-   `<service>.packetcraft.dev` → `http://localhost:80`. Cloudflare auto-creates
+1. Add a public hostname to the cluster's tunnel in Cloudflare:
+   `<service>.packetcraft.dev` pointing at the Traefik Service, for example
+   `http://traefik.kube-system.svc.cluster.local:80`. Cloudflare auto-creates
    a proxied CNAME and terminates TLS at its edge (real cert, required because
    `.dev` is HSTS-preloaded and rejects self-signed).
 2. Create a Traefik IngressRoute:
@@ -374,7 +376,7 @@ Every new externally-exposed service = one CNAME (public hostname on the tunnel)
 
 # 4. ArgoCD detects change (~3 min poll; force with `argocd app sync <service>`)
 kubectl get application <service> -n argocd      # Synced / Healthy
-kubectl get pods -n <service> -o wide            # new pod, on deus
+kubectl get pods -n <service> -o wide            # new pod, on whichever node K3s chose
 kubectl rollout status deployment/<service> -n <service>
 ```
 

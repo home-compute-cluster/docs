@@ -15,7 +15,7 @@ storage, and GitOps fit together).
 
 | Node | Hardware | IP | Role | Notable duties |
 |------|----------|-----|------|----------------|
-| **deus** | Lenovo M910q, i7-6700T | `192.168.1.250` | K3s server + etcd member | cloudflared, WireGuard, Tailscale subnet router; **no Longhorn replicas** (thermal) |
+| **deus** | Lenovo M910q, i7-6700T | `192.168.1.250` | K3s server + etcd member | WireGuard, Tailscale subnet router; **no Longhorn replicas** (thermal) |
 | **sol** | Intel NUC, i5-10210U, 16GB | `192.168.1.251` | K3s server + etcd member | Provisioned with Ansible; also schedules workloads |
 | **opus** | HP EliteDesk 800 G4 Mini, i5-8500 | `192.168.1.252` | K3s server + etcd member | Provisioned with Ansible; also schedules workloads |
 | **nebula** | i7-6700K desktop | `192.168.1.248` | Agent (worker) | Most storage in the cluster: ZFS `tank`, Garage (S3 backup store), Seafile (Compose), GTX 1080, Longhorn NVMe replica |
@@ -82,18 +82,15 @@ flowchart TB
     subgraph lan["Home LAN, 192.168.1.0/24"]
         direction TB
 
-        subgraph deus_node["deus, 192.168.1.250"]
-            cloudflared["cloudflared<br/>outbound only"]
-        end
-
+        cloudflared["cloudflared Deployment<br/>2 replicas, any node<br/>outbound only"]
         svclb["ServiceLB<br/>Traefik on host ports 80/443<br/>of every node"]
         traefik["Traefik<br/>the single routing brain<br/>IngressRoutes"]
         svc_pool["K3s Services and Pods<br/>on all five nodes"]
     end
 
     user_pub -->|"HTTPS"| cf_tunnel
-    cf_tunnel -.->|"http://localhost:80"| cloudflared
-    cloudflared --> traefik
+    cf_tunnel -.->|"outbound tunnel"| cloudflared
+    cloudflared -->|"Traefik Service"| traefik
 
     user_priv -->|"resolves to<br/>a private IP"| cf_dns_grey
     cf_dns_grey -.->|"routed over"| ts_router
@@ -118,6 +115,13 @@ flowchart TB
 and Tailscale/WireGuard (private) are *dumb pipes*. All routing logic lives in Traefik
 IngressRoutes. This is the single-routing-brain principle: per-app proxies are scoped to
 their own stack and never become a second general-purpose ingress.
+
+**The tunnel runs inside K3s.** `cloudflared` used to be a systemd service on deus,
+with a second, separate connector on nebula for Seafile. Both are gone. There is now
+one Cloudflare Tunnel, served by a `cloudflared` Deployment with two replicas that K3s
+can schedule on any node, and its public hostnames point at the Traefik Service inside
+the cluster. Traefik also runs two replicas, kept on different nodes. When deus locked
+up in September, public traffic kept flowing because neither of them was tied to it.
 
 | Access path | Domain | TLS | Reaches |
 |-------------|--------|-----|---------|
@@ -144,7 +148,7 @@ Node roles and how the control plane fits together. Storage and observability fo
 flowchart TB
     subgraph cp["Control plane: three K3s servers, embedded etcd, quorum 2 of 3"]
         direction LR
-        deus["deus, .250<br/>K3s server + etcd<br/>Tailscale subnet router<br/>cloudflared, WireGuard<br/>no Longhorn replicas"]
+        deus["deus, .250<br/>K3s server + etcd<br/>Tailscale subnet router<br/>WireGuard<br/>no Longhorn replicas"]
         sol["sol, .251<br/>K3s server + etcd"]
         opus["opus, .252<br/>K3s server + etcd"]
     end
