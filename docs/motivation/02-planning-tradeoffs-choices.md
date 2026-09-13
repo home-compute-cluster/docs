@@ -107,14 +107,22 @@ while staying light enough to run on modest hardware.
 These are the principles that recur through every weekly log. They're the actual
 value of the planning, the rules that made later decisions fast.
 
-### "NAS owns data, K3s owns services"
+### Let K3s manage everything it reasonably can
 
-The cleanest line I drew due to the nature of a heterogenous cluster. Durable bulk 
-data lives on nebula's ZFS pool; services live in K3s. This is *why* Seafile runs 
-on Docker Compose on nebula and not in the cluster, it's a deliberate, data-safety 
-exception, kept out of K3s so it doesn't depend on cluster health. The tradeoff: a 
-little inconsistency (not everything isin K3s) bought a lot of data safety and a 
-clear mental model.
+The intent is for K3s to run and reconcile as much of the platform as possible, so
+that everything is declared in Git and handled the same way: scheduled, health
+checked, restarted and upgraded by the cluster rather than by hand.
+
+What nebula brings is capacity. It is by far the node with the most storage, so it
+holds the ZFS `tank` pool and acts as the backup path for most deployments: database
+WAL archives and base backups land in Garage on `tank`, and Longhorn backups go to
+nebula as well. That makes nebula important, but it is still just a node in the
+cluster, not a separate system with its own set of rules.
+
+A few things still run under Docker Compose on nebula, Seafile being the main one.
+Seafile went there early because I did not yet trust a week-old cluster with
+people's files. That was a reasonable call at the time, not a principle to
+preserve, and those services move into K3s when it is worth the effort.
 
 ### "Cloudflare Tunnel = dumb pipe, Traefik = routing brain"
 

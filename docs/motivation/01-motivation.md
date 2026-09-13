@@ -110,8 +110,9 @@ following, in roughly this order of priority:
   and a high-throughput private path (WireGuard/Tailscale). Eventually
   hand-building an L4/L7 proxy and a custom binary protocol to understand what the
   off-the-shelf tools are doing.
-- **Distributed storage.** Longhorn for replicated block storage, ZFS for the NAS
-  layer, and a clear rule about which owns what.
+- **Distributed storage.** Longhorn for replicated block storage, ZFS on the
+  storage-heavy node for bulk data and backups, and backup and restore paths I have
+  actually tested for anything stateful.
 - **Real, self-hosted services** running on all of it, a portfolio site, a media
   server (Jellyfin), a file-sync system (Seafile), and my own hand-written
   Obsidian sync (obsync).

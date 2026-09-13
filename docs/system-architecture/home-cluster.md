@@ -18,7 +18,7 @@ storage, and GitOps fit together).
 | **deus** | Lenovo M910q, i7-6700T | `192.168.1.250` | K3s server + etcd member | cloudflared, WireGuard, Tailscale subnet router; **no Longhorn replicas** (thermal) |
 | **sol** | Intel NUC, i5-10210U, 16GB | `192.168.1.251` | K3s server + etcd member | Provisioned with Ansible; also schedules workloads |
 | **opus** | HP EliteDesk 800 G4 Mini, i5-8500 | `192.168.1.252` | K3s server + etcd member | Provisioned with Ansible; also schedules workloads |
-| **nebula** | i7-6700K desktop | `192.168.1.248` | Agent (worker) | ZFS NAS (`tank`), Seafile (Compose), GTX 1080, Longhorn NVMe replica |
+| **nebula** | i7-6700K desktop | `192.168.1.248` | Agent (worker) | Most storage in the cluster: ZFS `tank`, Garage (S3 backup store), Seafile (Compose), GTX 1080, Longhorn NVMe replica |
 | **legion** | Laptop (battery removed) | `192.168.1.249` | Agent (worker) | Longhorn SATA replica (`/var/lib/longhorn-disk-sda`) |
 
 > Every node runs 24/7. `legion` is a permanent node, not a transient or Wake-on-LAN worker.
@@ -188,7 +188,7 @@ flowchart TB
     subgraph storage["Storage Planes"]
         longhorn["Longhorn<br/>distributed block<br/>2 replicas → nebula + legion"]
         localpath["local-path<br/>(some workloads)"]
-        zfs_nas["ZFS 'tank'<br/>NAS owns data"]
+        zfs_nas["ZFS 'tank' on nebula<br/>bulk data + backup path"]
     end
 
     subgraph obs["Observability"]
@@ -261,7 +261,7 @@ directly, a single repo would loop (CI's write-back re-triggers CI). Off-the-she
 
 ## 5. Key architectural principles
 
-- **NAS owns data, K3s owns services.** Seafile lives on Compose for data-safety; ZFS `tank` on nebula holds durable state. Jellyfin placement remains open (GPU is on nebula, a Compose host).
+- **Let K3s manage as much as it can.** The aim is for the cluster to run and reconcile everything from Git, not to split ownership between K3s and a NAS. nebula is simply the node with the most storage: it holds the ZFS `tank` pool and is the backup path for most deployments (CNPG WAL archives and base backups go to Garage on `tank`, and the Longhorn backup target sits on nebula too). Seafile still runs under Docker Compose on nebula for now. Jellyfin placement remains open (the GTX 1080 is on nebula).
 - **Cloudflare Tunnel = dumb pipe, Traefik = routing brain.** All routing logic in IngressRoutes; ingress pipes just feed it.
 - **Single routing brain.** Per-app proxies stay scoped to their stack, never a second general-purpose ingress.
 - **Longhorn cannot use ZFS.** Needs a dedicated disk formatted ext4/XFS at a stable mount, `multipathd` blacklisted. 2 replicas = the floor for node-independent redundancy.
