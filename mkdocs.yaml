@@ -39,6 +39,15 @@ nav:
   - Containerization:
     - Dockerfile Guide: containerization/dockerfile-guide.md
     - Dev Container Setup: containerization/dynamic-dev-container-setup-guide.md
+  - Lessons Learnt:
+    - Overview: lessons/index.md
+    - GitOps and ArgoCD: lessons/gitops-and-argocd.md
+    - Secrets and Credentials: lessons/secrets-and-credentials.md
+    - Networking and Remote Access: lessons/networking-and-remote-access.md
+    - Storage and Backups: lessons/storage-and-backups.md
+    - Control Plane and Nodes: lessons/control-plane-and-nodes.md
+    - Debugging and Incidents: lessons/debugging-and-incident-response.md
+    - Planning and Habits: lessons/planning-and-working-habits.md
   - Postmortems:
     - Overview: postmortems/index.md
     - 2026-09-02 deus lockup: postmortems/2026-09-02-deus-lockup.md

@@ -51,6 +51,24 @@ mistakes are cheap and the lessons are real.
 
     [:octicons-arrow-right-24: K3s guide](kubernetes-guides/k3s-kubernetes-guide.md)
 
+-   :material-lightbulb-on-outline:{ .lg .middle } __Lessons learnt__
+
+    ---
+
+    What building and breaking the cluster actually taught, grouped by topic:
+    GitOps, secrets, networking, storage, the control plane and debugging.
+
+    [:octicons-arrow-right-24: Lessons](lessons/index.md)
+
+-   :material-fire-alert:{ .lg .middle } __Postmortems__
+
+    ---
+
+    Full write-ups of the real failures: timelines, evidence, root causes and
+    the fixes that came out of them.
+
+    [:octicons-arrow-right-24: Postmortems](postmortems/index.md)
+
 </div>
 
 ---

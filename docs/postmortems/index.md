@@ -44,3 +44,6 @@ Reading the three together, a few patterns stand out:
 - **No ECC and no out-of-band access.** Two of the three incidents ended with me
   physically at the machine, and memory faults on these boards cannot be ruled
   out from logs alone.
+
+The [lessons learnt](../lessons/index.md) section pulls these and other takeaways
+from the diaries into one place.
