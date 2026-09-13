@@ -88,7 +88,7 @@ The names stuck, so they stayed.
 | **legion** | worker | Laptop, GTX 1060 | Longhorn replica |
 
 **Stack:** K3s, ArgoCD, Traefik, ServiceLB, kube-vip, Longhorn, ZFS, Prometheus,
-Grafana, Cloudflare Tunnel, Tailscale, WireGuard
+Grafana, Cloudflare Tunnel, Tailscale
 
 **Domains:** `*.packetcraft.dev` (public) and `*.lab.packetcraft.dev` (tailnet-only)
 

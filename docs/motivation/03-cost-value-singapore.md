@@ -214,7 +214,7 @@ baseline, burst into cloud for peaks.
 My design *is* the hybrid principle in miniature. `deus` is the always-on baseline
 (cheap to keep up); heavy GPU draw is spun up only when needed; Cloudflare Tunnel
 (essentially free public ingress) handles the low-bandwidth public surface while
-owned WireGuard handles bulk transfer. I'm making the same steady-baseline-vs-
+Tailscale carries private access and bulk transfer. I'm making the same steady-baseline-vs-
 elastic-burst tradeoffs a real infra team makes, just at a scale where the whole
 year's power bill is less than a fortnight of the cloud-equivalent invoice.
 

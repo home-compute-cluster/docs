@@ -15,7 +15,7 @@ storage, and GitOps fit together).
 
 | Node | Hardware | IP | Role | Notable duties |
 |------|----------|-----|------|----------------|
-| **deus** | Lenovo M910q, i7-6700T | `192.168.1.250` | K3s server + etcd member | WireGuard, Tailscale subnet router; **no Longhorn replicas** (thermal) |
+| **deus** | Lenovo M910q, i7-6700T | `192.168.1.250` | K3s server + etcd member | Tailscale subnet router; **no Longhorn replicas** (thermal) |
 | **sol** | Intel NUC, i5-10210U, 16GB | `192.168.1.251` | K3s server + etcd member | Provisioned with Ansible; also schedules workloads |
 | **opus** | HP EliteDesk 800 G4 Mini, i5-8500 | `192.168.1.252` | K3s server + etcd member | Provisioned with Ansible; also schedules workloads |
 | **nebula** | i7-6700K desktop | `192.168.1.248` | Agent (worker) | Most storage in the cluster: ZFS `tank`, Garage (S3 backup store), Seafile (Compose), GTX 1080, Longhorn NVMe replica |
@@ -77,8 +77,6 @@ flowchart TB
         ts_router["Subnet router on deus<br/>advertises 192.168.1.0/24"]
     end
 
-    wg["WireGuard, UDP 51820<br/>port-forwarded on the router<br/>high-throughput admin path"]
-
     subgraph lan["Home LAN, 192.168.1.0/24"]
         direction TB
 
@@ -95,7 +93,6 @@ flowchart TB
     user_priv -->|"resolves to<br/>a private IP"| cf_dns_grey
     cf_dns_grey -.->|"routed over"| ts_router
     ts_router --> svclb
-    wg --> svclb
     svclb --> traefik
 
     traefik -->|"Host-based routing"| svc_pool
@@ -106,13 +103,13 @@ flowchart TB
     classDef node fill:#eef2ff,stroke:#6366f1,color:#111
 
     class cf_tunnel,cf_dns_grey edge
-    class ts_router,wg ts
+    class ts_router ts
     class traefik brain
     class cloudflared,svclb,svc_pool,user_pub,user_priv node
 ```
 
 **Two ingress pipes, one brain.** Cloudflare Tunnel (public, outbound-only, no open ports)
-and Tailscale/WireGuard (private) are *dumb pipes*. All routing logic lives in Traefik
+and Tailscale (private) are *dumb pipes*. All routing logic lives in Traefik
 IngressRoutes. This is the single-routing-brain principle: per-app proxies are scoped to
 their own stack and never become a second general-purpose ingress.
 
@@ -126,8 +123,7 @@ up in September, public traffic kept flowing because neither of them was tied to
 | Access path | Domain | TLS | Reaches |
 |-------------|--------|-----|---------|
 | Cloudflare Tunnel | `*.packetcraft.dev` | Cloudflare edge cert | Public services |
-| Tailscale subnet router | `*.lab.packetcraft.dev` | Let's Encrypt wildcard (cert-manager DNS-01) | Tailnet-only services |
-| WireGuard (UDP 51820) | private IPs | N/A | High-throughput admin path |
+| Tailscale subnet router | `*.lab.packetcraft.dev`, node IPs, `192.168.1.241` | Let's Encrypt wildcard (cert-manager DNS-01) | Tailnet-only services, SSH, `kubectl` |
 
 **How traffic reaches Traefik on the LAN.** Traefik is a `LoadBalancer` Service, and
 the ServiceLB controller bundled with K3s satisfies it without any external load
@@ -137,6 +133,20 @@ node's own IP answers on 80 and 443. There is no address pool to manage. Since
 September, kube-vip also holds `192.168.1.242` as one shared address for the lab
 plane, carried by one control node at a time, so lab DNS records can point at a
 single address instead of at a specific node.
+
+**Remote access is Tailscale.** Off the LAN, every administrative path goes over the
+tailnet. deus runs as a Tailscale subnet router advertising `192.168.1.0/24`, so SSH
+to any node, `kubectl` against the kube-vip address `192.168.1.241`, and every
+`*.lab.packetcraft.dev` service work from any device signed in to the tailnet, with
+the same kubeconfig used at home. There is no WARP client and no port forwarded on
+the router for this.
+
+Two rules came out of the September incidents. Cluster nodes never accept routes
+from the tailnet (`--accept-routes=false`), because a node that accepts the LAN
+route back starts sending its own LAN replies into the tunnel. And deus is still
+the only subnet router, so it is a single point of failure for remote access until
+a second router is added on sol. See the
+[control-plane outage postmortem](../postmortems/2026-09-08-deus-control-plane-outage.md).
 
 ---
 
@@ -148,7 +158,7 @@ Node roles and how the control plane fits together. Storage and observability fo
 flowchart TB
     subgraph cp["Control plane: three K3s servers, embedded etcd, quorum 2 of 3"]
         direction LR
-        deus["deus, .250<br/>K3s server + etcd<br/>Tailscale subnet router<br/>WireGuard<br/>no Longhorn replicas"]
+        deus["deus, .250<br/>K3s server + etcd<br/>Tailscale subnet router<br/>no Longhorn replicas"]
         sol["sol, .251<br/>K3s server + etcd"]
         opus["opus, .252<br/>K3s server + etcd"]
     end
@@ -276,7 +286,7 @@ flowchart LR
     subgraph priv["Tailnet plane"]
         t1["*.lab.packetcraft.dev"]
         t2["Grey-cloud A record<br/>private IP"]
-        t3["Tailscale or WireGuard<br/>to Traefik"]
+        t3["Tailscale subnet route<br/>to Traefik"]
         t4["Let's Encrypt wildcard<br/>cert-manager DNS-01"]
         t1 --> t2 --> t3
         t4 -.->|"serves cert for"| t1

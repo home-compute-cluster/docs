@@ -107,7 +107,7 @@ following, in roughly this order of priority:
 - **Networking depth.** Reverse proxies and ingress (Traefik), load balancing
   (K3s ServiceLB, plus kube-vip for floating addresses), secure external access
   without opening my router (Cloudflare Tunnel),
-  and a high-throughput private path (WireGuard/Tailscale). Eventually
+  and private remote access to the whole cluster (Tailscale). Eventually
   hand-building an L4/L7 proxy and a custom binary protocol to understand what the
   off-the-shelf tools are doing.
 - **Distributed storage.** Longhorn for replicated block storage, ZFS on the

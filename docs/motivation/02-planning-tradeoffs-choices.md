@@ -77,7 +77,7 @@ while staying light enough to run on modest hardware.
 | Ingress | **Traefik** | nginx-ingress. Traefik ships with K3s and became my single routing brain. NGINX will be used as web servers instead |
 | Load balancer | **ServiceLB (bundled with K3s)** | MetalLB. ServiceLB already ships with K3s and exposes a LoadBalancer Service on the host ports of every node, so any node's own IP reaches Traefik. MetalLB would mean running another controller and managing a separate address pool for no real gain on a cluster fronted by a tunnel and a tailnet. |
 | Public access | **Cloudflare Tunnel** | Port-forwarding. My ISP router was locked at planning time; the tunnel dials *outbound*, sidestepping inbound ports entirely. |
-| Private/bulk access | **WireGuard + Tailscale** | Cloudflare Tunnel for *everything*. the tunnel hairpins through an edge PoP and is slow for bulk transfer. |
+| Private and remote access | **Tailscale** (WireGuard underneath) | Cloudflare Tunnel or WARP for *everything*. The tunnel hairpins through an edge PoP and is slow for bulk transfer, while a Tailscale subnet router gives SSH, `kubectl` and the lab services from anywhere without opening a port. |
 | Storage (block) | **Longhorn** | Rook/Ceph. Far heavier operationally; Longhorn is right-sized for a small cluster with a handful of storage nodes. |
 | Storage (bulk/NAS) | **ZFS** | Plain ext4/mdadm. ZFS gives snapshots, checksums, and mirror integrity the NAS role needs. |
 | Secrets | **Sealed Secrets** | Vault / External Secrets Operator, overkill until I need dynamic secrets, rotation, or audit logging. |
