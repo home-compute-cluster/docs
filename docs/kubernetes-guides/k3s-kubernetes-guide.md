@@ -831,7 +831,8 @@ everything else looks fine. That was one of the two faults in the September outa
 
 - **Public traffic** (`*.packetcraft.dev`): Cloudflare's edge terminates TLS and sends
   requests down a Cloudflare Tunnel to `cloudflared`, which runs as a Deployment inside
-  the cluster and forwards to the Traefik Service. Traefik routes by host name with
+  the cluster and forwards to the Traefik Service at
+  `http://traefik.kube-system.svc.cluster.local:80`. Traefik routes by host name with
   IngressRoutes.
 - **Private traffic** (`*.lab.packetcraft.dev`): DNS points at private LAN addresses.
   Off the LAN, those are reached over Tailscale through a subnet router. Traefik is a

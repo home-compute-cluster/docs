@@ -117,7 +117,7 @@ their own stack and never become a second general-purpose ingress.
 with a second, separate connector on nebula for Seafile. Both are gone. There is now
 one Cloudflare Tunnel, served by a `cloudflared` Deployment with two replicas that K3s
 can schedule on any node, and its public hostnames point at the Traefik Service inside
-the cluster. Traefik also runs two replicas, kept on different nodes. When deus locked
+the cluster (`http://traefik.kube-system.svc.cluster.local:80`). Traefik also runs two replicas, kept on different nodes. When deus locked
 up in September, public traffic kept flowing because neither of them was tied to it.
 
 | Access path | Domain | TLS | Reaches |

@@ -332,7 +332,7 @@ replicas, schedulable on any node), so the tunnel does not depend on a single no
 The tunnel is a dumb pipe; Traefik is the routing brain.
 
 1. Add a public hostname to the cluster's tunnel in Cloudflare:
-   `<service>.packetcraft.dev` pointing at the Traefik Service, for example
+   `<service>.packetcraft.dev` pointing at the Traefik Service,
    `http://traefik.kube-system.svc.cluster.local:80`. Cloudflare auto-creates
    a proxied CNAME and terminates TLS at its edge (real cert, required because
    `.dev` is HSTS-preloaded and rejects self-signed).
