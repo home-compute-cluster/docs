@@ -19,7 +19,7 @@ storage, and GitOps fit together).
 | **sol** | Intel NUC, i5-10210U, 16GB | `192.168.1.251` | K3s server + etcd member | Provisioned with Ansible; also schedules workloads |
 | **opus** | HP EliteDesk 800 G4 Mini, i5-8500 | `192.168.1.252` | K3s server + etcd member | Provisioned with Ansible; also schedules workloads |
 | **nebula** | i7-6700K desktop | `192.168.1.248` | Agent (worker) | ZFS NAS (`tank`), Seafile (Compose), GTX 1080, Longhorn NVMe replica |
-| **legion** | Laptop (battery removed) | `192.168.1.249` | Agent (worker) | Longhorn SATA replica (`/var/lib/longhorn-disk-sda`), MetalLB VIP advertiser |
+| **legion** | Laptop (battery removed) | `192.168.1.249` | Agent (worker) | Longhorn SATA replica (`/var/lib/longhorn-disk-sda`) |
 
 > Every node runs 24/7. `legion` is a permanent node, not a transient or Wake-on-LAN worker.
 
@@ -84,11 +84,11 @@ flowchart TB
 
         subgraph deus_node["deus · 192.168.1.250 (control plane)"]
             cloudflared["cloudflared<br/>(outbound-only, dumb pipe)"]
-            traefik["Traefik<br/>★ single routing brain<br/>IngressRoutes"]
-            metallb_vip["MetalLB VIP<br/>(Traefik LoadBalancer)"]
         end
 
-        svc_pool["K3s Services / Pods<br/>(nebula · legion)"]
+        svclb["ServiceLB<br/>Traefik on host ports 80/443<br/>of every node"]
+        traefik["Traefik<br/>★ single routing brain<br/>IngressRoutes"]
+        svc_pool["K3s Services / Pods<br/>(all five nodes)"]
     end
 
     user_pub -->|"outbound-only<br/>connection"| cf_tunnel
@@ -97,9 +97,9 @@ flowchart TB
 
     user_priv -->|"resolves to<br/>private IP"| cf_dns_grey
     cf_dns_grey -.->|"routed over"| ts_router
-    ts_router --> metallb_vip
-    wg --> metallb_vip
-    metallb_vip --> traefik
+    ts_router --> svclb
+    wg --> svclb
+    svclb --> traefik
 
     traefik -->|"Host-based routing"| svc_pool
 
@@ -111,7 +111,7 @@ flowchart TB
     class cf_tunnel,cf_dns_grey edge
     class ts_router,wg ts
     class traefik brain
-    class cloudflared,metallb_vip,svc_pool node
+    class cloudflared,svclb,svc_pool node
 ```
 
 **Two ingress pipes, one brain.** Cloudflare Tunnel (public, outbound-only, no open ports)
@@ -124,6 +124,15 @@ their own stack and never become a second general-purpose ingress.
 | Cloudflare Tunnel | `*.packetcraft.dev` | Cloudflare edge cert | Public services |
 | Tailscale subnet router | `*.lab.packetcraft.dev` | Let's Encrypt wildcard (cert-manager DNS-01) | Tailnet-only services |
 | WireGuard (UDP 51820) | private IPs | N/A | High-throughput admin path |
+
+**How traffic reaches Traefik on the LAN.** Traefik is a `LoadBalancer` Service, and
+the ServiceLB controller bundled with K3s satisfies it without any external load
+balancer. ServiceLB runs a small `svclb` pod on each eligible node that binds the
+Service ports (80 and 443) as host ports and forwards them to Traefik, so every
+node's own IP answers on 80 and 443. There is no address pool to manage. Since
+September, kube-vip also holds `192.168.1.242` as one shared address for the lab
+plane, carried by one control node at a time, so lab DNS records can point at a
+single address instead of at a specific node.
 
 ---
 
@@ -173,7 +182,6 @@ flowchart TB
         subgraph legion["legion · worker (always-on)"]
             leg_workloads["K3s workloads"]
             leg_sata["Longhorn replica<br/>(WD Red SA500 SATA, ext4)"]
-            leg_metallb["MetalLB VIP advertiser"]
         end
     end
 
@@ -211,7 +219,7 @@ flowchart TB
     classDef git fill:#ede9fe,stroke:#7c3aed,color:#111
 
     class k3s_server,sol_server,opus_server,traefik2,cloudflared2,wg2,argo2 control
-    class neb_workloads,neb_nvme,neb_compose,neb_zfs,neb_gpu,leg_workloads,leg_sata,leg_metallb worker
+    class neb_workloads,neb_nvme,neb_compose,neb_zfs,neb_gpu,leg_workloads,leg_sata worker
     class longhorn,localpath,zfs_nas store
     class note_deus warn
     class gh,gha,argo git

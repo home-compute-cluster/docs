@@ -105,7 +105,8 @@ following, in roughly this order of priority:
   Grafana dashboards I actually read, an understanding of the RED method and how
   metrics feed autoscaling, not a default dashboard I imported and forgot.
 - **Networking depth.** Reverse proxies and ingress (Traefik), load balancing
-  (MetalLB), secure external access without opening my router (Cloudflare Tunnel),
+  (K3s ServiceLB, plus kube-vip for floating addresses), secure external access
+  without opening my router (Cloudflare Tunnel),
   and a high-throughput private path (WireGuard/Tailscale). Eventually
   hand-building an L4/L7 proxy and a custom binary protocol to understand what the
   off-the-shelf tools are doing.

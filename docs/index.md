@@ -67,9 +67,9 @@ The names stuck, so they stayed.
 | **sol** | control plane | Intel NUC, i5-10210U, 16GB | K3s server, etcd member |
 | **opus** | control plane | HP EliteDesk 800 G4 Mini, i5-8500 | K3s server, etcd member |
 | **nebula** | worker + storage | i7-6700K, GTX 1080 | Most storage in the cluster, ZFS, backup target, Longhorn replica |
-| **legion** | worker | Laptop, GTX 1060 | Longhorn replica, MetalLB VIP advertiser |
+| **legion** | worker | Laptop, GTX 1060 | Longhorn replica |
 
-**Stack:** K3s · ArgoCD · Traefik · MetalLB · Longhorn · ZFS · Prometheus ·
+**Stack:** K3s · ArgoCD · Traefik · ServiceLB · kube-vip · Longhorn · ZFS · Prometheus ·
 Grafana · Cloudflare Tunnel · Tailscale · WireGuard
 
 **Domains:** `*.packetcraft.dev` (public) · `*.lab.packetcraft.dev` (tailnet-only)
