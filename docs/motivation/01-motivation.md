@@ -5,7 +5,7 @@ it stood when I decided to build.*
 
 ## 1. The motivation
 
-The honest starting point: I'm a CS student in Singapore interest in the domains
+The starting point: I'm a CS student in Singapore interest in the domains
 of computer systems, networks and graphics. I am primarily gearing towards CDN, SRE, 
 and platform-engineering roles, and those roles have a chicken-and-egg problem. 
 They want people who've *operated* real infrastructure: GitOps, observability,
@@ -24,28 +24,31 @@ So here comes the question of **how**. To do that, we must first somewhat unders
 the development lifecycle of software, from gathering the requirements to deployment
 and the monitoring + maintenance that comes after.
 
-```text
-┌──────┐ -> ┌──────────────┐ -> ┌─────────────┐ -> ┌────────┐ -> ┌─────────────┐
-│ Idea │   │ Requirements │   │ Feasibility │   │ Design │   │ Planning    │
-└──────┘   └──────────────┘   └─────────────┘   └────────┘   └─────────────┘
+```mermaid
+flowchart TB
+    subgraph plan["Plan"]
+        direction LR
+        idea["Idea"] --> req["Requirements"] --> feas["Feasibility"] --> design["Design"] --> planning["Planning"]
+    end
 
-      v
+    subgraph build["Build"]
+        direction LR
+        dev["Development"] --> ci["Build / CI"] --> test["Testing"] --> release["Release"]
+    end
 
-┌─────────────┐ -> ┌──────────┐ -> ┌─────────┐ -> ┌─────────────┐
-│ Development │   │ Build/CI │   │ Testing │   │ Release     │
-└─────────────┘   └──────────┘   └─────────┘   └─────────────┘
+    subgraph run["Run"]
+        direction LR
+        deploy["Deployment"] --> ops["Operations"] --> maint["Maintenance"] --> feedback["Feedback"]
+    end
 
-      v
+    subgraph eol["End of life"]
+        direction LR
+        eolplan["EOL planning"] --> decom["Decommissioning"] --> retire["Retirement"]
+    end
 
-┌────────────┐ -> ┌────────────┐ -> ┌─────────────┐ -> ┌─────────────┐
-│ Deployment │   │ Operations │   │ Maintenance │   │ Feedback    │
-└────────────┘   └────────────┘   └─────────────┘   └─────────────┘
-                                                              │
-                                                              v
-                                                    [Requirements]
-
-End-of-Life:
-[Maintenance] -> [EOL Planning] -> [Decommissioning] -> [Retirement]
+    plan --> build --> run
+    run -. "feedback becomes<br/>new requirements" .-> plan
+    run -->|"eventually"| eol
 ```
 
 As a student, you will typically learn the steps from Ideation all the way to development
@@ -53,13 +56,11 @@ and perhaps the steps heading towards deployment. But have though about **how** 
 will actually serve your products to your "customers"? 
 
 Suppose that you are making a website. Ask yourself these questions:
+
 - How is my website hosted?
-- How does the domain name actually send user traffic to the place that hosts the
-  website?
-- How is the website backend server actually implemented on the physical device? 
-  Afterall, your server must exist as a physical computer 
-- How do we actually reconcile bugs or even service failures during deployments?
-  Or better yet, how do we **anticipate** and **plan** for such cases?
+- How does the domain name actually send user traffic to the place that hosts the website?
+- How is the website backend server actually implemented on the physical device?  Afterall, your server must exist on a physical computer 
+- How do we actually reconcile bugs or even service failures during deployments? Or better yet, how do we **anticipate** and **plan** for such cases?
 
 There are many questions not yet asked for the average student like me trying to
 build our own projects that ultimately ends up in the dumpster due to the lack of 
@@ -142,8 +143,8 @@ durability, the exact managed services I'd use at work, and instant scale.
   pricing, which charges a premium precisely so you can scale to zero. I never
   scale to zero; I'd be paying the elasticity premium for elasticity I don't use.
   (The full numbers are here, but the headline is that the AWS-equivalent of my 
-  cluster runs roughly **US$11,000+/year**, and my entire hardware build cost less 
-  than one month of that.)
+  cluster runs roughly **US$11,000+/year**, and my entire hardware build cost about
+  a month and a half of that.)
 - **The managed layer hides the learning.** EKS *is* the thing I want to
   understand the guts of. If AWS runs the control plane, provisions the storage
   CSI, and manages the ingress, I've learned to *consume* a platform, not

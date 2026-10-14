@@ -15,8 +15,8 @@ storage, and GitOps fit together).
 
 | Node | Hardware | IP | Role | Notable duties |
 |------|----------|-----|------|----------------|
-| **deus** | Lenovo M910q, i7-6700T | `192.168.1.250` | K3s server + etcd member | Tailscale subnet router; **no Longhorn replicas** (thermal) |
-| **sol** | Intel NUC, i5-10210U, 16GB | `192.168.1.251` | K3s server + etcd member | Provisioned with Ansible; also schedules workloads |
+| **deus** | Lenovo M910q, i7-6700T | `192.168.1.250` | K3s server + etcd member | Tailscale subnet router (1 of 2); **no Longhorn replicas** (thermal) |
+| **sol** | Intel NUC, i5-10210U, 16GB | `192.168.1.251` | K3s server + etcd member | Tailscale subnet router (2 of 2); provisioned with Ansible; also schedules workloads |
 | **opus** | HP EliteDesk 800 G4 Mini, i5-8500 | `192.168.1.252` | K3s server + etcd member | Provisioned with Ansible; also schedules workloads |
 | **nebula** | i7-6700K desktop | `192.168.1.248` | Agent (worker) | Most storage in the cluster: ZFS `tank`, Garage on Docker Compose (external S3 backup store), GTX 1080, Longhorn NVMe replica |
 | **legion** | Laptop (battery removed) | `192.168.1.249` | Agent (worker) | Longhorn SATA replica (`/var/lib/longhorn-disk-sda`) |
@@ -74,7 +74,7 @@ flowchart TB
     end
 
     subgraph tailnet["Tailscale tailnet"]
-        ts_router["Subnet router on deus<br/>advertises 192.168.1.0/24"]
+        ts_router["Subnet routers on deus and sol<br/>both advertise 192.168.1.0/24"]
     end
 
     subgraph lan["Home LAN, 192.168.1.0/24"]
@@ -120,10 +120,16 @@ can schedule on any node, and its public hostnames point at the Traefik Service 
 the cluster (`http://traefik.kube-system.svc.cluster.local:80`). Traefik also runs two replicas, kept on different nodes. When deus locked
 up in September, public traffic kept flowing because neither of them was tied to it.
 
+Tailscale has not made the same move yet. It still runs as a systemd service on the
+nodes themselves. Moving it into K3s as well, either as an in-cluster subnet router
+or through the Tailscale Kubernetes operator, is the obvious next step for symmetry,
+but I am still weighing it: Tailscale is also the way in when K3s itself is broken,
+and that is a reason to keep at least one path that does not depend on the cluster.
+
 | Access path | Domain | TLS | Reaches |
 |-------------|--------|-----|---------|
 | Cloudflare Tunnel | `*.packetcraft.dev` | Cloudflare edge cert | Public services |
-| Tailscale subnet router | `*.lab.packetcraft.dev`, node IPs, `192.168.1.241` | Let's Encrypt wildcard (cert-manager DNS-01) | Tailnet-only services, SSH, `kubectl` |
+| Tailscale subnet routers | `*.lab.packetcraft.dev`, node IPs, `192.168.1.241` | Let's Encrypt wildcard (cert-manager DNS-01) | Tailnet-only services, SSH, `kubectl` |
 
 **How traffic reaches Traefik on the LAN.** Traefik is a `LoadBalancer` Service, and
 the ServiceLB controller bundled with K3s satisfies it without any external load
@@ -135,7 +141,8 @@ plane, carried by one control node at a time, so lab DNS records can point at a
 single address instead of at a specific node.
 
 **Remote access is Tailscale.** Off the LAN, every administrative path goes over the
-tailnet. deus runs as a Tailscale subnet router advertising `192.168.1.0/24`, so SSH
+tailnet. deus and sol both run as Tailscale subnet routers advertising
+`192.168.1.0/24`, so SSH
 to any node, `kubectl` against the kube-vip address `192.168.1.241`, and every
 `*.lab.packetcraft.dev` service work from any device signed in to the tailnet, with
 the same kubeconfig used at home. There is no WARP client and no port forwarded on
@@ -143,9 +150,10 @@ the router for this.
 
 Two rules came out of the September incidents. Cluster nodes never accept routes
 from the tailnet (`--accept-routes=false`), because a node that accepts the LAN
-route back starts sending its own LAN replies into the tunnel. And deus is still
-the only subnet router, so it is a single point of failure for remote access until
-a second router is added on sol. See the
+route back starts sending its own LAN replies into the tunnel. And there are now two
+subnet routers, deus and sol. Tailscale treats them as a high-availability pair:
+one is primary for the prefix and the other takes over if it drops off, so losing
+deus no longer removes remote access to the whole cluster. See the
 [control-plane outage postmortem](../postmortems/2026-09-08-deus-control-plane-outage.md).
 
 ---
@@ -159,7 +167,7 @@ flowchart TB
     subgraph cp["Control plane: three K3s servers, embedded etcd, quorum 2 of 3"]
         direction LR
         deus["deus, .250<br/>K3s server + etcd<br/>Tailscale subnet router<br/>no Longhorn replicas"]
-        sol["sol, .251<br/>K3s server + etcd"]
+        sol["sol, .251<br/>K3s server + etcd<br/>Tailscale subnet router"]
         opus["opus, .252<br/>K3s server + etcd"]
     end
 
@@ -216,13 +224,32 @@ flowchart LR
     class apps app
 ```
 
+obsync has its own object store: a separate three-replica Garage StatefulSet in the
+`obsync` namespace, inside K3s. It is a different cluster from the Garage on nebula,
+with its own secret and its own failure domain, and it holds mirrored course files
+rather than backups.
+
 ### 3.2 Observability
 
 - **kube-prometheus-stack** (Prometheus, Alertmanager, Grafana) scrapes every node's
-  node-exporter plus Traefik, Longhorn, CNPG, cert-manager and ArgoCD, each with its
-  own dashboard stored as a ConfigMap in Git.
+  node-exporter plus Traefik, Longhorn, CNPG, cert-manager, ArgoCD, kured,
+  cloudflared and the obsync worker, each with its own dashboard stored as a
+  ConfigMap in Git.
+- **etcd is scraped.** K3s runs etcd inside the `k3s` process, so the chart's
+  built-in etcd job finds nothing. Instead each server sets `etcd-expose-metrics:
+  true` and a `ScrapeConfig` scrapes deus, sol and opus directly on port 2381. Alert
+  rules cover a missing leader, running on 2 of 3 members, lost quorum, unreachable
+  peers and slow WAL fsyncs.
 - **nvidia_gpu_exporter** runs on nebula and is pulled in through a `ScrapeConfig`.
-- **Known blind spot:** etcd itself is not scraped yet (see section 7).
+- **Alerts go to Discord.** The whole Alertmanager routing tree is an
+  `AlertmanagerConfig` in Git, and the Discord webhook URL is a SealedSecret. Critical
+  alerts are sent within seconds and repeat hourly. Alerts that a healthy kured reboot
+  causes (node NotReady, Longhorn degraded, etcd on 2 of 3) are muted only inside the
+  Sunday reboot window, each with an unmuted backstop that still catches a real
+  failure. Discord is outside the tailnet, so alerts still arrive when the lab plane is
+  down.
+- **Known blind spot:** the always-firing `Watchdog` alert goes nowhere, so a dead
+  Prometheus or Alertmanager is silent. An external heartbeat check would close it.
 
 ---
 
@@ -304,11 +331,12 @@ flowchart LR
 
 **Highest priority (from the September postmortems)**
 - **Tailscale and `ufw` state in Ansible**, asserted on every run. Both September faults came from settings applied by hand on one node.
-- **A second Tailscale subnet router** on sol, so losing deus no longer removes all remote access.
-- **etcd visibility**: K3s does not expose etcd metrics by default (`--etcd-expose-metrics` is false) and the kube-prometheus-stack etcd job looks for etcd pods that do not exist under K3s, so losing a member currently alerts nobody.
+
+Done since: a second Tailscale subnet router on sol, etcd scraping and alerting, and Alertmanager notifications to Discord.
 
 **Other open gaps**
-- Alerts for unexpected reboots and `k3s.service` restarts, and an alert path that does not depend on the lab plane
+- Alerts for unexpected reboots and `k3s.service` restarts
+- An external heartbeat for the `Watchdog` alert, so a dead Alertmanager is noticed
 - Hardware watchdog (`RuntimeWatchdogSec`) on every node
 - An app-of-apps watching `argocd/`, and the GitHub webhook so ArgoCD syncs on push instead of polling
 - A restore drill for the portfolio database; WAL archiving works, restore is unproven
@@ -319,6 +347,6 @@ flowchart LR
 - Deployment guide still needs sections on secrets and IngressRoutes
 
 **On the horizon**
-- **obsync**: a pull-based Canvas mirror first, then real-time sync, with a late October target
+- **obsync**: phase 1 is done and shipped as [stele-pull](https://github.com/BarneyLaw/stele-pull): a worker CronJob that mirrors Canvas course files into the obsync Garage once a day, and an Obsidian plugin that downloads them into a vault. It is one-way and read-only. Phase 2, server-side sync using operational transform, is in progress
 - **Penny**: the tutoring payments app (Flutter and Go), still at the schema and skeleton stage
-- **Tailscale Kubernetes operator**: worth evaluating once the subnet router work is stable, since it would expose services as tailnet devices directly
+- **Tailscale into K3s**: following cloudflared into the cluster, possibly through the Tailscale Kubernetes operator. Still undecided, because Tailscale is also the way in when K3s itself is down

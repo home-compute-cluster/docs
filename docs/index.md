@@ -81,8 +81,8 @@ The names stuck, so they stayed.
 
 | Node | Callsign | Hardware | Role |
 |------|----------|----------|------|
-| **deus** | control plane | Lenovo M910q, i7-6700T | K3s server, etcd member, Tailscale subnet router |
-| **sol** | control plane | Intel NUC, i5-10210U, 16GB | K3s server, etcd member |
+| **deus** | control plane | Lenovo M910q, i7-6700T | K3s server, etcd member, Tailscale subnet router (1 of 2) |
+| **sol** | control plane | Intel NUC, i5-10210U, 16GB | K3s server, etcd member, Tailscale subnet router (2 of 2) |
 | **opus** | control plane | HP EliteDesk 800 G4 Mini, i5-8500 | K3s server, etcd member |
 | **nebula** | worker + storage | i7-6700K, GTX 1080 | Most storage in the cluster, ZFS, backup target, Longhorn replica |
 | **legion** | worker | Laptop, GTX 1060 | Longhorn replica |
@@ -99,7 +99,8 @@ Grafana, Cloudflare Tunnel, Tailscale
 New here? Read the [motivation](motivation/01-motivation.md) for the why, then the
 [architecture](system-architecture/home-cluster.md) for the how. If you just want
 to follow the build as it happened, the [weekly logs](weekly/2026-05-10.md) are the
-running diary.
+running diary. They stop at Week 19, because the cluster is mostly done; from here on
+an entry only gets written when something interesting happens.
 
 > The value is in the decision log, not the uptime number. Every choice here has a
 > reason, and the reason is written down.

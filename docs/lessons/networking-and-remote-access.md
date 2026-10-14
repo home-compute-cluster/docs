@@ -50,8 +50,8 @@ advertisement.
 **The lesson.** Redundancy in the workloads does not help if the only way in has
 none.
 
-**What I am changing.** A second subnet router on sol is a P0 action item and not
-done yet. Tailscale
+**What I changed.** sol now advertises `192.168.1.0/24` as well, so deus is one of
+two subnet routers. Tailscale
 elects one primary for a prefix and fails over to another advertiser if it goes
 offline. Before advertising on a new node, IP forwarding must be enabled, or the
 elected router will silently drop the whole prefix:
@@ -69,8 +69,11 @@ outage that removed the lab plane also removed every tool I would have used to s
 it, and Alertmanager could not have sent a notification even if a rule had fired.
 
 **What I do now.** Treat "how would I find out if the tailnet path died" as a design
-question. An alert path that does not depend on the lab plane is on the medium term
-action list.
+question. Alertmanager now pushes to a Discord channel, which goes out over the
+internet and does not need the tailnet, so a firing alert reaches me even when the
+lab plane is gone. What it cannot do yet is report its own death: the always-firing
+`Watchdog` alert is still routed to nowhere, and an external heartbeat check is what
+would close that gap.
 
 ## 4. "Can ping out but nobody can ping in" is a return path problem
 

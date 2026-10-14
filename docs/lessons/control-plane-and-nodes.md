@@ -72,10 +72,12 @@ without a single alert.
 **The lesson.** A rule that syncs green is not a rule that works. Change the
 distribution and the defaults may be watching things that do not exist.
 
-**What I am changing.** Enable etcd metrics, scrape them explicitly, and alert on
-`etcd_server_has_leader == 0` and on member count. This is a P0 item from the
-September postmortem and is not done yet. Once it is, the alert gets tested by
-actually stopping a member, because that is the only proof it fires.
+**What I changed.** `etcd-expose-metrics: true` on all three servers, and a
+`ScrapeConfig` that scrapes each of them directly on port 2381 (plain HTTP, not the
+HTTPS that most published etcd monitors assume). The alert rules cover no leader,
+running on 2 of 3 members, lost quorum, unreachable peers and slow disks, and they
+notify the Discord channel like every other alert. A rule still only counts once it
+has been seen to fire, so the test is stopping a member and watching it arrive.
 
 ## 6. Alert on the things you keep finding by eye
 
@@ -83,12 +85,13 @@ actually stopping a member, because that is the only proof it fires.
 panel, a `kubectl` call that timed out. The opus reset loop ran for about two days
 before I spotted a pattern of gaps.
 
-**What I am adding.** Alerts for what I found manually (still open at the time of
-writing):
+**What I changed.** Alertmanager now routes to a Discord channel. The webhook URL
+is a credential, so it lives in a SealedSecret and is referenced from an
+`AlertmanagerConfig`, and alerts that a healthy kured reboot causes are muted inside
+the Sunday reboot window only. Still to add for what I found manually:
 
 - Unexpected reboots: `changes(node_boot_time_seconds[1h]) > 0`
 - `k3s.service` restarts: needs node-exporter's `--collector.systemd`
-- A node disappearing from scrapes: `up == 0` for a few minutes
 
 ## 7. Anything configured by hand has an unknown value
 
@@ -124,13 +127,13 @@ the power button, 21 minutes after it died.
 ## 9. One node doing five jobs is five single points of failure
 
 **What happened.** deus is a control-plane node, an etcd member, a schedulable worker,
-the kube-vip VIP holder and the only Tailscale subnet router. Both deus incidents
+the kube-vip VIP holder and was the only Tailscale subnet router. Both deus incidents
 turned a single-node problem into a whole-cluster access problem because of that last
 role.
 
-**What I am changing.** Spreading the roles out: a second subnet router, and a
-taint on deus to keep general workloads off the node that carries the most critical
-duties. Both are open action items.
+**What I changed.** Spreading the roles out. sol is now a second subnet router, so
+losing deus no longer removes remote access. A taint on deus, to keep general
+workloads off the node that carries the most critical duties, is still open.
 
 ## 10. Match the hardware to the job, not the spec sheet
 

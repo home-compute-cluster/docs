@@ -26,7 +26,7 @@ who configured it, even when that person is me.
 | Date | Incident | Severity | Duration | Status |
 |------|----------|----------|----------|--------|
 | 2 Sep 2026 | [deus silent lockup and total tailnet plane outage](2026-09-02-deus-lockup.md) | High | About 21 minutes, physical reboot needed | Root cause narrowed to hardware or firmware |
-| 4 to 6 Sep 2026 | [opus reset loop](2026-09-06-opus-reset-loop.md) | Medium | About two days of resets every 30 minutes or so | Resolved, root cause unconfirmed |
+| 4 to 6 Sep 2026 | [opus reset loop](2026-09-06-opus-reset-loop.md) | Medium | About two days of resets every 30 minutes or so | Resolved, root cause i915 display power states |
 | 8 to 12 Sep 2026 | [deus control-plane outage](2026-09-08-deus-control-plane-outage.md) | SEV-1 | About 3 days 15 hours | Root cause confirmed, follow-ups open |
 
 ## Themes so far
@@ -34,11 +34,13 @@ who configured it, even when that person is me.
 Reading the three together, a few patterns stand out:
 
 - **deus carries too many roles.** It is a control-plane node, an etcd member, a
-  worker and the only Tailscale subnet router. The last role is what turned two
-  separate single-node faults into a total loss of remote access.
+  worker and, at the time, the only Tailscale subnet router. The last role is what
+  turned two separate single-node faults into a total loss of remote access. sol now
+  advertises the LAN as well, so deus is one of two routers.
 - **Nothing alerted.** Every incident was found by a person noticing a gap in
   Grafana or a `kubectl` timeout. The monitoring stack also sits behind the same
-  tailnet path it would need to report on.
+  tailnet path it would need to report on. Since then Alertmanager sends to a
+  Discord channel, which does not depend on the tailnet, and etcd is scraped.
 - **Hand-applied config drifts.** Tailscale flags and `ufw` state were set by hand
   per node, and both caused faults that nothing could have detected in advance.
 - **No ECC and no out-of-band access.** Two of the three incidents ended with me

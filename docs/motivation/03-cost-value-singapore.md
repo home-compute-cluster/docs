@@ -25,20 +25,21 @@ compute power.
 |---|---|---|
 | deus M910q Lenovo Thinkcentre Mini-PC | Bought online, i7-6700T + 16GB Ram | $280 |
 | nebula Used custom gaming pc | Bought from a seller in Carousell, came with i7-6700K, 24GB Ram and a GTX 1080| $270 |
-| legion Lenovo Legion gaming laptop | Used to belong to Red Hat, sold off for free in their company marketplace | $0 |
+| sol Intel NUC Mini-PC | Refurbished, i5-10210U + 16GB Ram, added in August as a control-plane node | $270 |
+| opus HP EliteDesk 800 G4 Mini | Refurbished, i5-8500, added in August as a control-plane node | $270 |
+| legion Lenovo Legion gaming laptop | Used to belong to Red Hat (yes, the same ones behind the Fedora Project), sold off for free in their company marketplace | $0 |
 | Longhorn NVMe drives (3 drives, 256GB) | **Free** used, from company IT (pretty good quality) | S$0 |
 | legion's WD Red SA500 500GB SATA | NAS-rated, for the Longhorn partition | ~S$103 |
 | ZFS NAS drives (nebula) | 2 x 3.6TB in a mirror | $400 |
 | Networking (switch, cables, MoCA) | Omada switch, Cat6, MoCA over coax | ~S200 |
 | Misc (thermal pads, USB sticks, etc.) | | ~S$30 |
 
-The total cost is about **S\$1283**, not too bad at this day and age with ballooning 
+The total cost is about **S\$1823**, not too bad at this day and age with ballooning 
 memory and storage prices, and the single most important storage component 
 (the Longhorn drives) was free.
 
-> **Note (September 2026):** these figures cover the original three nodes. Two more
-> control-plane nodes, sol (Intel NUC) and opus (HP EliteDesk 800 G4 Mini), joined
-> in August. Their purchase price and power draw are not in this document yet.
+The original three-node build came to about S\$1283. sol and opus, the two extra
+control-plane nodes added in August, added the other S\$540.
 
 ### What it would cost to build fresh
 
@@ -75,25 +76,27 @@ rise further depending on global fuel prices. For this analysis I use the all-in
 
 ### The draw
 
-The recurring cost is the **always-on** draw. The original three nodes all run
-24/7 (sol and opus are not measured yet):
+The recurring cost is the **always-on** draw. All five nodes run 24/7:
 
 - **deus** (M910q): idles low, ~15W.
+- **opus** (EliteDesk 800 G4 Mini): about the same as deus, ~15W.
+- **sol** (NUC): a little less than deus.
 - **nebula** (i7-6700K + GTX 1080): the heavy one; higher idle ~50W, more under load.
 - **legion** (laptop, battery removed): modest, ~16W.
 
-Realistic always-on total: **~80W idle, ~130W with moderate workload.**
+Realistic always-on total: **~110W idle, ~170W with moderate workload.** The two
+mini PCs added about 30W to the idle figure.
 Do note that the high idle is due to overhead power consumption. The overhead is due to
 motherboard and other components (GPU is your worst nightware here), not the CPU 
 (especially the case with nebula, with only 5W CPU idle).
 
 ### The monthly bill
 
-- **At idle (~80W):** 80W x 24h x 30d = 57.6 kWh, so **~S$20/month**
-- **With moderate load (~130W):** ~94 kWh, so **~S$33/month**
+- **At idle (~110W):** 110W x 24h x 30d = 79.2 kWh, so **~S$28/month**
+- **With moderate load (~170W):** ~122 kWh, so **~S$43/month**
 
-So realistically **S$25-33/month**, call it **~S$300-400/year.** deus alone is
-almost free (~S$4/month); nebula with the 1080 is the main contributor.
+So realistically **S$30-43/month**, call it **~S$350-500/year.** Each mini PC on
+its own is almost free (~S$4/month); nebula with the 1080 is the main contributor.
 
 ### The one lever
 
@@ -123,14 +126,17 @@ node, with EBS gp3 for storage):
 
 ### The comparison that matters
 
-- **Capital:** my whole build (or a ~S$1,000 from-scratch equivalent) costs **less
-  than a single month** of the AWS-equivalent on-demand bill.
-- **Running:** ~S\$20-33/month of electricity vs. ~US$970/month of cloud compute.
+- **Capital:** my whole build costs about **a month and a half** of the
+  AWS-equivalent on-demand bill, and a ~S$1,000 from-scratch equivalent costs less
+  than one month. The AWS figure only maps the original three nodes, so with sol and
+  opus included the real gap is wider.
+- **Running:** ~S\$30-43/month of electricity vs. ~US$970/month of cloud compute.
   The homelab's *entire annual running cost* is roughly what the cloud equivalent
   bills in **a week and a half.**
-- **Over a year:** owned hardware total (build + power) sits around **S\$1,300-1,400
-  all-in**; the cloud equivalent is **US$7,000-11,600+.** Roughly an
-  **order of magnitude** difference.
+- **Over a year:** owned hardware total (build + power) sits around **S\$2,200-2,300
+  all-in**; the cloud equivalent is **US$7,000-11,600+**, several times more. After
+  the first year only the electricity remains, and the gap becomes an **order of
+  magnitude**.
 
 ### But value isn't only the dollar delta
 
@@ -149,7 +155,7 @@ So the real value has two parts:
    amount of cloud credit would have produced, because the cloud hides the exact
    layers I needed to learn.
 
-Put bluntly: I spent ~S\$1,200 once plus pocket change monthly to build something
+Put bluntly: I spent ~S\$1,800 once plus pocket change monthly to build something
 that would cost ~US$11k/year to rent *and* that teaches me the thing I'm actually
 trying to learn. The economics are firmly on the side of building.
 
@@ -168,7 +174,7 @@ about acquiring compute in Singapore right now.
 Singapore generates ~95% of its electricity from imported natural gas, so the
 tariff tracks global gas prices with a ~one-quarter lag. In 2026 that's meant a
 climb to a **record 34.78 cents/kWh (with GST) for Q3**, a 17% single-quarter
-jump. For a hobbyist homelab this is a rounding error (S$25-33/month). But it's
+jump. For a hobbyist homelab this is a rounding error (S$30-43/month). But it's
 the reason Singapore is an *expensive place to run always-on compute at scale*,
 and it's a real input into why large-scale compute here leans toward efficiency
 and toward the cloud's shared-infrastructure model. Land and power are both scarce
@@ -220,8 +226,8 @@ year's power bill is less than a fortnight of the cloud-equivalent invoice.
 
 ## 5. The bottom line
 
-- **Capital:** ~S$1,200 once, more with further upgrades or additional nodes.
-- **Running:** ~S$25-33/month of electricity at the current record-high tariff
+- **Capital:** ~S$1,800 once, more with further upgrades or additional nodes.
+- **Running:** ~S$30-43/month of electricity at the current record-high tariff
   the only recurring cost, and a small one.
 - **Cloud-equivalent:** ~US$7,000-11,600+/year, higher still at Singapore-region
   pricing.

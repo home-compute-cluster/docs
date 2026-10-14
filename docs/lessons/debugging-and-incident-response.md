@@ -92,13 +92,14 @@ most valuable step of the investigation. It ruled out every software cause at on
 ## 9. Change one thing at a time, especially at the fix
 
 **What happened.** I was careful about single variables all through the opus
-diagnosis. Then, wanting the node back, I replaced the CMOS battery and added
-`i915.enable_dc=0` to the kernel command line at the same time. Swapping the battery
-also meant lifting the drive cage, which may have reseated the memory. Three possible
-fixes, one outcome, no way to know which one worked.
+diagnosis, and that is what made the fix credible. By the time I added
+`i915.enable_dc=0`, the idle test had already narrowed the cause to the hardware and
+its drivers, and the only driver complaining in the logs was i915. The resets
+stopped, and the evidence explained why.
 
-**The lesson.** Discipline is easiest to drop right at the end, when it matters most
-for knowing what actually fixed it.
+**The lesson.** Discipline is easiest to drop right at the end, when you just want
+the node back. That is exactly when it matters most for knowing what actually fixed
+it.
 
 ## 10. Check the date and the freshness of what you are looking at
 
@@ -113,8 +114,9 @@ log line or a graph.
 ## 11. Recurring low-severity noise deserves a second look when nothing else fits
 
 **What happened.** The i915 graphics driver warnings on opus were in the logs from the
-very first boot I read. I filed them as a known annoyance. The fix that seems to have
-worked was an i915 display power setting.
+very first boot I read. I filed them as a known annoyance. They were the display
+driver stalling on a headless box, and the root cause turned out to be that same
+driver: an i915 display power setting fixed it.
 
 ## 12. Search for your exact hardware model
 
