@@ -4,7 +4,8 @@
 it costs to run, what it's worth, and how that sits against the actual state of
 compute in Singapore in 2026.*
 
-All figures are current as of **July 2026** and, where they change quarterly (the
+All figures are current as of **July 2026** (sol and opus, added in August, are
+included at their purchase price) and, where they change quarterly (the
 electricity tariff especially), I've dated them so a future reader knows to
 re-check.
 
@@ -18,20 +19,20 @@ it from scratch in Singapore today.
 ### What I actually spent
 
 I wouldn't say this is a cheap project to make. But honestly, I believe this is one
-of the cheaper hobbies that you can have, and you at least end up with actualy tangible
+of the cheaper hobbies that you can have, and you at least end up with actually tangible
 compute power.
 
 | Item | Notes | Approx. cost |
 |---|---|---|
-| deus M910q Lenovo Thinkcentre Mini-PC | Bought online, i7-6700T + 16GB Ram | $280 |
-| nebula Used custom gaming pc | Bought from a seller in Carousell, came with i7-6700K, 24GB Ram and a GTX 1080| $270 |
-| sol Intel NUC Mini-PC | Refurbished, i5-10210U + 16GB Ram, added in August as a control-plane node | $270 |
-| opus HP EliteDesk 800 G4 Mini | Refurbished, i5-8500, added in August as a control-plane node | $270 |
-| legion Lenovo Legion gaming laptop | Used to belong to Red Hat (yes, the same ones behind the Fedora Project), sold off for free in their company marketplace | $0 |
+| deus M910q Lenovo Thinkcentre Mini-PC | Bought online, i7-6700T + 16GB Ram | S$280 |
+| nebula Used custom gaming pc | Bought from a seller in Carousell, came with i7-6700K, 24GB Ram and a GTX 1080 | S$270 |
+| sol Intel NUC Mini-PC | Refurbished, i5-10210U + 16GB Ram, added in August as a control-plane node | S$270 |
+| opus HP EliteDesk 800 G4 Mini | Refurbished, i5-8500, added in August as a control-plane node | S$270 |
+| legion Lenovo Legion gaming laptop | Used to belong to Red Hat (yes, the same ones behind the Fedora Project), sold off for free in their company marketplace | S$0 |
 | Longhorn NVMe drives (3 drives, 256GB) | **Free** used, from company IT (pretty good quality) | S$0 |
 | legion's WD Red SA500 500GB SATA | NAS-rated, for the Longhorn partition | ~S$103 |
-| ZFS NAS drives (nebula) | 2 x 3.6TB in a mirror | $400 |
-| Networking (switch, cables, MoCA) | Omada switch, Cat6, MoCA over coax | ~S200 |
+| ZFS NAS drives (nebula) | 2 x 3.6TB in a mirror | S$400 |
+| Networking (switch, cables, MoCA) | Omada switch, Cat6, MoCA over coax | ~S$200 |
 | Misc (thermal pads, USB sticks, etc.) | | ~S$30 |
 
 The total cost is about **S\$1823**, not too bad at this day and age with ballooning 
@@ -55,10 +56,10 @@ If someone replicated this from nothing, at Singapore retail (July 2026):
 | **Total (new mini-PCs)** | | | **~S$1920** |
 | **Total (refurb path)** | | | **~S$1620** |
 
-So a from-scratch equivalent lands right around the original **S$1,000 budget**
-under it on the refurb path. That's the capital number to hold in your head:
-**a complete, capable multi-node K3s platform for roughly one thousand Singapore
-dollars, once.** 
+So a from-scratch equivalent lands at **~S$1,600-1,900**, well over the original
+**S$1,000 budget** even on the refurb path, and close to what I actually spent.
+That's the capital number to hold in your head: **a complete, capable multi-node
+K3s platform for under two thousand Singapore dollars, once.**
 
 ## 2. Running cost: electricity is the only recurring line
 
@@ -126,9 +127,8 @@ node, with EBS gp3 for storage):
 
 ### The comparison that matters
 
-- **Capital:** my whole build costs about **a month and a half** of the
-  AWS-equivalent on-demand bill, and a ~S$1,000 from-scratch equivalent costs less
-  than one month. The AWS figure only maps the original three nodes, so with sol and
+- **Capital:** my whole build, or a from-scratch equivalent, costs about **a month
+  and a half** of the AWS-equivalent on-demand bill. The AWS figure only maps the original three nodes, so with sol and
   opus included the real gap is wider.
 - **Running:** ~S\$30-43/month of electricity vs. ~US$970/month of cloud compute.
   The homelab's *entire annual running cost* is roughly what the cloud equivalent
@@ -140,7 +140,7 @@ node, with EBS gp3 for storage):
 
 ### But value isn't only the dollar delta
 
-The cloud bill buys things my cluster doesn't have, genuine redundancy, 25Gbit
+The cloud bill buys things my cluster doesn't have: genuine redundancy, 25Gbit
 networking, managed durability, and no 3am debugging of a flapping MoCA link. I'm
 not paying that premium because, for a *learning cluster*, I don't need any of it.
 So the real value has two parts:
@@ -148,7 +148,7 @@ So the real value has two parts:
 1. **The compute-per-dollar**, which is overwhelmingly in the homelab's favour for
    a steady always-on workload.
 2. **The learning and portfolio value**, which is the actual point. The cluster is
-   a standing, defensible demonstration of platform engineering, every
+   a standing, defensible demonstration of platform engineering. Every
    post-mortem, every open item, every "here's *why* this CRD sync failed and how
    I fixed it" is evidence I can operate and reason about infrastructure. That's
    worth more to my career goal than the dollar saving, and it's something no
@@ -159,10 +159,10 @@ Put bluntly: I spent ~S\$1,800 once plus pocket change monthly to build somethin
 that would cost ~US$11k/year to rent *and* that teaches me the thing I'm actually
 trying to learn. The economics are firmly on the side of building.
 
-Another thing that I must preface is that building the cluster my way would have
-you touching the hardware and configuring very fragile components such as the BIOS
-and manually tuning the custom setup. If you're rather new to PC hardware, it is 
-perhaps not very ideal to buy random custom PCs online.
+One more caveat: building the cluster my way means touching the hardware,
+configuring fragile components such as the BIOS and tuning a custom setup by hand.
+If you're new to PC hardware, buying random custom PCs online is probably not
+ideal.
 
 ## 4. The reality of compute in Singapore, 2026
 
@@ -181,12 +181,12 @@ and toward the cloud's shared-infrastructure model. Land and power are both scar
 and priced accordingly. The lesson scales inversely: **small always-on rigs are
 cheap to run; large ones are penalised by exactly the same tariff.**
 
-Fun fact: Despite being an island with no natural resources, the electricity prices
+Fun fact: despite being an island with no natural resources, the electricity prices
 here are still cheaper than the UK or Australia.
 
 ### The cloud is dominant here, and the pricing reflects premium demand
 
-Singapore is a major cloud hub, AWS (`ap-southeast-1`), GCP, and Azure all have
+Singapore is a major cloud hub: AWS (`ap-southeast-1`), GCP, and Azure all have
 strong regional presence, and `ap-southeast-1` offers 800+ EC2 instance types. But
 regional pricing runs *above* the US reference regions. For businesses with spiky
 or unpredictable load, or that need managed durability and compliance, the cloud
@@ -209,7 +209,7 @@ tip an organisation toward owning or colocating hardware:
 - **Heavy data egress**, where cloud pricing punishes moving data out.
 - **Regulatory or latency requirements** that favour owned/colocated kit.
 
-Real companies have made exactly this move at scale, Dropbox and 37signals/
+Real companies have made exactly this move at scale: Dropbox and 37signals/
 Basecamp are the well-known cloud-repatriation cases. The honest counterweight is
 that owning hardware demands headcount and operational burden that erodes the
 savings, which is why the common landing spot is **hybrid**: own the steady
@@ -217,8 +217,9 @@ baseline, burst into cloud for peaks.
 
 ### My cluster as a micro-version of that same logic
 
-My design *is* the hybrid principle in miniature. `deus` is the always-on baseline
-(cheap to keep up); heavy GPU draw is spun up only when needed; Cloudflare Tunnel
+My design *is* the hybrid principle in miniature. The mini PCs are the always-on
+baseline (cheap to keep up); heavy GPU draw on nebula is the part that costs, and
+it used to be spun up only when needed; Cloudflare Tunnel
 (essentially free public ingress) handles the low-bandwidth public surface while
 Tailscale carries private access and bulk transfer. I'm making the same steady-baseline-vs-
 elastic-burst tradeoffs a real infra team makes, just at a scale where the whole
@@ -227,7 +228,7 @@ year's power bill is less than a fortnight of the cloud-equivalent invoice.
 ## 5. The bottom line
 
 - **Capital:** ~S$1,800 once, more with further upgrades or additional nodes.
-- **Running:** ~S$30-43/month of electricity at the current record-high tariff
+- **Running:** ~S$30-43/month of electricity at the current record-high tariff,
   the only recurring cost, and a small one.
 - **Cloud-equivalent:** ~US$7,000-11,600+/year, higher still at Singapore-region
   pricing.

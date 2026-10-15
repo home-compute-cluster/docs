@@ -21,7 +21,7 @@ Two consequences drive almost every best practice:
   is why instruction *ordering* matters so much: put rarely-changing things
   (dependency installs) before frequently-changing things (your source code).
 - **Layers only add, never subtract.** Deleting a file in a later layer doesn't
-  shrink the image, the bytes still exist in the earlier layer. To actually
+  shrink the image; the bytes still exist in the earlier layer. To actually
   remove something, it must be cleaned up *within the same instruction* that
   created it (or avoided via multi-stage builds).
 
@@ -80,7 +80,7 @@ COPY . .                       # copy everything
 ```
 
 - The **build context** is the directory you pass to `docker build` (usually
-  `.`). `COPY` can only see files inside it, you can't `COPY /etc/passwd`.
+  `.`). `COPY` can only see files inside it; you can't `COPY /etc/passwd`.
 - Prefer `COPY` over `ADD` for plain files. `COPY` does exactly one thing.
 
 ### `ADD`: copy, but with extra magic
@@ -103,7 +103,7 @@ WORKDIR /app
 ```
 
 Sets the cwd for subsequent `RUN`, `CMD`, `ENTRYPOINT`, `COPY`, `ADD`. Creates
-the directory if absent. Use it instead of `RUN cd /app`, `cd` in a `RUN`
+the directory if absent. Use it instead of `RUN cd /app`: `cd` in a `RUN`
 doesn't persist to the next instruction (each `RUN` is a fresh shell).
 
 ### `ENV`: set environment variables
@@ -127,10 +127,10 @@ RUN echo "building $BUILD_ID"
 ```
 
 - Only exists during the build; **not** present in the running container.
-- An `ARG` before the first `FROM` is special, it can parameterize the base
+- An `ARG` before the first `FROM` is special: it can parameterize the base
   image, but is out of scope for stages unless re-declared.
-- Don't pass secrets via `ARG`, they're visible in image history. Use
-  `RUN --mount=type=secret` instead (section 6).
+- Don't pass secrets via `ARG`; they're visible in image history. Use
+  `RUN --mount=type=secret` instead (section 8).
 
 ### `EXPOSE`: document the listening port
 
@@ -138,7 +138,7 @@ RUN echo "building $BUILD_ID"
 EXPOSE 80
 ```
 
-Pure documentation/metadata. It does **not** publish the port, that's
+Pure documentation/metadata. It does **not** publish the port; that's
 `-p` at run time, or a Kubernetes Service. Worth including so the image is
 self-describing (and whoever wires up ingress knows the port).
 
@@ -251,8 +251,7 @@ and queue time billed directly.
 | `gcr.io/distroless/*` | Small, no shell | Runtime for compiled binaries; minimal attack surface, no shell to exec into |
 | `scratch` | Empty | Fully static binaries (typical static Go); nothing but your binary |
 
-Trade-off: smaller bases pull faster (shorter `ImagePullBackOff` window on
-Kubernetes), have fewer CVEs, but give you less to debug with (no shell in
+Trade-off: smaller bases pull faster (pods start sooner on a new node), have fewer CVEs, but give you less to debug with (no shell in
 `scratch`/distroless). For a static Go service, `scratch` or `distroless/static`
 is ideal. For nginx serving static files, `nginx:1.27-alpine` is the standard.
 
@@ -339,7 +338,7 @@ EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
 ```
 
-`daemon off;` is required, nginx daemonizes by default, which would make PID 1
+`daemon off;` is required: nginx daemonizes by default, which would make PID 1
 exit and kill the container. This keeps it in the foreground.
 
 ### Go binary with subcommands
@@ -374,7 +373,7 @@ USER 1000
 ENTRYPOINT ["app"]
 ```
 
-`alpine` gives you a shell and `apk` while staying small, a good default while
+`alpine` gives you a shell and `apk` while staying small; a good default while
 you're still iterating on and debugging a service, before you tighten it down to
 `scratch`/distroless for production.
 
@@ -392,7 +391,7 @@ you're still iterating on and debugging a service, before you tighten it down to
   RUN --mount=type=secret,id=npmrc,target=/root/.npmrc npm ci
   ```
 - **Use a `.dockerignore`.** Keeps junk (`.git`, `node_modules`, `*.md`, local
-  env files) out of the build context, faster builds, smaller context, no
+  env files) out of the build context: faster builds, smaller context, no
   accidental secret leakage:
   ```
   .git
@@ -433,14 +432,14 @@ A typical CI step builds from the repo root: `docker build -t $IMAGE:$SHA -t
 $IMAGE:latest .`. So the Dockerfile lives at the repo root, sees that directory
 as its build context, and should:
 
-1. **Pin its base image**, the image content becomes as reproducible as the SHA
+1. **Pin its base image**: the image content becomes as reproducible as the SHA
    tag, so a given commit always produces a functionally identical image.
 2. **Order deps-before-source** so runner build minutes stay low.
-3. **Multi-stage down to a small final image** so `ImagePullBackOff` windows are
-   short and the pull onto each node is quick.
+3. **Multi-stage down to a small final image** so the pull onto each node is
+   quick and pods start sooner.
 4. **Add `LABEL org.opencontainers.image.source=https://github.com/<owner>/<repo>`**
    so the registry package auto-links back to the source repo.
 
 Off-the-shelf images (databases, Grafana, media servers, etc.) have no
-Dockerfile at all, they skip the build step entirely and are referenced
+Dockerfile at all; they skip the build step entirely and are referenced
 directly by their upstream image tag in your deployment manifests.

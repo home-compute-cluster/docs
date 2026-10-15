@@ -2,7 +2,7 @@
 
 **Date of incident:** 2026-09-02, 23:12 to 23:33 SGT
 **Duration:** ~21 minutes hard down; full recovery required physical intervention
-**Author:** barney
+**Author:** Barney
 **Status:** Root cause narrowed to hardware/firmware; remediation in progress
 **Severity:** High. Complete loss of all administrative access, including the tooling
 required to diagnose the incident
@@ -254,7 +254,7 @@ or `tailscale debug prefs` instead.
 ## 10. Recommendation: removing the subnet-router single point of failure
 
 The subnet router is load-bearing for everything administrative and has no redundancy.
-Three layers of fix, in increasing order of thoroughness. Layer 1 is required regardless.
+Four layers of fix, in increasing order of thoroughness. Layer 1 is required regardless.
 
 ### Layer 1: correct the current state (do first)
 

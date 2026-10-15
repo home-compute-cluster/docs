@@ -14,7 +14,7 @@ tradeoff, and the tradeoff is the interesting part.
 
 The initial concept, captured in the original spec, was a fairly textbook
 homelab: one Lenovo Legion laptop as control plane + worker, plus **three budget
-N100 mini-PCs** as worker agents, on a S$1,000 budget over 3-6 months. Clean,
+N100 mini-PCs** as worker agents, on an S$1,000 budget over 3-6 months. Clean,
 symmetric, easy to reason about.
 
 What I actually converged on is messier and better: **three heterogeneous
@@ -23,12 +23,12 @@ always-on nodes** using hardware I largely already had or could get cheaply.
 - **deus**: Lenovo M910q (i7-6700T class, ~16GB). Always-on control plane. Small,
   low-power, quiet, ideal for the one node that must never go down.
 - **nebula**: i7-6700K desktop, 24GB, GTX 1080. Doubles as the ZFS NAS and the
-  Docker Compose host (This thing only cost me S$270 and 6 hours of cleaning and
+  Docker Compose host (this thing only cost me S$270 and 6 hours of cleaning and
   troubleshooting). 
 - **legion**: a laptop with a GTX 1060, battery removed so it runs 24/7 as a
   worker.
 
-Why these names for the machine? Well no real reason, I just find the latin names
+Why these names for the machines? Well, no real reason, I just find the Latin names
 more interesting and easier to remember.
 
 ### Later additions: sol and opus
@@ -73,15 +73,15 @@ while staying light enough to run on modest hardware.
 | Layer | Choice | The main alternative I passed on, and why |
 |---|---|---|
 | Orchestration | **K3s** | Full kubeadm Kubernetes. Too heavy for this hardware, and K3s is real Kubernetes (same API) with the operational fat trimmed. Single binary, bundled Flannel/Traefik. |
-| GitOps | **ArgoCD** | Flux. both are fine; ArgoCD's UI makes the reconciliation loop *visible*, which matters when the goal is learning. |
-| Ingress | **Traefik** | nginx-ingress. Traefik ships with K3s and became my single routing brain. NGINX will be used as web servers instead |
+| GitOps | **ArgoCD** | Flux. Both are fine; ArgoCD's UI makes the reconciliation loop *visible*, which matters when the goal is learning. |
+| Ingress | **Traefik** | nginx-ingress. Traefik ships with K3s and became my single routing brain. nginx is used as a web server instead. |
 | Load balancer | **ServiceLB (bundled with K3s)** | MetalLB. ServiceLB already ships with K3s and exposes a LoadBalancer Service on the host ports of every node, so any node's own IP reaches Traefik. MetalLB would mean running another controller and managing a separate address pool for no real gain on a cluster fronted by a tunnel and a tailnet. |
 | Public access | **Cloudflare Tunnel** | Port-forwarding. My ISP router was locked at planning time; the tunnel dials *outbound*, sidestepping inbound ports entirely. |
 | Private and remote access | **Tailscale** (WireGuard underneath) | Cloudflare Tunnel or WARP for *everything*. The tunnel hairpins through an edge PoP and is slow for bulk transfer, while a Tailscale subnet router gives SSH, `kubectl` and the lab services from anywhere without opening a port. |
 | Storage (block) | **Longhorn** | Rook/Ceph. Far heavier operationally; Longhorn is right-sized for a small cluster with a handful of storage nodes. |
 | Storage (bulk/NAS) | **ZFS** | Plain ext4/mdadm. ZFS gives snapshots, checksums, and mirror integrity the NAS role needs. |
 | Secrets | **Sealed Secrets** | Vault / External Secrets Operator, overkill until I need dynamic secrets, rotation, or audit logging. |
-| Observability | **kube-prometheus-stack** | Rolling my own Prometheus/Grafana. the Helm stack is the industry-standard bundle, they work together and I might as well just use as it is. |
+| Observability | **kube-prometheus-stack** | Rolling my own Prometheus/Grafana. The Helm stack is the industry-standard bundle, the parts already work together, and I might as well use it as it is. |
 | Database | **CloudNativePG** | Bare Postgres in a Deployment, or Compose Postgres. CNPG gives an operator that owns failover, backups, and WAL archiving. |
 
 ### Two stack tradeoffs worth expanding
@@ -94,7 +94,7 @@ while staying light enough to run on modest hardware.
   the controller's private key outside the cluster and outside Git, because losing
   it makes every sealed secret unrecoverable. That single backup is the load-
   bearing discipline of the whole choice. I will definitely switch over to Vault
-  once a significant number of services warrant its use
+  once a significant number of services warrant its use.
 
 - **CNPG over a shared Postgres.** I decided on **one CNPG `Cluster` per
   application** rather than a single shared instance. Shared is cheaper on
@@ -133,15 +133,15 @@ backup, so keeping Garage outside K3s makes it an external copy in practice.
 All routing logic lives in Traefik IngressRoutes. Cloudflare and Tailscale are
 *ingress pipes* that feed Traefik; they carry no routing intelligence. This is
 what lets me have multiple ingress paths (public tunnel, private tailnet) without
-fragmenting routing across them. The corollary rule: **a single routing brain**
+fragmenting routing across them. The corollary rule: **a single routing brain**:
 per-app proxies (like nginx fronting an out-of-cluster stack) are allowed *only*
 if scoped to that stack, never promoted to a second general-purpose ingress.
 
-### Longhorn cannot use ZFS (We should perhaps help with this implmentation)
+### Longhorn cannot use ZFS (perhaps something worth contributing upstream)
 
 A hard technical constraint I learned the hard way: Longhorn needs a **dedicated
 disk formatted ext4/XFS at a stable mount path** with `multipathd` blacklisted. It
-cannot sit on a ZFS dataset. This shaped the whole storage-hardware plan, I
+cannot sit on a ZFS dataset. This shaped the whole storage-hardware plan: I
 couldn't just carve Longhorn space out of nebula's ZFS mirror (and ZFS can't
 shrink a vdev in place anyway, so clawing space back would mean breaking
 redundancy or a full backup-destroy-restore). The clean answer was **buy/acquire

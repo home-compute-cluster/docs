@@ -318,7 +318,8 @@ everything else looks fine. That was one of the two faults in the September outa
   `http://traefik.kube-system.svc.cluster.local:80`. Traefik routes by host name with
   IngressRoutes.
 - **Private traffic** (`*.lab.packetcraft.dev`): DNS points at private LAN addresses.
-  Off the LAN, those are reached over Tailscale through a subnet router. Traefik is a
+  Off the LAN, those are reached over Tailscale through the subnet routers on deus
+  and sol. Traefik is a
   LoadBalancer Service served by ServiceLB, so it answers on ports 80 and 443 of every
   node, and kube-vip also holds a shared lab address.
 - **The API server** is reached through the kube-vip address `192.168.1.241`, which

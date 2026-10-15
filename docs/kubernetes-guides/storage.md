@@ -54,7 +54,7 @@ spec:
   `local-path` class works this way.
 - `allowVolumeExpansion: true` lets you grow a PVC by editing its size.
 
-**The two classes on this cluster:**
+**The two main classes on this cluster:**
 
 - **`local-path`** (bundled with K3s): a directory on the node where the Pod first
   landed. Fast and simple, but **the data is pinned to that node**. If the Pod moves,
@@ -63,6 +63,11 @@ spec:
   snapshots and backups. Pods can move between nodes and keep their data. Here it runs
   with two replicas (nebula and legion), because those are the only two nodes with
   Longhorn disks.
+
+Two narrower classes exist for single workloads. `nebula-local` has no provisioner
+and binds Seafile to a hand-made PersistentVolume on nebula's ZFS pool.
+`longhorn-garage` is a one-replica, strictly local Longhorn class for the obsync
+Garage, which already replicates its data three ways itself.
 
 Replicated storage is not a backup. It protects against losing a disk or a node, not
 against deleting the data or corrupting it. Backups go to a separate target, and a

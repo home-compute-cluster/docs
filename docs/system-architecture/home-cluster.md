@@ -282,7 +282,7 @@ sequenceDiagram
 - **selfHeal** reverts manual drift and **prune** removes resources deleted from Git.
 
 **Two-repo split.** CI writes to the config repo; ArgoCD reads from it. They never talk
-directly, a single repo would loop (CI's write-back re-triggers CI). Off-the-shelf images
+directly; a single repo would loop (CI's write-back re-triggers CI). Off-the-shelf images
 (Grafana, Headlamp) skip CI entirely: just an `apps/<svc>/` manifest + ArgoCD Application.
 
 ---
@@ -342,11 +342,10 @@ Done since: a second Tailscale subnet router on sol, etcd scraping and alerting,
 - A restore drill for the portfolio database; WAL archiving works, restore is unproven
 - An off-site copy of the most important backups (today they all end up on nebula)
 - Taint deus, which carries the most cluster-critical roles, to keep general workloads off it
-- Grafana `lab.` IngressRoute still hand-applied; move it to `apps/monitoring-extras/`
 - Renovate not yet set up
 - Deployment guide still needs sections on secrets and IngressRoutes
 
 **On the horizon**
-- **obsync**: phase 1 is done and shipped as [stele-pull](https://github.com/BarneyLaw/stele-pull): a worker CronJob that mirrors Canvas course files into the obsync Garage once a day, and an Obsidian plugin that downloads them into a vault. It is one-way and read-only. Phase 2, server-side sync using operational transform, is in progress
+- **obsync**: phase 1 is done and shipped as [stele-pull](https://github.com/BarneyLaw/stele-pull): a worker CronJob that mirrors Canvas course files into the obsync Garage once a day, and an Obsidian plugin that downloads them into a vault. It is one-way and read-only. Phase 2, server-side sync using operational transform, is in progress.
 - **Penny**: the tutoring payments app (Flutter and Go), still at the schema and skeleton stage
 - **Tailscale into K3s**: following cloudflared into the cluster, possibly through the Tailscale Kubernetes operator. Still undecided, because Tailscale is also the way in when K3s itself is down

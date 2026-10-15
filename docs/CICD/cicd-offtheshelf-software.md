@@ -1,14 +1,14 @@
 # GitOps for Off-the-Shelf Software: Setup Guide
 
-A companion to `cicd-pipeline-setup-guide.md`. That guide covers
+A companion to the [pipeline setup guide](cicd-pipeline-setup-guide.md). That guide covers
 **built-from-source** services (you write the code, CI builds an image). This one
-covers **off-the-shelf software** you don't compile, Grafana, Headlamp,
+covers **off-the-shelf software** you don't compile: Grafana, Headlamp,
 Longhorn, cert-manager, anything that already ships an image or a Helm chart.
 
 The key difference: **off-the-shelf software has no app repo and no CI.** There is
 nothing to build. You only declare *what to run*; ArgoCD reconciles the cluster to
 match. This is the `CD applies to everything you run; CI only applies to things
-you build` rule from the main guide, here, CI is simply absent.
+you build` rule from the main guide; here, CI is simply absent.
 
 ---
 
@@ -23,8 +23,8 @@ how the software is distributed.
 | A Helm chart | kube-prometheus-stack, Longhorn, cert-manager, ArgoCD itself | **Pattern B: ArgoCD Application pointing at a Helm chart** |
 
 Rule of thumb: if the project's install docs say "here's our image, write your own
-Deployment," use Pattern A. If they say "`helm install ...`," use Pattern B, never
-hand-translate a chart into raw manifests, you lose every upstream default and
+Deployment," use Pattern A. If they say "`helm install ...`," use Pattern B. Never
+hand-translate a chart into raw manifests: you lose every upstream default and
 every future upgrade.
 
 ---
@@ -32,7 +32,7 @@ every future upgrade.
 ## 2. Pattern A: raw manifests for a plain image
 
 Identical to the source-built layout in the main guide, minus the app repo and the
-`images:` tag-bump seam (there's no CI to bump it, you pin the version yourself).
+`images:` tag-bump seam (there's no CI to bump it; you pin the version yourself).
 
 ### Config repo layout
 ```
@@ -94,7 +94,7 @@ resources:
   - service.yaml
 ```
 
-> No `images:` block needed, there's no CI rewriting a tag. You set the version in
+> No `images:` block needed; there's no CI rewriting a tag. You set the version in
 > `deployment.yaml` by hand and commit it. **Renovate** (already on your roadmap)
 > watches these pinned tags and opens a PR when a newer `louislam/uptime-kuma` tag ships,
 > so upgrades stay declarative: review the PR, merge it, and ArgoCD rolls it out.
@@ -216,23 +216,24 @@ homelab-cicd-config/
 > than duplicating it, *provided* chart name, version, namespace, and release name
 > line up. Pin `targetRevision` to the version you actually have now (find it with
 > `helm list -A`), sync, confirm Healthy, *then* bump the version in a later commit.
-> Don't combine "adopt" and "upgrade" in one move, you won't know which broke what.
+> Don't combine "adopt" and "upgrade" in one move; you won't know which broke what.
 
 ### Where the Grafana `lab.` IngressRoute belongs now
 
 Two clean homes, pick one:
 
-1. **In the chart values**, kube-prometheus-stack exposes
+1. **In the chart values.** kube-prometheus-stack exposes
    `grafana.extraObjects` (or you template the IngressRoute through the chart),
    so the `lab.` IngressRoute is rendered by the same Application. Most cohesive.
-2. **As a sibling raw manifest**, a small `apps/monitoring-extras/` folder
+2. **As a sibling raw manifest.** A small `apps/monitoring-extras/` folder
    (Pattern A, manifests only, no Deployment) holding just the Grafana
    IngressRoute, with its own ArgoCD Application. Simpler to reason about; keeps
    "the chart" and "my routing for the chart" as separate Applications.
 
-Either way the hand-applied IngressRoute stops being an orphan. Given you already
-have it applied, the lowest-friction path is option 2: drop the YAML you already
-wrote into `apps/monitoring-extras/`, add an Application, and ArgoCD adopts it.
+Either way the hand-applied IngressRoute stops being an orphan. This cluster went
+with option 2, the lowest-friction path: the YAML that was already applied by hand
+now lives in `apps/monitoring-extras/grafana-ingress-tail.yaml`, and the
+monitoring-extras Application adopted it.
 
 ---
 

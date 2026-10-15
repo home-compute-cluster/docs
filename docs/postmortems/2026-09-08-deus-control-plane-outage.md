@@ -1,4 +1,4 @@
-# Post-mortem: deus control-plane outage, 2026-09-08 to 2026-09-12
+# Postmortem: deus control-plane outage, 2026-09-08 to 2026-09-12
 
 **Incident start:** 2026-09-08, 21:47 SGT
 **Resolved:** 2026-09-12, ~13:15 SGT
@@ -129,7 +129,7 @@ The consequence is asymmetric:
 
 This is why every inbound protocol failed identically and simultaneously: SSH,
 ICMP, the API on 6443, kubelet on 10250 and etcd peer traffic on 2380 are not
-five separate faults, they are one routing fault observed five times.
+five separate faults; they are one routing fault observed five times.
 
 It also explains the etcd log signature precisely. `deus` lost both peers in the
 same second because the fault is local to `deus`, not distributed across two

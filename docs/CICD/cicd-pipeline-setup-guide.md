@@ -33,9 +33,9 @@ communicate only through the **config repo**.
   └──────┬───────┘                └─────────────┘
          │ 3. reconcile
          v
-  ┌──────────────────────────────┐
-  │ ArgoCD (in-cluster, always-on)│ ──> Deployment rolls to image:SHA   CD
-  └──────────────────────────────┘
+  ┌────────────────────────────────┐
+  │ ArgoCD (in-cluster, always-on) │ ──> Deployment rolls to image:SHA   CD
+  └────────────────────────────────┘
 ```
 
 - **CI** (GitHub runner): turns a commit into a tested, versioned image and
@@ -46,7 +46,7 @@ communicate only through the **config repo**.
   cluster from outside.
 
 Key rule: **CD applies to everything you run; CI only applies to things you
-build.** Off-the-shelf images (Grafana, Headlamp) skip CI entirely, they need
+build.** Off-the-shelf images (Grafana, Headlamp) skip CI entirely; they need
 only a config-repo manifest + an ArgoCD Application.
 
 ---
@@ -61,7 +61,7 @@ re-triggers CI).
 | `<service>-app` | Source + CI workflow | You (humans) | GitHub Actions |
 | `homelab-cicd-config` | K8s manifests | GitHub Actions (bot) | ArgoCD |
 
-The config repo is shared across all services, each service gets its own
+The config repo is shared across all services; each service gets its own
 subfolder under `apps/`.
 
 ### App repo layout
@@ -157,7 +157,7 @@ images:
   `kustomization.yaml`. Don't swap file contents.
 - **ghcr.io is all-lowercase.** `<owner-lowercase>` must be lowercase even if
   your GitHub login has capitals (`BarneyLaw` becomes `barneylaw`). `kustomize edit
-  set image` does a **case-sensitive string match**, a case mismatch matches
+  set image` does a **case-sensitive string match**: a case mismatch matches
   nothing and the tag silently never updates.
 
 ---
@@ -236,7 +236,7 @@ build.
 
 ## 5. Credentials (the part that's easy to get wrong)
 
-Three boundaries, each needs its own credential **only when it crosses into
+Four boundaries, each needing its own credential **only when it crosses into
 private**. Scope every credential to the minimum.
 
 | Boundary | Credential | Who creates it | Needed when |
@@ -318,7 +318,7 @@ spec:
 kubectl apply -f <service>-app.yaml
 ```
 
-> **`repoURL` is the entire Gitea migration later**, switch this one line to
+> **`repoURL` is the entire Gitea migration later**: switch this one line to
 > the Gitea URL, re-add repo creds, done.
 
 ---

@@ -121,8 +121,9 @@ the power button, 21 minutes after it died.
   loses.
 - Persistent journald, so an investigation can start after the reboot.
 - `kured` to handle the cordon, drain, reboot and uncordon cycle when OS updates need
-  a restart, one node at a time. This one was deployed in September and is still
-  being watched to confirm it behaves.
+  a restart, one node at a time. This one was deployed in September and verified
+  end to end on 20 September, when two nodes that had been waiting weeks for a
+  reboot were patched in one window.
 
 ## 9. One node doing five jobs is five single points of failure
 

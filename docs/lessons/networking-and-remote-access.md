@@ -1,7 +1,7 @@
 # Lessons: Networking and Remote Access
 
-Remote access to the cluster goes through Tailscale: deus advertises
-`192.168.1.0/24` as a subnet router, and the `*.lab.packetcraft.dev` names resolve
+Remote access to the cluster goes through Tailscale: deus and sol advertise
+`192.168.1.0/24` as subnet routers, and the `*.lab.packetcraft.dev` names resolve
 to private addresses that only work over the tailnet. Two of the three postmortems
 were caused by this setup, so this page is mostly about getting it right.
 
@@ -51,9 +51,8 @@ advertisement.
 none.
 
 **What I changed.** sol now advertises `192.168.1.0/24` as well, so deus is one of
-two subnet routers. Tailscale
-elects one primary for a prefix and fails over to another advertiser if it goes
-offline. Before advertising on a new node, IP forwarding must be enabled, or the
+two subnet routers. Tailscale elects one primary for a prefix and fails over to
+another advertiser if it goes offline. Before advertising on a new node, IP forwarding must be enabled, or the
 elected router will silently drop the whole prefix:
 
 ```bash

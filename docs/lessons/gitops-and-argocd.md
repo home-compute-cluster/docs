@@ -60,7 +60,7 @@ The Grafana subchart generates a random password at `helm template` time, and
 reconcile.
 
 **The lesson.** If a chart owns a credential, ArgoCD will keep regenerating it.
-This is not a Grafana bug, it is how templated secrets and self-heal interact.
+This is not a Grafana bug; it is how templated secrets and self-heal interact.
 
 **What I do now.** Move ownership out of the chart. A SealedSecret holds the
 credential and the chart points at it with `existingSecret` (for Grafana,

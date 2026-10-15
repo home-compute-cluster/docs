@@ -77,7 +77,7 @@ mistakes are cheap and the lessons are real.
 
 Five heterogeneous, always-on x86 nodes. Three of them run the K3s control plane
 with embedded etcd, so losing any single server no longer takes the cluster down.
-The names stuck, so they stayed.
+The names are Latin, picked simply because they are easier to remember.
 
 | Node | Callsign | Hardware | Role |
 |------|----------|----------|------|

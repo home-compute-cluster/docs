@@ -32,12 +32,12 @@ push`; the network policy keeps the agent off your home network).
 ```
 
 You connect to the **cluster**, not a host. The scheduler places the pod; your
-editor follows the tunnel, not an IP. That's the "dynamic" you asked for.
+editor follows the tunnel, not an IP. That's what "dynamic" means here.
 
 ### Why `code tunnel`, not code-server (browser)
-You wanted your real laptop VS Code, not a browser tab. `code tunnel` runs
+The goal was the real desktop VS Code, not a browser tab. `code tunnel` runs
 Microsoft's tunnel host inside the pod; your desktop VS Code's **Remote-Tunnels**
-extension attaches to it by name. The pod can be anywhere, the relay handles
+extension attaches to it by name. The pod can be anywhere; the relay handles
 reachability, so no ingress/IngressRoute is even needed for the editor itself.
 
 ---
@@ -47,7 +47,9 @@ reachability, so no ingress/IngressRoute is even needed for the editor itself.
 Honest framing, because the word oversells easily:
 
 - **Hard rule:** the pod is schedulable **only on `deus` or `nebula`**, never
-  `legion` (transient, it'd evict your editor when the GPU node sleeps).
+  `legion`. This was written when legion was a transient, Wake-on-LAN worker that
+  would evict the editor whenever it slept. legion now runs 24/7, and the cluster
+  has since grown to five nodes.
 - **Soft rule:** prefer `nebula` (more RAM for compile/AI), fall back to `deus`.
 - Placement is decided **once, at schedule time**, from `resources.requests` +
   the preference. K3s does **not** rebalance a running pod. So "whichever is
@@ -55,13 +57,17 @@ Honest framing, because the word oversells easily:
   load balancer. Restart the pod (delete it; the Deployment recreates it) to
   re-trigger placement.
 
-This is the genuine, defensible version of dynamic, the same model real
+> **Current state:** the node affinity in `apps/code-server/deployment.yaml` is
+> commented out, so today K3s may place the pod on any of the five nodes. The rules
+> above describe the intended design, not what is deployed.
+
+This is the genuine, defensible version of dynamic: the same model real
 platform teams use. Live editor-session migration across nodes isn't a thing
 that exists cleanly; "stateless pod, reschedule freely" is the honest best.
 
 ---
 
-## 3. Repos & files (mirrors your existing two-repo pattern)
+## 3. Repos & files (mirrors the existing two-repo pattern)
 
 **`code-server-app`** (new app repo: source + CI):
 ```
@@ -96,7 +102,7 @@ Before pushing, replace these across the files:
 | `<your-dev-repo>` | deployment.yaml (init + main `REPO_URL`) | the repo you want to hack on in the sandbox |
 | node names `deus`/`nebula` | deployment.yaml affinity | confirm against `kubectl get nodes` |
 
-> The lowercase rule is the same silent-failure trap from your nginx guide:
+> The lowercase rule is the same silent-failure trap from the [pipeline guide](../CICD/cicd-pipeline-setup-guide.md):
 > `kustomize edit set image` is a case-sensitive string match. Mismatch =
 > tag never updates, no error.
 
@@ -162,7 +168,7 @@ defeats dynamic placement. Your three options, spelled out in `pvc.yaml`:
   gives *both* persisted auth and free placement. The correct long-term answer.
 
 If dynamic placement matters more to you than skipping the occasional re-login,
-start with **(B)**, it's the purest expression of the thesis. You can move to
+start with **(B)**; it's the purest expression of the thesis. You can move to
 (A) or (C) anytime; it's a volume swap, not a redesign.
 
 ---
@@ -177,7 +183,7 @@ stock K3s:
   the containment that matters most.*
 - Link-local / metadata (`169.254/16`) blocked.
 - DNS + intra-cluster allowed (needed to function).
-- **Caution, general internet on 443/80 is allowed**: required because `code tunnel`
+- **Caution: general internet on 443/80 is allowed.** required because `code tunnel`
   and `git clone` need out. This is IP-based, so it's "all internet on 443," not
   a domain allowlist.
 
@@ -185,15 +191,15 @@ Plus pod hardening: non-root (uid 1000), all capabilities dropped, no privilege
 escalation, no host mounts, RuntimeDefault seccomp, and a hard memory ceiling so
 a runaway process can't OOM the node.
 
-**What this does NOT give you:** a domain allowlist like your bash sandbox
-(`github.com` yes, everything else no). NetworkPolicy can't express that,
-domains map to rotating CDN IPs. That's the next section.
+**What this does NOT give you:** a domain allowlist (`github.com` yes,
+everything else no). NetworkPolicy can't express that, because domains map to
+rotating CDN IPs. That's the next section.
 
 ---
 
 ## 8. Follow-up: true domain allowlist via egress proxy
 
-When you want the bash-sandbox-grade "only these domains" containment, it's a
+When you want "only these domains" containment, it's a
 distinct project worth its own write-up:
 
 1. Run a small **Squid** (or similar) in-cluster with a domain allowlist
@@ -205,7 +211,7 @@ distinct project worth its own write-up:
    allowlist is enforced.
 
 That inverts the model from "block the bad" (LAN) to "allow only the good"
-(domains), the real equivalent of your bash setup, and a legitimate platform
+(domains), and is a legitimate platform
 concern (egress filtering) for the portfolio. Deliberately deferred so standing
 up the editor and enforcing domain policy don't tangle into one hard step.
 
@@ -249,11 +255,11 @@ If the LAN checks print "blocked (good)", the sandbox is doing its job.
 
 ## 11. Where this sits in the project
 
-This is your **second app through the pipeline** (the "prove the pattern
-generalizes" next-pickup from Phase 3), and the first one that exercises
+This was the **second app through the pipeline** (the one that proved the pattern
+generalizes), and the first one that exercises
 NetworkPolicy, pod security context, and scheduler affinity together, all
-directly transferable platform-engineering surface. It also unblocks the AI
-sandbox you wanted without a second piece of infrastructure: the cluster *is*
+of it directly transferable platform-engineering surface. It also provides an AI
+sandbox without a second piece of infrastructure: the cluster *is*
 the sandbox.
 
 Natural follow-ups, in rough order:
@@ -261,4 +267,3 @@ Natural follow-ups, in rough order:
 2. The egress-proxy domain allowlist (section 8), own write-up.
 3. A second profile of this image (e.g. a GPU-tolerating variant pinned to
    `legion` for AI inference work) once you want the GTX in the loop.
-```
