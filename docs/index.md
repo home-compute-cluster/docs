@@ -8,6 +8,7 @@ mistakes are cheap and the lessons are real.
 
 [Read the motivation](motivation/01-motivation.md){ .md-button .md-button--primary }
 [Jump to architecture](system-architecture/home-cluster.md){ .md-button }
+[Cluster config on GitHub](https://github.com/BarneyLaw/homelab-cicd-config){ .md-button }
 
 ---
 
@@ -91,6 +92,10 @@ The names are Latin, picked simply because they are easier to remember.
 Grafana, Cloudflare Tunnel, Tailscale
 
 **Domains:** `*.packetcraft.dev` (public) and `*.lab.packetcraft.dev` (tailnet-only)
+
+**Source of truth:** every manifest the cluster runs lives in
+[BarneyLaw/homelab-cicd-config](https://github.com/BarneyLaw/homelab-cicd-config),
+and ArgoCD reconciles the cluster to match it.
 
 ---
 
